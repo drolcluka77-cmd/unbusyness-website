@@ -56,6 +56,11 @@ h2{font-size:clamp(30px,4.2vw,48px);line-height:1.08}
 .choice{display:grid;grid-template-columns:52px minmax(0,1fr);gap:14px;align-items:center;text-align:left;background:var(--surface);border:1.5px solid var(--line);border-radius:20px;padding:18px;transition:border-color .15s,transform .15s}
 .choice:hover{border-color:var(--green);transform:translateY(-1px)}
 a.choice{color:inherit;text-decoration:none}
+.topr{display:flex;align-items:center;gap:10px}
+.langs{display:inline-flex;border:1px solid var(--line);border-radius:999px;padding:3px;background:var(--surface)}
+.langs button{all:unset;cursor:pointer;font-size:13px;font-weight:700;padding:5px 11px;border-radius:999px;color:var(--muted)}
+.langs button[aria-pressed="true"]{background:var(--green);color:var(--bg)}
+.langs button:focus-visible{outline:3px solid var(--apricot)}
 .choice .ic{width:52px;height:52px;border-radius:16px;display:grid;place-items:center;background:var(--sand);color:var(--green)}
 .choice b{display:block;font-size:18px;letter-spacing:-.01em}
 .choice span{display:block;color:var(--muted);font-size:14.5px;line-height:1.4;margin-top:2px}
@@ -110,7 +115,8 @@ footer{padding-block:28px;border-top:1px solid var(--line);color:var(--muted);fo
 <div class="wrap">
   <header class="top">
     <div class="brand"><svg width="34" height="34" viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="24" fill="#1F4D45"/><path d="M14.5 19 V25.5 a9.5 9.5 0 0 0 19 0 V19" fill="none" stroke="#FBFAF7" stroke-width="4" stroke-linecap="round"/><circle cx="24" cy="15.5" r="3.4" fill="#F2A57A"/></svg>unbusyness</div>
-    <button class="back" id="back" type="button" hidden></button>
+    <div class="topr"><button class="back" id="back" type="button" hidden></button>
+      <div class="langs" role="group" aria-label="Language / Jezik"><button type="button" data-lang="sl" aria-pressed="false">SL</button><button type="button" data-lang="en" aria-pressed="false">EN</button></div></div>
   </header>
 
   <div class="layout">
@@ -134,6 +140,7 @@ const PAGES = {
   manager: "/building-managers/",
   hotel: "/hotels/",
   resident: "/home/",
+  trade: { en: "/contractor/", sl: "/contractor/sl/" },
 };
 // Where sign-ups go when hosted (e.g. "/api/waitlist"). Empty = preview: the page says nothing was sent.
 const WAITLIST_ENDPOINT = "";
@@ -201,7 +208,7 @@ let lang = (navigator.language || "").toLowerCase().startsWith("sl") ? "sl" : "e
 try { lang = localStorage.getItem("ub-lang") || lang; } catch {}
 const S = { step: "hello", role: null, trade: null, history: [] };
 const t = (k) => T[lang][k];
-const LEVEL = { hello: 0, lang: 1, role: 2, trade: 3, form: 3, done: 4 };
+const LEVEL = { hello: 0, role: 1, trade: 2, form: 3, done: 4 };
 const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 function meter() {
@@ -220,20 +227,15 @@ function render() {
   document.documentElement.lang = lang;
   const st = document.getElementById("stage"); const b = document.getElementById("back");
   b.hidden = S.step === "hello" || S.step === "done"; b.textContent = t("back");
+  document.querySelectorAll("[data-lang]").forEach((x) => x.setAttribute("aria-pressed", String(x.dataset.lang === lang)));
   meter();
   if (S.step === "hello") {
     st.innerHTML = `<section class="step"><div class="eyebrow">unbusyness.com</div><h1><span id="ty1" class="typed"></span><br><span id="ty2"></span></h1><p class="lede" id="hiLede" style="opacity:0;transition:opacity .5s">${t("hiLede")}</p><div><button class="btn primary" id="startBtn" style="opacity:0;transition:opacity .5s" type="button">${t("start")} →</button></div></section>`;
-    typeHello(); document.getElementById("startBtn").onclick = () => go("lang");
-  } else if (S.step === "lang") {
-    st.innerHTML = `<section class="step"><h2>${t("langQ")}</h2><p class="lede">${t("langLede")}</p><div class="choices">
-      <button class="choice lang" data-l="sl" type="button"><span class="ic">SL</span><div><b>Slovenščina</b><span>Nadaljuj v slovenščini</span></div></button>
-      <button class="choice lang" data-l="en" type="button"><span class="ic">EN</span><div><b>English</b><span>Continue in English</span></div></button></div></section>`;
-    st.querySelectorAll("[data-l]").forEach((x) => (x.onclick = () => { lang = x.dataset.l; try { localStorage.setItem("ub-lang", lang); } catch {} go("role"); }));
+    typeHello(); document.getElementById("startBtn").onclick = () => go("role");
   } else if (S.step === "role") {
-    // Residents, building managers and hotels go straight to their own page (language is kept in localStorage).
-    // Tradespeople have no page yet, so they pick a trade and sign up here.
+    // Every choice opens its own page. The language is kept in localStorage; the contractor page has its own SL/EN addresses.
     const ROLE = { Res: "resident", Man: "manager", Trade: "trade", Hotel: "hotel" };
-    const c = (k, ic) => { const inner = `<span class="ic">${svg(ic)}</span><div><b>${t("r" + k)}</b><span>${t("r" + k + "D")}</span></div>`; const page = PAGES[ROLE[k]];
+    const c = (k, ic) => { const inner = `<span class="ic">${svg(ic)}</span><div><b>${t("r" + k)}</b><span>${t("r" + k + "D")}</span></div>`; let page = PAGES[ROLE[k]]; if (page && typeof page === "object") page = page[lang] || page.en;
       return page ? `<a class="choice" href="${page}">${inner}</a>` : `<button class="choice" data-r="${k}" type="button">${inner}</button>`; };
     st.innerHTML = `<section class="step"><h2>${t("roleQ")}</h2><p class="lede">${t("roleLede")}</p><div class="choices">${c("Res", "res")}${c("Man", "man")}${c("Trade", "trade")}${c("Hotel", "hotel")}</div></section>`;
     st.querySelectorAll("[data-r]").forEach((x) => (x.onclick = () => { S.role = ROLE[x.dataset.r]; go(S.role === "trade" ? "trade" : "form"); }));
@@ -302,6 +304,12 @@ async function submit(e) {
 }
 
 document.getElementById("back").onclick = back;
+document.querySelectorAll("[data-lang]").forEach((x) => (x.onclick = () => {
+  if (lang === x.dataset.lang) return;
+  lang = x.dataset.lang; try { localStorage.setItem("ub-lang", lang); } catch {}
+  if (S.step === "form") { S.step = S.history.pop() || "role"; } // the short form is rebuilt in the new language
+  render();
+}));
 document.getElementById("breath").onclick = () => {
   const m = document.getElementById("mNote"); m.textContent = t("breathing");
   const g = document.getElementById("gfill"); const w = parseFloat(g.style.width); g.style.width = Math.max(6, w - 10) + "%";

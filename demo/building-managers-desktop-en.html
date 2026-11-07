@@ -1,0 +1,639 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+</head>
+<body>
+<title>Unbusyness for Building Managers</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<style>
+/* Layout: desktop workspace — sidebar nav, sticky top bar, content area with cards; documents open as A4 sheets; same tokens as the phone demo. */
+:root{
+  --green:#1F4D45; --green-dark:#173D37; --green-soft:#E6EEEB; --on-green:#CFE0DA;
+  --apricot:#E8915F; --apricot-light:#F2A57A; --apricot-ink:#A84E22; --apricot-soft:#FBE8DC;
+  --slate:#4F5F80; --slate-soft:#E9ECF3;
+  --sand:#F4EFE6; --linen:#FBFAF7; --white:#FFFFFF; --side:#FDFCFA;
+  --ink:#14201E; --muted:#56615F; --line:#E7E3DA; --line2:#EFEBE3;
+  --red:#B23A32; --red-soft:#FBEAE8; --ok:#2F7A55; --ok-soft:#E4F1E8;
+  --font:'Plus Jakarta Sans','Segoe UI',system-ui,-apple-system,sans-serif;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--linen);color:var(--ink);font-family:var(--font);font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none;padding:0}
+input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--apricot);outline-offset:2px}
+@media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
+
+.app{display:grid;grid-template-columns:248px minmax(0,1fr);min-height:100%}
+.side{background:var(--side);border-right:1px solid var(--line);padding:22px 14px;display:flex;flex-direction:column;gap:20px;position:sticky;top:0;height:100vh;overflow-y:auto}
+.brand{display:flex;align-items:center;gap:10px;padding:0 8px;font-size:20px;font-weight:700;letter-spacing:-.6px}
+.ws{margin:0 4px;background:var(--sand);border-radius:14px;padding:11px 12px;display:flex;gap:10px;align-items:center}
+.ws .av{width:32px;height:32px;border-radius:50%;background:var(--green-soft);color:var(--green);display:grid;place-items:center;font-weight:700;font-size:12px}
+.ws small{display:block;color:var(--muted);font-size:11px}
+.navlabel{font-size:10px;font-weight:700;letter-spacing:1.6px;color:#8A938F;padding:0 12px;margin-bottom:6px}
+.nav{display:flex;flex-direction:column;gap:2px}
+.nav button{display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:12px;color:var(--muted);font-weight:600;text-align:left;width:100%}
+.nav button:hover{background:var(--sand)}
+.nav button.on{background:var(--green-soft);color:var(--green);font-weight:700}
+.nav .cnt{margin-left:auto;background:var(--white);border:1px solid var(--line);border-radius:99px;padding:0 7px;font-size:11px;color:var(--muted)}
+.nav .cnt.hot{background:var(--red);border-color:var(--red);color:#fff}
+.sidecard{margin-top:auto;background:var(--sand);border-radius:16px;padding:14px;font-size:12px;color:var(--muted)}
+.sidecard b{display:block;color:var(--ink);font-size:13px;margin-bottom:4px}
+
+.main{min-width:0}
+.top{height:66px;position:sticky;top:0;z-index:10;background:rgba(251,250,247,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 32px;gap:16px}
+.crumb{color:var(--muted);font-size:13px}
+.crumb b{color:var(--ink)}
+.topr{display:flex;align-items:center;gap:10px}
+.iconbtn{width:38px;height:38px;border-radius:50%;background:var(--white);border:1px solid var(--line);display:grid;place-items:center;color:var(--muted)}
+.user{display:flex;align-items:center;gap:9px;padding-left:10px;border-left:1px solid var(--line);font-size:12px}
+.user .av{width:36px;height:36px;border-radius:50%;background:var(--apricot-soft);color:var(--apricot-ink);display:grid;place-items:center;font-weight:700}
+.offpill{display:flex;align-items:center;gap:8px;background:var(--slate);color:#fff;border-radius:99px;padding:6px 12px;font-size:12px;font-weight:700}
+.content{max-width:1360px;margin:0 auto;padding:28px 32px 120px}
+
+.head{display:flex;justify-content:space-between;align-items:flex-end;gap:18px;margin-bottom:22px;flex-wrap:wrap}
+.eyebrow{font-size:11px;font-weight:700;letter-spacing:1.8px;text-transform:uppercase;color:var(--green);margin-bottom:6px}
+.head h1{margin:0;font-size:30px;font-weight:600;letter-spacing:-1.1px}
+.head p{margin:6px 0 0;color:var(--muted);font-size:14px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:40px;padding:0 16px;border-radius:12px;font-weight:700;font-size:13px;white-space:nowrap}
+.btn.primary{background:var(--green);color:var(--linen)}
+.btn.primary:hover{background:var(--green-dark)}
+.btn.apricot{background:var(--apricot);color:var(--ink)}
+.btn.soft{background:var(--green-soft);color:var(--green)}
+.btn.line{background:var(--white);border:1px solid var(--line)}
+.btn.line:hover{background:var(--sand)}
+.btn.sm{min-height:32px;padding:0 12px;font-size:12px;border-radius:10px}
+.btns{display:flex;gap:8px;flex-wrap:wrap}
+
+.grid{display:grid;gap:16px}
+.g4{grid-template-columns:repeat(4,minmax(0,1fr))}
+.g3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.g2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.gmain{grid-template-columns:minmax(0,1.65fr) minmax(300px,1fr);align-items:start}
+.card{background:var(--white);border:1px solid var(--line);border-radius:20px;min-width:0}
+.ch{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:16px 20px;border-bottom:1px solid var(--line2)}
+.ch h2{margin:0;font-size:15px;font-weight:700;letter-spacing:-.2px}
+.ch p{margin:2px 0 0;color:var(--muted);font-size:12px}
+.cb{padding:16px 20px}
+.stat{padding:16px 18px;display:flex;flex-direction:column;gap:4px}
+.stat .lbl{display:flex;justify-content:space-between;align-items:center;color:var(--muted);font-size:12px;font-weight:600}
+.stat .ic{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:var(--green-soft);color:var(--green)}
+.stat b{font-size:27px;font-weight:700;letter-spacing:-.8px;font-variant-numeric:tabular-nums}
+.stat small{color:var(--muted);font-size:12px}
+.pill{display:inline-flex;align-items:center;gap:5px;border-radius:99px;padding:3px 10px;font-size:11px;font-weight:700;white-space:nowrap}
+.pill.green{background:var(--green-soft);color:var(--green)} .pill.red{background:var(--red-soft);color:var(--red)} .pill.apricot{background:var(--apricot-soft);color:var(--apricot-ink)} .pill.ok{background:var(--ok-soft);color:var(--ok)} .pill.slate{background:var(--slate-soft);color:var(--slate)} .pill.ink{background:var(--ink);color:var(--linen)}
+.muted{color:var(--muted)}
+.row{display:flex;align-items:center;gap:12px}
+.ic{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;flex-shrink:0}
+.ic.green{background:var(--green-soft);color:var(--green)} .ic.red{background:var(--red-soft);color:var(--red)} .ic.apricot{background:var(--apricot-soft);color:var(--apricot-ink)} .ic.slate{background:var(--slate-soft);color:var(--slate)} .ic.sand{background:var(--sand);color:var(--green)}
+.explain{display:flex;gap:10px;align-items:flex-start;background:var(--apricot-soft);border-radius:14px;padding:12px 14px;font-size:13px;color:#5A3A26;line-height:1.5}
+.explain b{color:var(--apricot-ink)}
+.explain .ei{width:22px;height:22px;border-radius:50%;background:var(--white);color:var(--apricot-ink);display:grid;place-items:center;flex-shrink:0;font-weight:800;font-size:12px}
+
+/* tables */
+.tbl{width:100%;border-collapse:collapse;font-size:13px}
+.tbl th{text-align:left;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted);padding:10px 14px;border-bottom:1px solid var(--line)}
+.tbl td{padding:12px 14px;border-bottom:1px solid var(--line2);vertical-align:middle}
+.tbl tr:last-child td{border-bottom:0}
+.tbl tr.click{cursor:pointer}
+.tbl tr.click:hover td{background:var(--linen)}
+.tbl .num{text-align:right;font-variant-numeric:tabular-nums}
+.tscroll{overflow-x:auto}
+
+/* task node tree */
+.root{background:var(--green);color:var(--linen);border-radius:16px;padding:14px 16px;display:flex;align-items:center;gap:12px}
+.root .ri{width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.14);color:var(--apricot-light);display:grid;place-items:center}
+.root small{display:block;font-size:10px;letter-spacing:1.4px;color:var(--on-green);font-weight:700}
+.stem{width:1px;height:18px;background:#CFC8BA;margin:0 auto}
+.branches{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.branch{border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.bh{display:flex;align-items:center;gap:10px;padding:12px;background:var(--side)}
+.bh strong{display:block;font-size:13px}.bh small{display:block;color:var(--muted);font-size:11px}
+.task{display:flex;gap:9px;align-items:flex-start;padding:10px 12px;border-top:1px solid var(--line2);width:100%;text-align:left}
+.task:hover{background:var(--linen)}
+.dot{width:8px;height:8px;border-radius:50%;margin-top:6px;flex-shrink:0;background:var(--green)}
+.dot.red{background:var(--red)}.dot.apricot{background:var(--apricot)}
+.task b{display:block;font-size:12.5px;font-weight:700}.task span{display:block;font-size:11.5px;color:var(--muted)}
+
+/* briefing */
+.brief{background:var(--green);color:var(--linen);border-radius:20px;padding:18px}
+.brief .play{width:48px;height:48px;border-radius:50%;background:var(--apricot);color:var(--ink);display:grid;place-items:center;flex-shrink:0}
+.brief p{margin:6px 0 0;color:rgba(251,250,247,.45);font-size:13.5px;transition:color .3s}
+.brief p.on{color:var(--linen)} .brief p.done{color:var(--on-green)}
+.act{display:flex;gap:10px;padding:12px 0;border-bottom:1px solid var(--line2)}
+.act:last-child{border-bottom:0}
+.act b{display:block;font-size:12.5px}.act span{display:block;font-size:12px;color:var(--muted)}.act time{font-size:11px;color:#8A938F}
+
+/* calls */
+.split{display:grid;grid-template-columns:minmax(300px,.9fr) minmax(0,1.4fr);gap:16px;align-items:start}
+.citem{display:flex;gap:12px;align-items:center;padding:14px 18px;border-bottom:1px solid var(--line2);width:100%;text-align:left}
+.citem:hover{background:var(--linen)}
+.citem.sel{background:var(--green-soft)}
+.citem b{display:block;font-size:13.5px}.citem span{display:block;font-size:12px;color:var(--muted)}
+.summary{background:var(--sand);border-radius:16px;padding:14px 16px;font-size:14px}
+.fields{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.fld{border:1px solid var(--line);border-radius:14px;padding:10px 12px}
+.fld small{display:block;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted)}
+.fld b{font-size:13.5px}
+.modes{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.mode{border:1.5px solid var(--line);border-radius:16px;padding:14px;text-align:left;background:var(--white)}
+.mode.on{border-color:var(--green);background:var(--green-soft)}
+.mode b{display:block;font-size:14px}.mode span{font-size:12px;color:var(--muted)}
+
+/* week board */
+.weekhead{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px;flex-wrap:wrap}
+.board{display:grid;grid-template-columns:repeat(7,minmax(150px,1fr));gap:10px;min-width:1080px}
+.col{background:var(--side);border:1px solid var(--line);border-radius:16px;padding:10px;display:flex;flex-direction:column;gap:8px;min-height:380px}
+.col.today{border-color:var(--green);box-shadow:inset 0 0 0 1px var(--green)}
+.col .dh{display:flex;justify-content:space-between;align-items:baseline;padding:2px 4px 6px}
+.col .dh b{font-size:13px}.col .dh span{font-size:11px;color:var(--muted)}
+.jc{background:var(--white);border:1px solid var(--line);border-left:4px solid var(--green);border-radius:12px;padding:8px 10px;text-align:left;width:100%;display:flex;flex-direction:column;gap:2px}
+.jc:hover{box-shadow:0 4px 14px rgba(20,32,30,.08)}
+.jc b{font-size:12.5px;line-height:1.3}.jc span{font-size:11px;color:var(--muted)}
+.jc .t{font-size:11px;font-weight:800;color:var(--ink)}
+.jc.done{opacity:.62}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--muted)}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+.steps{display:flex;gap:5px}
+.steps i{flex:1;height:6px;border-radius:6px;background:var(--line)}
+.steps i.on{background:var(--green)}
+
+/* drawer + modal */
+.scrim{position:fixed;inset:0;background:rgba(20,32,30,.38);z-index:40;display:flex;justify-content:flex-end;animation:fade .15s ease}
+.scrim.center{justify-content:center;align-items:flex-start;padding:32px 16px;overflow-y:auto}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+.drawer{width:min(480px,100%);height:100%;background:var(--linen);overflow-y:auto;padding:22px 24px 40px;display:flex;flex-direction:column;gap:14px;animation:slide .2s ease}
+@keyframes slide{from{transform:translateX(30px)}to{transform:none}}
+.modal{width:min(880px,100%);background:var(--linen);border-radius:24px;padding:22px 24px 26px;display:flex;flex-direction:column;gap:14px;animation:slide .2s ease}
+.mh{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.mh h2{margin:0;font-size:20px;letter-spacing:-.5px}
+.x{width:38px;height:38px;border-radius:50%;background:var(--white);border:1px solid var(--line);display:grid;place-items:center}
+
+/* translator */
+.langbar{display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--green);color:var(--linen);border-radius:16px;padding:12px 16px}
+.langbar small{display:block;color:var(--on-green);font-size:11px;font-weight:700}
+.langbar b{font-size:15px}
+.convo{display:flex;flex-direction:column;gap:8px}
+.bub{border-radius:16px;padding:10px 14px;max-width:80%;display:flex;flex-direction:column;gap:2px}
+.bub.w{align-self:flex-end;background:var(--green-soft)} .bub.c{align-self:flex-start;background:var(--white);border:1px solid var(--line)}
+.bub .l{font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted)}
+.bub .o{font-size:13px;color:var(--muted)} .bub .big{font-size:17px;font-weight:700} .bub .gl{font-size:12px;color:#7A8481;font-style:italic}
+.phr{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.phr button{border:1px solid var(--line);background:var(--white);border-radius:12px;padding:10px 12px;text-align:left;font-weight:600;font-size:12.5px;display:flex;gap:8px;align-items:flex-start}
+.phr button:hover{background:var(--sand)}
+
+/* documents: A4 sheet */
+.tabs{display:flex;gap:4px;background:var(--sand);border-radius:12px;padding:4px;width:max-content;max-width:100%;overflow-x:auto}
+.tabs button{padding:8px 14px;border-radius:9px;font-weight:700;font-size:13px;color:var(--muted);white-space:nowrap}
+.tabs button.on{background:var(--white);color:var(--green)}
+.docwrap{display:grid;grid-template-columns:minmax(0,1fr) 280px;gap:18px;align-items:start}
+.sheet{background:#fff;border:1px solid var(--line);border-radius:6px;box-shadow:0 10px 40px rgba(20,32,30,.10);padding:44px 48px;color:#1b2422;font-size:12.5px;aspect-ratio:210/297;max-width:100%;display:flex;flex-direction:column}
+.sheet .sh{display:flex;justify-content:space-between;gap:24px;align-items:flex-start}
+.sheet .co b{font-size:15px}
+.sheet .co div,.sheet .meta div{color:#4b5653;font-size:11.5px;line-height:1.55}
+.sheet h3{margin:28px 0 4px;font-size:24px;letter-spacing:-.6px;font-weight:700}
+.sheet .meta{display:grid;grid-template-columns:auto auto;gap:2px 16px;font-size:11.5px;text-align:right}
+.sheet .meta span{color:#7b8582}
+.sheet .bill{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin:18px 0 22px}
+.sheet .bill small{display:block;font-size:9.5px;font-weight:700;letter-spacing:1.2px;color:#7b8582;text-transform:uppercase;margin-bottom:4px}
+.sheet table{width:100%;border-collapse:collapse;font-size:11.5px}
+.sheet th{background:var(--sand);text-align:left;font-size:9.5px;letter-spacing:1px;text-transform:uppercase;padding:8px 10px;color:#4b5653}
+.sheet td{padding:9px 10px;border-bottom:1px solid #eee9df}
+.sheet .r{text-align:right;font-variant-numeric:tabular-nums}
+.sheet .tot{margin-left:auto;width:270px;margin-top:14px;font-size:12px}
+.sheet .tot div{display:flex;justify-content:space-between;padding:5px 10px}
+.sheet .tot .grand{background:var(--green);color:#fff;border-radius:6px;font-weight:800;font-size:14px;padding:9px 10px;margin-top:4px}
+.sheet .pay{margin-top:auto;display:grid;grid-template-columns:1fr 92px;gap:16px;border-top:1px solid #eee9df;padding-top:14px;font-size:11px;color:#4b5653}
+.qr{width:92px;height:92px;border-radius:6px;background:conic-gradient(#1b2422 25%,#fff 0 50%,#1b2422 0 75%,#fff 0) 0 0/16px 16px;border:6px solid #fff;outline:1px solid #ddd}
+.stamp{display:inline-block;border:2px solid var(--ok);color:var(--ok);border-radius:6px;padding:2px 10px;font-weight:800;letter-spacing:2px;transform:rotate(-6deg);font-size:14px}
+.timeline{display:flex;flex-direction:column;gap:0}
+.tl{display:flex;gap:10px;align-items:flex-start;padding:8px 0;position:relative}
+.tl i{width:12px;height:12px;border-radius:50%;background:var(--line);margin-top:4px;flex-shrink:0}
+.tl.on i{background:var(--green)}
+.tl b{display:block;font-size:12.5px}.tl span{font-size:11.5px;color:var(--muted)}
+.integ{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.integ .card{padding:14px;display:flex;flex-direction:column;gap:8px}
+.logo{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;font-weight:800;color:#fff;font-size:14px}
+.bars .br{display:grid;grid-template-columns:150px 1fr 70px;gap:10px;align-items:center;padding:6px 0;font-size:13px}
+.bars .bar{height:12px;border-radius:6px;background:var(--sand);overflow:hidden}
+.bars .bar i{display:block;height:100%;border-radius:6px}
+.bars b{text-align:right;font-variant-numeric:tabular-nums}
+.switch{width:50px;height:30px;border-radius:15px;background:#CFC8BA;position:relative;flex-shrink:0;transition:background .2s}
+.switch:after{content:"";position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:#fff;transition:transform .2s}
+.switch[aria-checked="true"]{background:var(--green)}
+.switch[aria-checked="true"]:after{transform:translateX(20px)}
+
+/* voice */
+.fab{position:fixed;right:28px;bottom:28px;z-index:30;width:64px;height:64px;border-radius:50%;background:var(--green);color:var(--linen);display:grid;place-items:center;box-shadow:0 12px 30px rgba(31,77,69,.38)}
+.fab:after{content:"";position:absolute;inset:-7px;border-radius:50%;border:2px solid var(--apricot-light);animation:ring 2.6s ease-out infinite;opacity:0}
+@keyframes ring{0%{transform:scale(.9);opacity:.7}100%{transform:scale(1.15);opacity:0}}
+.voice{width:min(560px,100%);background:var(--green);color:var(--linen);border-radius:24px;padding:22px;display:flex;flex-direction:column;gap:12px;margin-top:60px}
+.orb{width:110px;height:110px;border-radius:50%;margin:8px auto;background:radial-gradient(circle at 50% 45%,var(--apricot-light),var(--apricot) 60%);display:grid;place-items:center;color:var(--ink);box-shadow:0 0 0 14px rgba(242,165,122,.16)}
+.orb.live{animation:pulse 1.4s ease-in-out infinite}
+@keyframes pulse{50%{box-shadow:0 0 0 24px rgba(242,165,122,.2)}}
+.said{font-size:19px;font-weight:600;text-align:center;min-height:56px}
+.ex button{display:block;width:100%;text-align:left;background:rgba(255,255,255,.1);border-radius:12px;padding:10px 14px;margin-top:6px;font-weight:600}
+.plan{background:var(--linen);color:var(--ink);border-radius:16px;padding:12px 16px}
+.plan .pr{display:flex;justify-content:space-between;gap:12px;padding:6px 0;border-bottom:1px solid var(--line2);font-size:13.5px}
+.plan .pr:last-of-type{border-bottom:0}
+
+.who{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.who button{border:1.5px solid var(--line);background:var(--white);border-radius:12px;padding:8px 12px;text-align:left;display:flex;flex-direction:column;color:var(--ink)}
+.who button b{font-size:13.5px}.who button span{font-size:11.5px;color:var(--muted)}
+.who button.on{border-color:var(--green);background:var(--green-soft);box-shadow:inset 0 0 0 1px var(--green)}
+.plan .who{grid-template-columns:repeat(4,1fr);margin-top:6px}
+.thumbs{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.thumb{position:relative;aspect-ratio:1;border-radius:12px;overflow:hidden;display:grid;place-items:center;border:0;width:100%}
+.thumb.job{background:linear-gradient(135deg,#C9D9D3,#8FB0A6);color:#fff}.thumb.inv{background:#fff;border:1px solid var(--line);color:var(--apricot-ink)}
+.thumb img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.thumb .lbl{position:absolute;left:5px;right:5px;bottom:5px;border-radius:6px;font-size:10px;font-weight:800;text-align:center;padding:1px 4px;background:var(--green);color:#fff}
+.thumb.inv .lbl{background:var(--apricot);color:var(--ink)}
+.thumb.flag{outline:3px solid var(--red);outline-offset:-3px}
+.thumb .warn{position:absolute;top:5px;right:5px;width:20px;height:20px;border-radius:50%;background:var(--red);color:#fff;display:grid;place-items:center;font-weight:800;font-size:12px}
+.lblpick{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.lblpick button{border:2px solid var(--line);background:var(--white);border-radius:16px;padding:14px;text-align:left;display:flex;flex-direction:column;gap:4px;color:var(--ink)}
+.lblpick button b{font-size:15px;display:flex;gap:8px;align-items:center}.lblpick button span{font-size:12.5px;color:var(--muted)}
+.lblpick button.on{border-color:var(--green);background:var(--green-soft)}
+.btn.off{opacity:.4;pointer-events:none}
+.flagbox{display:flex;gap:10px;align-items:flex-start;background:var(--red-soft);color:#6d2420;border-radius:14px;padding:12px 14px;font-size:13px;line-height:1.5}
+.flagbox .ei{width:22px;height:22px;border-radius:50%;background:var(--red);color:#fff;display:grid;place-items:center;flex-shrink:0;font-weight:800;font-size:12px}
+.flagbox b{color:var(--red)}
+.okbox{display:flex;gap:10px;align-items:flex-start;background:var(--ok-soft);color:#1f4a35;border-radius:14px;padding:12px 14px;font-size:13px}
+.receipt{background:#fff;border:1px solid var(--line);border-radius:8px;padding:18px 20px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:11.5px;line-height:1.6;box-shadow:0 8px 24px rgba(20,32,30,.10);transform:rotate(-1.2deg);color:#28302e}
+.receipt .rr{display:flex;justify-content:space-between;gap:10px}
+.receipt hr{border:0;border-top:1px dashed #bbb;margin:8px 0}
+.receipt.blur{filter:blur(1.1px)}
+.wrongpic{aspect-ratio:4/3;border-radius:12px;background:radial-gradient(circle at 40% 45%,#7a8f88 0 18%,#5c716a 19% 24%,transparent 25%),linear-gradient(135deg,#9DB8AF,#4E6E64);display:grid;place-items:end start;color:#fff;padding:12px;font-size:12px;font-weight:700}
+.toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%);background:var(--ink);color:var(--linen);border-radius:14px;padding:12px 16px;font-weight:600;font-size:13px;z-index:60;display:flex;gap:8px;align-items:center;max-width:min(560px,calc(100% - 32px))}
+
+@media (max-width:1100px){.g4{grid-template-columns:repeat(2,minmax(0,1fr))}.gmain,.split,.docwrap{grid-template-columns:1fr}.integ{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+/* building-manager additions */
+.need{display:flex;align-items:center;gap:12px;padding:14px 20px;border-bottom:1px solid var(--line2)}
+.need:last-child{border-bottom:0}
+.need .grow{min-width:0;flex:1}
+.need b{display:block;font-size:13.5px}.need span:not(.ic){display:block;font-size:12px;color:var(--muted)}
+.grow{flex:1;min-width:0}
+.citem .ic,.need .ic{display:grid}
+.statb{text-align:left;width:100%}
+.statb:hover{border-color:var(--green)}
+.bcard{text-align:left;padding:0;overflow:hidden;display:flex;flex-direction:column}
+.bcard:hover{box-shadow:0 8px 24px rgba(20,32,30,.08)}
+.bimg{height:86px;display:flex;align-items:flex-end;justify-content:space-between;padding:12px 16px;color:#fff;background-image:linear-gradient(135deg,rgba(255,255,255,.12),rgba(0,0,0,.1))}
+.bimg span{font-size:12px;font-weight:800;background:rgba(0,0,0,.18);border-radius:99px;padding:2px 10px}
+.kv{display:flex;justify-content:space-between;gap:12px;font-size:13px}.kv span{color:var(--muted)}.kv b{text-align:right}
+.sel{min-height:40px;border:1px solid var(--line);border-radius:12px;background:var(--white);padding:0 12px;font-weight:600}
+.ta{width:100%;border:1px solid var(--line);border-radius:14px;padding:12px 14px;background:var(--white);resize:vertical;line-height:1.5}
+.votebar{position:relative;height:22px;border-radius:11px;background:var(--sand);display:flex;overflow:visible}
+.votebar i{display:block;height:100%}.votebar .y{background:var(--ok);border-radius:11px 0 0 11px}.votebar .n{background:var(--red)}
+.votebar .thr{position:absolute;top:-5px;bottom:-5px;width:2px;background:var(--ink);padding:0;border:0}
+.livedot{width:12px;height:12px;border-radius:50%;background:var(--apricot-light);animation:pulse 1.2s infinite}
+.sheet p{margin:8px 0 0;line-height:1.6}
+.who button.on b{color:var(--green)}
+@media (max-width:760px){.need{flex-wrap:wrap}.need .btn{margin-left:50px}}
+
+@media (max-width:760px){.app{grid-template-columns:1fr}.side{position:static;height:auto;flex-direction:row;flex-wrap:wrap;gap:8px;padding:12px 16px}.side .ws,.side .navlabel,.sidecard{display:none}.nav{flex-direction:row;flex-wrap:wrap}.nav button{width:auto;padding:8px 10px}.top{padding:0 16px}.content{padding:20px 16px 110px}.g3,.g2,.branches,.fields,.modes,.phr,.integ{grid-template-columns:1fr}.sheet{padding:24px;aspect-ratio:auto}.user span{display:none}}
+</style>
+
+<div class="app">
+  <aside class="side">
+    <div class="brand"><svg width="34" height="34" viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="24" fill="#1F4D45"/><path d="M14.5 19 V25.5 a9.5 9.5 0 0 0 19 0 V19" fill="none" stroke="#FBFAF7" stroke-width="4" stroke-linecap="round"/><circle cx="24" cy="15.5" r="3.4" fill="#F2A57A"/></svg>unbusyness</div>
+    <div class="ws"><span class="av">UD</span><div><b style="font-size:12.5px">Upravnik Demo d.o.o.</b><small>Unbusyness for Building Managers</small></div></div>
+    <div><div class="navlabel">MANAGEMENT</div><nav class="nav" id="nav1"></nav></div>
+    <div class="sidecard"><b>Interactive demo</b>Made-up data. Click "Simulate a resident’s call" or the green mic for a voice command.</div>
+  </aside>
+  <div class="main">
+    <header class="top"><div class="crumb" id="crumb"></div><div class="topr" id="topr"></div></header>
+    <main class="content" id="content"></main>
+  </div>
+</div>
+<button class="fab" id="fab" aria-label="Voice command"></button>
+<div id="layer"></div>
+<div id="toastHost"></div>
+
+<script>
+/* ---------- Example data (izmišljeno) ---------- */
+const CO = { name: 'Upravnik Demo d.o.o.', short: 'UD', manager: 'Maja Kovač', mi: 'MK' };
+const BLD = {
+  voj: { id: 'voj', name: 'Vojkova 12', city: 'Ljubljana', units: 48, entr: 'entrances A and B', lift: true, year: 1978, fund: 41820, fundMonth: 0.30, owners: 46, color: '#1F4D45' },
+  cel: { id: 'cel', name: 'Celovška 88', city: 'Ljubljana', units: 64, entr: '1 entrance', lift: true, year: 1985, fund: 23410, fundMonth: 0.28, owners: 61, color: '#4F5F80' },
+  tru: { id: 'tru', name: 'Trubarjeva 3', city: 'Ljubljana', units: 12, entr: '1 entrance', lift: false, year: 1912, fund: 9730, fundMonth: 0.45, owners: 12, color: '#A84E22' },
+  ker: { id: 'ker', name: 'Kersnikova 7', city: 'Ljubljana', units: 24, entr: '1 entrance', lift: true, year: 2004, fund: 18260, fundMonth: 0.25, owners: 23, color: '#8A5A9E' },
+  fuz: { id: 'fuz', name: 'Pot na Fužine 21', city: 'Ljubljana', units: 96, entr: 'entrances A, B and C', lift: true, year: 1982, fund: 66140, fundMonth: 0.32, owners: 90, color: '#2F7A55' },
+  zal: { id: 'zal', name: 'Zaloška 140', city: 'Ljubljana', units: 36, entr: '1 entrance', lift: true, year: 1996, fund: 15980, fundMonth: 0.27, owners: 35, color: '#B23A32' },
+};
+const CON = {
+  vod: { id: 'vod', name: 'Vodoinštalacije Kranjc', trade: 'Plumbing and heating', phone: '041 555 210', resp: '38 min', jobs: 3, on: true },
+  ele: { id: 'ele', name: 'Elektro Medved', trade: 'Electrics and lighting', phone: '031 555 377', resp: '2 h', jobs: 2, on: false },
+  dvi: { id: 'dvi', name: 'Lift-Servis d.o.o.', trade: 'Lifts (service contract)', phone: '01 555 9090', resp: '45 min', jobs: 1, on: true },
+  klj: { id: 'klj', name: 'Ključavničar Hitri', trade: 'Doors, locks, intercom', phone: '040 555 118', resp: '3 h', jobs: 1, on: false },
+  cis: { id: 'cis', name: 'Čistilni servis Bleščica', trade: 'Stairwell cleaning', phone: '051 555 640', resp: 'on schedule', jobs: 0, on: false },
+  dim: { id: 'dim', name: 'Dimnikarstvo Oblak', trade: 'Chimney inspections', phone: '041 555 902', resp: 'by arrangement', jobs: 0, on: false },
+  gsl: { id: 'gsl', name: 'Gasilna oprema Vidmar', trade: 'Fire extinguishers, hydrants', phone: '041 555 736', resp: 'by arrangement', jobs: 0, on: false },
+  pln: { id: 'pln', name: 'Gas emergency service', trade: 'Natural gas distributor', phone: '080 555 00', resp: '20 min', jobs: 0, on: true },
+  gra: { id: 'gra', name: 'Gradnje Zupan', trade: 'Building work, damp, facade', phone: '031 555 455', resp: '1 day', jobs: 1, on: false },
+};
+// Fault reports. st: 0 nova · 1 poslano izvajalcu · 2 v delu · 3 rešeno · 4 zaprto
+const ST = ['New', 'Sent to contractor', 'Contractor on the way', 'Resolved', 'Closed'];
+const R = [
+  { id: 2481, b: 'voj', where: 'entrance B · apt. 7, 3rd floor', who: 'Ana Zupančič', ph: '040 555 731', ch: 'Call', t: '23:40', day: 'Overnight', cat: 'Water', urg: 'urgent', st: 3, con: 'vod', title: 'Water running from the ceiling in the hallway',
+    sum: 'Water is dripping from the hallway ceiling onto the light. The neighbour in apt. 11 is not home. Unbusyness told the resident to switch off the fuse for the hallway light.',
+    talk: [['ai', 'Unbusyness, building management, good evening. How can I help?'], ['r', 'Good evening, at Vojkova 12 water is running from my ceiling, right onto the hallway light.'], ['ai', 'I understand, that’s urgent. Are you in entrance B, apartment 7?'], ['r', 'Yes, B, number seven. Nobody is home upstairs.'], ['ai', 'Please switch off the fuse for the hallway light and don’t touch the fitting. I’m sending the plumber on call, they’ll arrive in about 35 minutes. We’ll also let the owner of apartment 11 know. Can you send me a photo by text?'], ['r', 'Of course, thank you.']],
+    log: [['23:40', 'Call answered by Unbusyness', 'Urgent: water. Building, apartment and a photo by text.'], ['23:42', 'Sent to: Vodoinštalacije Kranjc', 'The contractor on call confirmed arrival in 35 min.'], ['23:43', 'Owner of apt. 11 notified', 'Text with the contractor’s name and arrival time.'], ['00:31', 'Leak stopped', 'Burst pipe under the sink in apt. 11. Report and 3 photos.'], ['07:30', 'In your morning summary', 'The contractor’s invoice is waiting for approval.']],
+    photos: 3, cost: 186.30, paidBy: 'Owner of apt. 11 (damage from the apartment)' },
+  { id: 2484, b: 'cel', where: 'lift · stuck at the 5th floor', who: 'Marko Petek', ph: '031 555 204', ch: 'Call', t: '07:52', day: 'Today', cat: 'Lift', urg: 'urgent', st: 2, con: 'dvi', title: 'Lift stuck between the 5th and 6th floors',
+    sum: 'The lift has stopped, nobody is inside. A resident noticed the doors won’t open. The service company is notified and on the way.',
+    talk: [['ai', 'Unbusyness, building management. How can I help?'], ['r', 'At Celovška 88 the lift isn’t working, it’s stuck somewhere between the fifth and sixth floors.'], ['ai', 'Is anyone in the lift?'], ['r', 'No, it’s empty, I rang.'], ['ai', 'Thank you. I’m notifying the lift service company and putting a notice on the entrance that the lift is out of order. I’ll let you know when it works again.']],
+    log: [['07:52', 'Call answered by Unbusyness', 'Urgent: lift. Nobody is trapped.'], ['07:53', 'Sent to: Lift-Servis d.o.o.', 'Service contract, response within 45 min.'], ['07:55', 'Notice to all residents', 'Text and a notice on the board: the lift is out of order.'], ['08:31', 'Technician on site', 'Assessment: replace the brake relay.']],
+    photos: 1, cost: null },
+  { id: 2485, b: 'fuz', where: 'entrance C · stairwell, 3rd floor', who: 'Jana Hribar', ph: '051 555 811', ch: 'SMS', t: '08:14', day: 'Today', cat: 'Electrics', urg: 'normal', st: 0, con: null, title: 'Stairwell light not working',
+    sum: 'The stairwell light on the 3rd floor of entrance C is out, it’s dark at night. The resident sent a photo.',
+    talk: [['r', 'Hello, at Fužine 21 C the stairwell light on the 3rd floor is out, it’s completely dark in the evening.'], ['ai', 'Thanks for your message, Mrs Hribar. I’ve logged the report and it will be fixed within 2 working days. Can I send you updates by text?'], ['r', 'Yes, please.']],
+    log: [['08:14', 'Text received by Unbusyness', 'Normal: lighting. Photo attached.'], ['08:15', 'Suggested: Elektro Medved', 'Waiting for your approval because the estimated cost is over €150.']],
+    photos: 1, cost: null, suggest: 'ele', est: 190 },
+  { id: 2486, b: 'ker', where: 'apt. 4, 2nd floor', who: 'Anonymous (neighbour)', ph: '—', ch: 'Email', t: '06:05', day: 'Today', cat: 'House rules', urg: 'can wait', st: 0, con: null, title: 'Noise from apartment 4 after 22:00',
+    sum: 'Third complaint this month about loud music after 22:00 from apt. 4. Unbusyness drafted a polite reminder of the house rules.',
+    talk: [['r', 'Hello, for the third time this month there is loud music from apartment 4 after 22:00. Please do something.'], ['ai', 'Thanks for your message. The manager will send the owner of apartment 4 a reminder of the house rules. Your name will not be shared.']],
+    log: [['06:05', 'Email received', 'House rules. The sender wants to stay anonymous.'], ['06:06', 'Reminder drafted', 'The draft letter to the owner of apt. 4 is waiting for your review.']],
+    photos: 0, cost: null, letter: true },
+  { id: 2482, b: 'zal', where: 'main entrance · intercom', who: 'Peter Golob', ph: '041 555 663', ch: 'Call', t: 'yesterday 17:20', day: 'Yesterday', cat: 'Door', urg: 'normal', st: 1, con: 'klj', title: 'Front door won’t close, intercom won’t open it',
+    sum: 'The front door stays open and the intercom doesn’t unlock it. A locksmith is booked for tomorrow at 9:00.',
+    talk: [['ai', 'Unbusyness, building management. How can I help?'], ['r', 'At Zaloška 140 the front door no longer closes and the intercom doesn’t open it.'], ['ai', 'Thank you. I’m booking a locksmith and will text you the time.']],
+    log: [['17:20', 'Call answered by Unbusyness', 'Normal: door and intercom.'], ['17:24', 'Sent to: Ključavničar Hitri', 'Appointment: tomorrow at 9:00.'], ['17:25', 'Residents notified', 'Text: the door will be fixed tomorrow morning.']],
+    photos: 0, cost: null },
+  { id: 2479, b: 'tru', where: 'basement · storage room 2', who: 'Nika Rozman', ph: '040 555 990', ch: 'App', t: 'Mon 10:12', day: 'This week', cat: 'Damp', urg: 'can wait', st: 1, con: 'gra', title: 'Mould and damp on the basement wall',
+    sum: 'Mould is spreading on the outer wall of the basement. An inspection is booked for Thursday. Any repair is paid from the reserve fund.',
+    talk: [['r', 'There’s mould on the wall in the basement at Trubarjeva 3, and it’s getting bigger. Photos attached.'], ['ai', 'Thank you. I’ve booked an inspection with a contractor and will let you know the time.']],
+    log: [['Mon 10:12', 'Report in the app', 'Can wait: damp. 2 photos.'], ['Mon 11:00', 'Sent to: Gradnje Zupan', 'Inspection: Thursday at 14:00.']],
+    photos: 2, cost: null },
+  { id: 2477, b: 'cel', where: 'apt. 22', who: 'Irena Bizjak', ph: '031 555 788', ch: 'Call', t: 'Mon 18:40', day: 'This week', cat: 'Question', urg: 'can wait', st: 4, con: null, title: 'Why is the October bill higher?',
+    sum: 'A question about running costs. Unbusyness explained that the yearly lift inspection was charged in October, split by ownership shares. Closed without you.',
+    talk: [['r', 'Why is my October bill higher?'], ['ai', 'In October the regular lift inspection was charged, €412, split by ownership shares. For your apartment that’s €6.40. Shall I email you the breakdown?'], ['r', 'Yes, thanks, now I understand.']],
+    log: [['Mon 18:40', 'Call answered by Unbusyness', 'Question about costs.'], ['Mon 18:43', 'Answered by Unbusyness', 'Cost breakdown sent by email. Closed.']],
+    photos: 0, cost: null },
+];
+// Maintenance duties: every (months), next date, status
+const DUT = [
+  { id: 'd1', b: 'voj', what: 'Regular lift inspection', every: '6 months', next: '2026-11-18', con: 'dvi', st: 'booked' },
+  { id: 'd2', b: 'cel', what: 'Fire extinguisher inspection', every: '12 months', next: '2026-11-09', con: null, st: 'late' },
+  { id: 'd3', b: 'tru', what: 'Chimney inspection', every: '12 months', next: '2027-02-02', con: 'dim', st: 'ok' },
+  { id: 'd4', b: 'voj', what: 'Stairwell cleaning', every: 'weekly', next: '2026-11-10', con: 'cis', st: 'ok' },
+  { id: 'd5', b: 'fuz', what: 'Hydrant system inspection', every: '12 months', next: '2026-11-25', con: null, st: 'soon' },
+  { id: 'd6', b: 'ker', what: 'Lightning conductor inspection', every: '24 months', next: '2026-12-04', con: null, st: 'soon' },
+  { id: 'd7', b: 'zal', what: 'Regular lift inspection', every: '6 months', next: '2026-11-12', con: 'dvi', st: 'booked' },
+  { id: 'd8', b: 'fuz', what: 'Heating substation service', every: '12 months', next: '2027-04-15', con: 'vod', st: 'ok' },
+  { id: 'd9', b: 'cel', what: 'Stairwell cleaning', every: 'weekly', next: '2026-11-10', con: 'cis', st: 'ok' },
+];
+const DST = { ok: ['On schedule', 'ok'], booked: ['Contractor booked', 'green'], soon: ['Soon: book it', 'apricot'], late: ['Due this week', 'red'] };
+// Supplier invoices waiting for approval
+const INV = [
+  { id: 'i1', con: 'vod', b: 'voj', rep: 2481, no: 'VK-2026-0412', amt: 186.30, what: 'Burst pipe repair, night call-out', split: 'Owner of apt. 11', st: 'wait' },
+  { id: 'i2', con: 'dvi', b: 'cel', rep: 2484, no: 'LS-26-1187', amt: 412.00, what: 'Regular lift inspection (October)', split: 'All owners by share', st: 'ok' },
+  { id: 'i3', con: 'cis', b: 'fuz', rep: null, no: 'BL-10-2026', amt: 640.00, what: 'Stairwell cleaning, October', split: 'Running costs', st: 'wait' },
+];
+// Owners' meeting
+const MEET = { b: 'voj', date: 'Thursday, 20 Nov 2026 at 18:00', place: 'common room, entrance A',
+  agenda: ['Manager’s report on 2026', 'Replacing stairwell lighting with LED (quote from Elektro Medved, €4,860)', 'Reserve fund spending plan for 2027', 'Any other business'],
+  vote: { item: 'Replacing stairwell lighting with LED', yes: 57.4, no: 8.1, need: 50, ofOwners: 31 } };
+
+/* ---------- helpers ---------- */
+const I={
+ home:'<path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/>',build:'<path d="M4 21V5l8-3 8 3v16"/><path d="M9 21v-4h6v4M8 8h2M14 8h2M8 12h2M14 12h2"/>',
+ phone:'<path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"/>',cal:'<rect x="3.5" y="5" width="17" height="15" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/>',
+ user:'<circle cx="12" cy="8" r="3.5"/><path d="M5 20a7 7 0 0 1 14 0"/>',doc:'<path d="M7 3h7l5 5v13H7z"/><path d="M14 3v5h5M10 13h6M10 17h4"/>',
+ euro:'<path d="M17 6.5A7 7 0 1 0 17 17.5M4 10h10M4 14h10"/>',team:'<circle cx="9" cy="8" r="3.2"/><path d="M3 19a6 6 0 0 1 12 0"/><circle cx="17" cy="9" r="2.5"/><path d="M15.5 14.2A5 5 0 0 1 21 19"/>',
+ wrench:'<path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.8-3.8a6 6 0 0 1-7.9 7.9l-6.9 6.9a2.1 2.1 0 0 1-3-3l6.9-6.9a6 6 0 0 1 7.9-7.9z"/>',
+ mic:'<rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/>',spark:'<path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/>',
+ check:'<path d="M5 12l4 4 10-10"/>',x:'<path d="M6 6l12 12M18 6L6 18"/>',play:'<path d="M7 4l13 8-13 8z"/>',pause:'<path d="M8 5v14M16 5v14"/>',
+ send:'<path d="M4 12l16-8-6 16-3-7z"/>',plus:'<path d="M12 5v14M5 12h14"/>',bell:'<path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15z"/><path d="M10 20a2 2 0 0 0 4 0"/>',
+ moon:'<path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/>',alert:'<path d="M12 3l9 16H3z"/><path d="M12 10v4M12 17v.5"/>',clock:'<circle cx="12" cy="12" r="8.5"/><path d="M12 7v5l3 2"/>',
+ receipt:'<path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9 8h6M9 12h6"/>',cam:'<path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/>',
+ msg:'<path d="M4 5h16v11H8l-4 4z"/>',vote:'<path d="M4 12l5 5L20 6"/><rect x="2" y="2" width="20" height="20" rx="4"/>',chart:'<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>',
+ drop:'<path d="M12 3s6 7 6 11a6 6 0 0 1-12 0c0-4 6-11 6-11z"/>',lift:'<rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 9l3-3 3 3M9 15l3 3 3-3"/>',bulb:'<path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-4 10.5c.8.8 1 1.5 1 2.5h6c0-1 .2-1.7 1-2.5A6 6 0 0 0 12 3z"/>',
+ door:'<path d="M5 21V4a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v17M3 21h18"/><circle cx="15" cy="12" r="1"/>',note:'<path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>',
+ mold:'<circle cx="8" cy="9" r="2.5"/><circle cx="15" cy="7" r="1.8"/><circle cx="14" cy="14" r="3"/><circle cx="7" cy="16" r="1.6"/>',q:'<circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.5V14M12 17v.5"/>',
+ gas:'<path d="M12 3c3 4 5 6.5 5 10a5 5 0 0 1-10 0c0-2 1-3.5 2-5 .5 1.5 1.5 2.5 3 3-1-3 0-5.5 0-8z"/>',speaker:'<path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M16 9a4 4 0 0 1 0 6M18.5 6.5a7.5 7.5 0 0 1 0 11"/>'
+};
+const CATIC={Water:'drop',Lift:'lift',Electrics:'bulb','House rules':'note',Door:'door',Damp:'mold',Question:'q',Gas:'gas'};
+const svg=(n,s=18,w=2)=>`<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${I[n]||I.doc}</svg>`;
+const esc=t=>String(t??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+const eur=n=>'€'+Number(n).toLocaleString('en-GB',{minimumFractionDigits:0,maximumFractionDigits:0});
+const eur2=n=>'€'+Number(n).toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2});
+const fdate=s=>{const [y,m,d]=s.split('-');return `${+d} ${['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][m-1]} ${y}`};
+const daysTo=s=>Math.round((new Date(s+'T12:00:00')-new Date('2026-11-06T12:00:00'))/864e5);
+function toast(m){const h=document.getElementById('toastHost');h.innerHTML=`<div class="toast" role="status">${svg('check',16)}<span>${esc(m)}</span></div>`;clearTimeout(window._t);window._t=setTimeout(()=>h.innerHTML='',3200)}
+function layer(html){document.getElementById('layer').innerHTML=html}
+function closeLayer(){document.getElementById('layer').innerHTML='';hush()}
+const TTS=window.speechSynthesis||null;
+function hush(){try{TTS&&TTS.cancel()}catch(e){}}
+function speak(text,done){if(!TTS){done&&done();return}hush();try{const u=new SpeechSynthesisUtterance(text);const v=(TTS.getVoices()||[]).find(v=>/^sl/i.test(v.lang));if(v)u.voice=v;u.lang='sl-SI';u.rate=1;u.onend=()=>done&&done();TTS.speak(u)}catch(e){done&&done()}}
+
+const S={page:'today',sel:2484,filter:'open',bfilter:'all',playing:false,line:-1,sent:false,letterSent:false,newCall:null};
+const rep=id=>R.find(r=>r.id===id);
+const pill=(t,c)=>`<span class="pill ${c}">${esc(t)}</span>`;
+const urgPill=u=>u==='urgent'?pill('Urgent','red'):u==='normal'?pill('Normal','slate'):pill('Can wait','green');
+const stPill=r=>r.st>=4?pill('Closed','ok'):r.st===3?pill('Resolved','ok'):r.st===2?pill(ST[2],'apricot'):r.st===1?pill(ST[1],'slate'):pill('New','red');
+const head=(eb,t,sub,btn='')=>`<div class="head"><div><div class="eyebrow">${eb}</div><h1>${t}</h1>${sub?`<p>${sub}</p>`:''}</div>${btn}</div>`;
+const stat=(l,n,s,ic,tone,go)=>`<button class="card stat statb" ${go?`onclick="${go}"`:''}><div class="lbl">${l}<span class="ic ${tone}" style="width:34px;height:34px">${svg(ic)}</span></div><b>${n}</b><small>${s}</small></button>`;
+
+const NAV=[['today','Today','home'],['reports','Fault reports','alert'],['buildings','Buildings','build'],['maint','Maintenance','cal'],['contractors','Contractors','wrench'],['meetings','Owners’ meetings','vote'],['costs','Costs and funds','euro']];
+function drawNav(){
+  const open=R.filter(r=>r.st<3).length, urg=R.filter(r=>r.st<3&&r.urg==='urgent').length;
+  document.getElementById('nav1').innerHTML=NAV.map(([k,l,ic])=>`<button class="${S.page===k?'on':''}" onclick="nav('${k}')" aria-current="${S.page===k?'page':'false'}">${svg(ic)}${l}${k==='reports'?`<span class="cnt ${urg?'hot':''}">${open}</span>`:''}</button>`).join('');
+  const P=NAV.find(n=>n[0]===S.page);document.getElementById('crumb').innerHTML=`${esc(CO.name)} / <b>${P?P[1]:''}</b>`;
+  document.getElementById('topr').innerHTML=`<button class="btn line sm" onclick="simCall()">${svg('phone',14)}Simulate a resident’s call</button><span class="iconbtn" aria-hidden="true">${svg('bell')}</span><div class="user"><span class="av">${CO.mi}</span><span><b>${CO.manager}</b><br><small class="muted">Building manager</small></span></div>`;
+  document.getElementById('fab').innerHTML=svg('mic',28);
+}
+function nav(p){hush();S.playing=false;S.page=p;closeLayer();render();window.scrollTo({top:0})}
+function render(){drawNav();const P={today:pToday,reports:pReports,buildings:pBuildings,maint:pMaint,contractors:pContractors,meetings:pMeetings,costs:pCosts};document.getElementById('content').innerHTML=P[S.page]()}
+
+/* ---------- Danes ---------- */
+function briefLines(){const n=R.find(r=>r.id===2481),open=R.filter(r=>r.st<3);
+  return ['Good morning, Maja. There was one urgent report overnight: water at Vojkova 12. The leak was stopped at 00:31.',
+  `There are ${open.length} open reports. A technician is fixing the lift at Celovška 88, it should be working again by 10:00.`,
+  'I need your approval for the electrician at Fužine, the estimate is 190 euros.',
+  'Due this week: fire extinguisher inspection at Celovška 88. I suggest booking it for Tuesday.']}
+function playBrief(){const L=briefLines();if(S.playing){S.playing=false;S.line=-1;hush();render();return}S.playing=true;let i=0;
+  const next=()=>{if(!S.playing||i>=L.length){S.playing=false;S.line=-1;render();return}S.line=i;render();const t=L[i++];if(TTS)speak(t,next);else setTimeout(next,2600)};next()}
+function needs(){const a=[];const r85=rep(2485),r86=rep(2486),i1=INV.find(x=>x.id==='i1'),d2=DUT.find(d=>d.id==='d2');
+  if(r85.st===0)a.push(['apricot','bulb','Approve the contractor: Fužine 21 C',`Stairwell light · Elektro Medved · estimate ${eur(r85.est)} (over your €150 limit)`,`<button class="btn primary sm" onclick="approveCon(2485)">Approve</button>`]);
+  if(r86.st===0)a.push(['slate','note','Review the reminder: Kersnikova 7, apt. 4','Third noise complaint. A draft letter is ready.',`<button class="btn soft sm" onclick="openLetter()">Open</button>`]);
+  if(i1.st==='wait')a.push(['green','receipt','Approve invoice: Vodoinštalacije Kranjc',`${eur2(i1.amt)} · night call-out · charged to the owner of apt. 11`,`<button class="btn soft sm" onclick="approveInv('i1')">Approve</button>`]);
+  if(d2.st==='late')a.push(['red','alert','Deadline: fire extinguishers, Celovška 88',`By ${fdate(d2.next)}. Suggested: Tuesday 11 Nov at 9:00`,`<button class="btn soft sm" onclick="bookDuty('d2')">Book</button>`]);
+  if(!S.sent)a.push(['apricot','vote','Send meeting invitations: Vojkova 12','Meeting 20 Nov · invitations must go out at least 8 days before',`<button class="btn soft sm" onclick="openInvite()">Review</button>`]);
+  return a}
+function pToday(){const L=briefLines(),open=R.filter(r=>r.st<3),urg=open.filter(r=>r.urg==='urgent'),soon=DUT.filter(d=>daysTo(d.next)<=14&&d.st!=='ok'),inv=INV.filter(i=>i.st==='wait'),n=needs(),night=rep(2481);
+  return head('Friday, 6 November','Good morning, Maja.',`You manage ${Object.keys(BLD).length} buildings and ${Object.values(BLD).reduce((a,b)=>a+b.units,0)} apartments. This needs you today.`)+
+  `<div class="grid g4" style="margin-bottom:16px">${stat('Open reports',open.length,`${urg.length} urgent`,'alert','red',"nav('reports')")}${stat('Answered by Unbusyness','14','calls, texts and emails in 24 hours','phone','green',"nav('reports')")}${stat('Deadlines in 14 days',soon.length,'inspections and services','cal','apricot',"nav('maint')")}${stat('Invoices to approve',inv.length,eur2(inv.reduce((a,i)=>a+i.amt,0)),'receipt','slate',"nav('costs')")}</div>
+  <div class="grid gmain"><div class="grid" style="gap:16px">
+    <div class="card"><div class="ch"><div><h2>Needs you</h2><p>Unbusyness handles everything else and sends you a summary.</p></div><span class="pill ${n.length?'apricot':'ok'}">${n.length||'All sorted'}</span></div>
+      ${n.length?n.map(([t,ic,b,s,btn])=>`<div class="need"><span class="ic ${t}">${svg(ic)}</span><div class="grow"><b>${b}</b><span>${s}</span></div>${btn}</div>`).join(''):'<div class="cb muted">Nothing more for today. Enjoy your coffee.</div>'}</div>
+    <div class="card"><div class="ch"><div><h2>Open reports</h2><p>What is happening in your buildings right now</p></div><button class="btn line sm" onclick="nav('reports')">All reports</button></div>
+      <div class="tscroll"><table class="tbl"><tbody>${open.map(r=>`<tr class="click" onclick="openReport(${r.id})"><td style="width:44px"><span class="ic ${r.urg==='urgent'?'red':'sand'}" style="width:32px;height:32px">${svg(CATIC[r.cat]||'alert',16)}</span></td><td><b>${esc(r.title)}</b><div class="muted" style="font-size:12px">${esc(BLD[r.b].name)} · ${esc(r.where)}</div></td><td>${urgPill(r.urg)}</td><td>${stPill(r)}</td><td class="muted" style="font-size:12px">${r.con?esc(CON[r.con].name):'—'}</td></tr>`).join('')}</tbody></table></div></div>
+  </div><aside class="grid" style="gap:16px">
+    <div class="brief"><div class="row"><button class="play" onclick="playBrief()" aria-label="${S.playing?'Stop':'Play'} the morning summary">${svg(S.playing?'pause':'play',20)}</button><div><b>Morning summary</b><div style="color:var(--on-green);font-size:12px">30 seconds · every day at 7:30</div></div></div>${L.map((l,i)=>`<p class="${S.line===i?'on':(S.line>i||S.line<0?'done':'')}">${esc(l)}</p>`).join('')}</div>
+    <div class="card"><div class="ch"><div><h2>${svg('moon',16)} Overnight Unbusyness</h2><p>Report #${night.id} · ${esc(BLD[night.b].name)}</p></div></div><div class="cb timeline">${night.log.map(l=>`<div class="tl on"><i></i><div><b>${esc(l[0])} · ${esc(l[1])}</b><span>${esc(l[2])}</span></div></div>`).join('')}<button class="btn line sm" style="margin-top:8px" onclick="openReport(2481)">Open the report</button></div></div>
+  </aside></div>`}
+
+/* ---------- Prijave ---------- */
+const FIL={open:['Open',r=>r.st<3],urg:['Urgent',r=>r.urg==='urgent'&&r.st<3],all:['All',()=>true],closed:['Resolved and closed',r=>r.st>=3]};
+function openReport(id){S.page='reports';S.sel=id;const r=rep(id);if(!FIL[S.filter][1](r))S.filter='all';closeLayer();render();window.scrollTo({top:0})}
+function pReports(){const list=R.filter(FIL[S.filter][1]),r=rep(S.sel)||list[0];
+  return head('Fault reports','Residents’ reports','By phone, text, email or in the app. Unbusyness handles and logs every one.',`<button class="btn primary" onclick="simCall()">${svg('phone',16)}Simulate a call</button>`)+
+  `<div class="tabs" role="tablist" style="margin-bottom:14px">${Object.entries(FIL).map(([k,[l,f]])=>`<button role="tab" aria-selected="${S.filter===k}" class="${S.filter===k?'on':''}" onclick="S.filter='${k}';render()">${l} <span class="muted">${R.filter(f).length}</span></button>`).join('')}</div>
+  <div class="split"><div class="card">${list.map(x=>`<button class="citem ${r&&x.id===r.id?'sel':''}" onclick="S.sel=${x.id};render()"><span class="ic ${x.urg==='urgent'&&x.st<3?'red':'sand'}">${svg(CATIC[x.cat]||'alert')}</span><div class="grow" style="min-width:0"><b>${esc(x.title)}</b><span>${esc(BLD[x.b].name)} · ${esc(x.ch)} · ${esc(x.t)}</span></div>${stPill(x)}</button>`).join('')||'<div class="cb muted">No reports.</div>'}</div>
+  ${r?reportDetail(r):''}</div>`}
+function reportDetail(r){const b=BLD[r.b],c=r.con?CON[r.con]:null;
+  return `<div class="card"><div class="ch"><div><h2>#${r.id} · ${esc(r.title)}</h2><p>${esc(b.name)} · ${esc(r.where)}</p></div><div class="btns">${urgPill(r.urg)}${stPill(r)}</div></div><div class="cb grid" style="gap:14px">
+    <div class="steps">${[0,1,2,3,4].map(i=>`<i class="${r.st>=i?'on':''}" title="${ST[i]}"></i>`).join('')}</div>
+    <div class="summary"><b style="display:block;margin-bottom:2px">${svg('spark',14)} Povzetek Unbusyness</b>${esc(r.sum)}</div>
+    <div class="fields"><div class="fld"><small>Reported by</small><b>${esc(r.who)}</b><div class="muted" style="font-size:12px">${esc(r.ph)}</div></div><div class="fld"><small>Channel · time</small><b>${esc(r.ch)} · ${esc(r.t)}</b></div><div class="fld"><small>Type</small><b>${esc(r.cat)}</b></div>
+      <div class="fld"><small>Contractor</small><b>${c?esc(c.name):'Not chosen yet'}</b>${c?`<div class="muted" style="font-size:12px">${esc(c.phone)}</div>`:''}</div><div class="fld"><small>Photos</small><b>${r.photos||'None'}</b></div><div class="fld"><small>Cost</small><b>${r.cost?eur2(r.cost):r.est?'estimate '+eur(r.est):'—'}</b>${r.paidBy?`<div class="muted" style="font-size:12px">${esc(r.paidBy)}</div>`:''}</div></div>
+    ${r.photos?`<div class="thumbs">${Array.from({length:r.photos},(_,i)=>`<div class="thumb job" role="img" aria-label="Photo ${i+1}">${svg('cam',22)}<span class="lbl">Photo ${i+1}</span></div>`).join('')}</div>`:''}
+    ${r.st===0&&!r.letter?`<div><b style="font-size:13px">Who should I send it to?</b><div class="who" style="margin-top:8px">${conChoices(r)}</div></div>`:''}
+    ${r.letter&&r.st===0?`<div class="explain"><span class="ei">!</span><div><b>Not a technical fault.</b> I've drafted a house rules reminder to the owner of apartment 4. The name of the person who complained won't be shared.</div></div>`:''}
+    <div class="btns">${r.letter&&r.st===0?`<button class="btn primary" onclick="openLetter()">${svg('doc',16)}Review the reminder</button>`:''}${r.st>=1&&r.st<3?`<button class="btn primary" onclick="resolve(${r.id})">${svg('check',16)}Mark as resolved</button>`:''}${r.st===3?`<button class="btn primary" onclick="closeRep(${r.id})">${svg('check',16)}Close the report</button>`:''}
+      <button class="btn line" onclick="openNotify(${r.id})">${svg('msg',16)}Notify residents</button><button class="btn line" onclick="toast('Call: ${esc(r.who)}, ${esc(r.ph)}')">${svg('phone',16)}Call the reporter</button></div>
+    <div class="grid g2" style="gap:14px;align-items:start"><div><b style="font-size:13px">Conversation</b><div class="convo" style="margin-top:8px">${r.talk.map(([w,t])=>`<div class="bub ${w==='ai'?'w':'c'}"><span class="l">${w==='ai'?'Unbusyness':esc(r.who)}</span><span>${esc(t)}</span></div>`).join('')}</div></div>
+    <div><b style="font-size:13px">Timeline</b><div class="timeline" style="margin-top:4px">${r.log.map(l=>`<div class="tl on"><i></i><div><b>${esc(l[0])} · ${esc(l[1])}</b><span>${esc(l[2])}</span></div></div>`).join('')}</div></div></div>
+  </div></div>`}
+function conChoices(r){const map={Water:['vod'],Lift:['dvi'],Electrics:['ele'],Door:['klj'],Damp:['gra'],Gas:['vod']};const ids=[...(map[r.cat]||[]),...Object.keys(CON).filter(k=>!(map[r.cat]||[]).includes(k))].slice(0,4);
+  return ids.map(k=>`<button class="${r.suggest===k?'on':''}" onclick="sendTo(${r.id},'${k}')"><b>${esc(CON[k].name)}${r.suggest===k?' · predlog':''}</b><span>${esc(CON[k].trade)} · odziv ${esc(CON[k].resp)}</span></button>`).join('')}
+function sendTo(id,k){const r=rep(id);r.st=1;r.con=k;r.log.push(['now','Sent to: '+CON[k].name,'The contractor got the report with the photo and the resident’s contact.']);render();toast(`Sent to: ${CON[k].name}. ${r.who.split(' ')[0]} gets a text with the contractor’s name.`)}
+function approveCon(id){sendTo(id,'ele')}
+function resolve(id){const r=rep(id);r.st=3;r.log.push(['now','Marked as resolved','Residents have been notified.']);render();toast('Resolved. Residents got a notice.')}
+function closeRep(id){const r=rep(id);r.st=4;render();toast('Report closed.')}
+function openNotify(id){const r=rep(id),b=BLD[r.b];S.nt={id,aud:r.urg==='urgent'&&r.cat==='Lift'?'bld':'one',sms:true,mail:true,board:r.cat==='Lift'};drawNotify()}
+function drawNotify(){const n=S.nt,r=rep(n.id),b=BLD[r.b];const txt=r.cat==='Lift'?`Dear residents, the lift at ${b.name} is out of order. A technician is on site, it should be working again by 10:00. Thank you for your understanding. ${CO.name}`:`Hello, your report "${r.title}" urejamo. ${r.con?'Izvajalec: '+CON[r.con].name+'.':''} We’ll keep you updated. ${CO.name}`;
+  const cnt=n.aud==='one'?1:n.aud==='ent'?Math.round(b.units/2):b.units;
+  const opt=(k,l,s)=>`<button class="${n.aud===k?'on':''}" onclick="S.nt.aud='${k}';drawNotify()"><b>${l}</b><span>${s}</span></button>`;
+  const sw=(k,l)=>`<label class="row" style="gap:10px"><button class="switch" role="switch" aria-checked="${n[k]}" onclick="S.nt.${k}=!S.nt.${k};drawNotify()" aria-label="${l}"></button>${l}</label>`;
+  layer(`<div class="scrim center" onclick="if(event.target===this)closeLayer()"><div class="modal" role="dialog" aria-label="Notify residents" style="width:min(640px,100%)"><div class="mh"><h2>Notify residents</h2><button class="x" onclick="closeLayer()" aria-label="Close">${svg('x')}</button></div>
+    <div class="who" style="grid-template-columns:repeat(3,minmax(0,1fr))">${opt('one','Only the reporter',esc(r.who))}${opt('ent','Entrance',b.entr.includes('entrance')&&b.entr.startsWith('entrance')?esc(r.where.split('·')[0]):'whole entrance')}${opt('bld','Whole building',`${b.units} apartments`)}</div>
+    <div class="row" style="gap:20px;flex-wrap:wrap">${sw('sms','SMS')}${sw('mail','Email')}${sw('board','Notice for the board (PDF)')}</div>
+    <textarea id="ntxt" class="ta" rows="4" aria-label="Notice text">${esc(txt)}</textarea>
+    <div class="row" style="justify-content:space-between;flex-wrap:wrap"><span class="muted">${cnt} prejemnik${cnt===1?'':'ov'}</span><button class="btn primary" onclick="closeLayer();toast('Sent ${cnt} recipient${cnt===1?'':'s'}${n.board?'. A PDF for the notice board is ready.':'.'}')">${svg('send',16)}Send</button></div></div></div>`)}
+function openLetter(){layer(`<div class="scrim center" onclick="if(event.target===this)closeLayer()"><div class="modal" role="dialog" aria-label="Reminder" style="width:min(760px,100%)"><div class="mh"><h2>House rules reminder</h2><button class="x" onclick="closeLayer()" aria-label="Close">${svg('x')}</button></div>
+  <div class="sheet" style="aspect-ratio:auto"><div class="sh"><div class="co"><b>${CO.name}</b><div>Building manager, Kersnikova 7</div><div>Ljubljana</div></div><div class="meta"><span>Date</span><b>6 Nov 2026</b><span>No.</span><b>KER-2026-031</b></div></div>
+  <div class="bill"><div><small>To</small><b>Owner of apartment 4</b><div>Kersnikova 7, 1000 Ljubljana</div></div></div>
+  <h3 style="font-size:19px">Notice about quiet hours</h3>
+  <p>Dear owner,</p><p>in the past month we have received several complaints about loud music from your apartment after 22:00. The house rules of Kersnikova 7 set quiet hours between 22:00 and 6:00.</p><p>Please keep to the quiet hours and help keep good relations with your neighbours. If you have any questions, call or write to us.</p><p>Kind regards,<br>${CO.manager}, ${CO.name}</p></div>
+  <div class="btns"><button class="btn primary" onclick="sendLetter()">${svg('send',16)}Send by email and post</button><button class="btn line" onclick="closeLayer()">Later</button></div></div></div>`)}
+function sendLetter(){const r=rep(2486);r.st=4;r.log.push(['now','Reminder sent','Email and post to the owner of apt. 4.']);closeLayer();render();toast('Reminder sent to the owner of apartment 4. The person who complained has been told it’s handled.')}
+
+/* simulated new call: gas smell, step by step */
+function simCall(){const steps=[
+  ['ai','Unbusyness, building management. How can I help?'],['r','At Fužine 21, there’s a strong smell of gas in the basement of entrance A!'],
+  ['ai','This is urgent. Please don’t switch on any lights or use lighters. Open the windows, leave the basement and wait outside. I’m alerting the gas emergency service and your building manager now.'],['r','OK, I’m going outside.'],
+  ['ai','Thank you. I’ve alerted the gas service, arriving in 20 minutes. I’m texting everyone in entrance A not to use open flames.']];
+  S.newCall={i:0,steps};drawSim();const tick=()=>{if(!S.newCall)return;if(S.newCall.i<steps.length){S.newCall.i++;drawSim();setTimeout(tick,1600)}};setTimeout(tick,700)}
+function drawSim(){const c=S.newCall;if(!c)return;const done=c.i>=c.steps.length;
+  layer(`<div class="scrim center" onclick="if(event.target===this)endSim()"><div class="modal" role="dialog" aria-label="Resident’s call" style="width:min(620px,100%)"><div class="mh"><h2>${svg('phone',18)} Incoming call · 041 555 302</h2><button class="x" onclick="endSim()" aria-label="Close">${svg('x')}</button></div>
+  <div class="langbar"><div><small>UNBUSYNESS IS ANSWERING</small><b>${done?'Call ended · report created':'Call in progress …'}</b></div>${done?pill('Nujno: plin','red'):'<span class="livedot" aria-hidden="true"></span>'}</div>
+  <div class="convo">${c.steps.slice(0,c.i).map(([w,t])=>`<div class="bub ${w==='ai'?'w':'c'}"><span class="l">${w==='ai'?'Unbusyness':'Resident'}</span><span>${esc(t)}</span></div>`).join('')}</div>
+  ${done?`<div class="okbox">${svg('check',18)}<div><b>Report #2487 created</b> · Pot na Fužine 21, entrance A, basement. The gas service has been notified, you by phone and 32 apartments in entrance A by text.</div></div><div class="btns"><button class="btn primary" onclick="addGas()">Open the report</button></div>`:''}</div></div>`)}
+function endSim(){if(S.newCall&&S.newCall.i>=S.newCall.steps.length)addGas(true);S.newCall=null;closeLayer()}
+function addGas(stay){if(!R.find(r=>r.id===2487))R.unshift({id:2487,b:'fuz',where:'entrance A · basement',who:'Tomaž Kos',ph:'041 555 302',ch:'Call',t:'now',day:'Today',cat:'Gas',urg:'urgent',st:2,con:'pln',title:'Smell of gas in the basement',
+  sum:'A resident smells strong gas in the basement of entrance A. He got safety instructions, the gas service is on the way. Everyone in entrance A has been texted.',
+  talk:S.newCall?S.newCall.steps:[],log:[['now','Call answered by Unbusyness','Urgent: gas. Safety instructions given.'],['now','Gas emergency service notified','Arriving in 20 minutes.'],['now','Call to the building manager','Maja Kovač notified by phone.'],['now','Text to entrance A','32 apartments: do not use open flames.']],photos:0,cost:null});
+  S.newCall=null;if(stay===true){render();toast('New urgent report #2487 is in the reports.');return}S.filter='open';openReport(2487)}
+
+/* ---------- Stavbe ---------- */
+function pBuildings(){const bs=Object.values(BLD);
+  return head('Buildings',`${bs.length} buildings managed`,`${bs.reduce((a,b)=>a+b.units,0)} apartments · ${bs.reduce((a,b)=>a+b.owners,0)} apartment owners`)+
+  `<div class="grid g3">${bs.map(b=>{const open=R.filter(r=>r.b===b.id&&r.st<3),next=DUT.filter(d=>d.b===b.id).sort((x,y)=>x.next.localeCompare(y.next))[0];
+    return `<button class="card bcard" onclick="openBuilding('${b.id}')"><div class="bimg" style="background:${b.color}">${svg('build',30,1.6)}<span>${b.units} apts</span></div><div class="cb" style="display:grid;gap:8px"><div><b style="font-size:16px">${esc(b.name)}</b><div class="muted" style="font-size:12px">${esc(b.city)} · ${esc(b.entr)} · built ${b.year}${b.lift?' · lift':''}</div></div>
+    <div class="kv"><span>Reserve fund</span><b>${eur(b.fund)}</b></div><div class="kv"><span>Open reports</span><b>${open.length?`<span style="color:${open.some(r=>r.urg==='urgent')?'var(--red)':'inherit'}">${open.length}</span>`:'0'}</b></div><div class="kv"><span>Next deadline</span><b>${next?esc(next.what.replace(/^Redni p/,'P'))+' · '+fdate(next.next):'—'}</b></div></div></button>`}).join('')}</div>`}
+function openBuilding(id){const b=BLD[id],open=R.filter(r=>r.b===id),du=DUT.filter(d=>d.b===id);
+  layer(`<div class="scrim" onclick="if(event.target===this)closeLayer()"><div class="drawer" role="dialog" aria-label="${esc(b.name)}"><div class="mh"><div><div class="eyebrow">Building</div><h2>${esc(b.name)}</h2></div><button class="x" onclick="closeLayer()" aria-label="Close">${svg('x')}</button></div>
+  <div class="fields"><div class="fld"><small>Apartments</small><b>${b.units}</b></div><div class="fld"><small>Owners</small><b>${b.owners}</b></div><div class="fld"><small>Built</small><b>${b.year}</b></div></div>
+  <div class="card cb" style="display:grid;gap:6px"><div class="kv"><span>Reserve fund</span><b>${eur(b.fund)}</b></div><div class="kv"><span>Contribution</span><b>${b.fundMonth.toFixed(2)} €/m² per month</b></div><div class="kv"><span>Next meeting</span><b>${id==='voj'?'20 Nov 2026':'not called yet'}</b></div></div>
+  <b>Reports</b><div class="card">${open.length?open.map(r=>`<button class="citem" onclick="openReport(${r.id})"><span class="ic sand">${svg(CATIC[r.cat]||'alert')}</span><div class="grow"><b>${esc(r.title)}</b><span>${esc(r.t)}</span></div>${stPill(r)}</button>`).join(''):'<div class="cb muted">No reports.</div>'}</div>
+  <b>Deadlines</b><div class="card">${du.map(d=>`<div class="citem"><span class="ic sand">${svg('cal')}</span><div class="grow"><b>${esc(d.what)}</b><span>${esc(d.every)} · ${fdate(d.next)}</span></div>${pill(DST[d.st][0],DST[d.st][1])}</div>`).join('')||'<div class="cb muted">No deadlines entered.</div>'}</div>
+  <b>Documents</b><div class="card">${['Building management contract','House rules','Energetska izkaznica','Zapisnik zbora lastnikov 2025','Maintenance plan 2026–2027'].map(d=>`<button class="citem" onclick="toast('${d}: opened (example)')"><span class="ic sand">${svg('doc')}</span><div class="grow"><b>${d}</b><span>PDF</span></div></button>`).join('')}</div>
+  </div></div>`)}
+
+/* ---------- Vzdrževanje ---------- */
+function pMaint(){const list=DUT.filter(d=>S.bfilter==='all'||d.b===S.bfilter).sort((a,b)=>a.next.localeCompare(b.next));
+  return head('Maintenance','Deadlines and regular tasks','Unbusyness books the contractor in time and tells residents the date.',`<select class="sel" aria-label="Building" onchange="S.bfilter=this.value;render()"><option value="all">All buildings</option>${Object.values(BLD).map(b=>`<option value="${b.id}" ${S.bfilter===b.id?'selected':''}>${esc(b.name)}</option>`).join('')}</select>`)+
+  `<div class="card tscroll"><table class="tbl"><thead><tr><th>Building</th><th>Task</th><th>Every</th><th>Next deadline</th><th>Contractor</th><th>Status</th><th></th></tr></thead><tbody>${list.map(d=>{const dd=daysTo(d.next);
+    return `<tr><td><b>${esc(BLD[d.b].name)}</b></td><td>${esc(d.what)}</td><td class="muted">${esc(d.every)}</td><td><b>${fdate(d.next)}</b><div class="muted" style="font-size:11.5px">${dd<0?'overdue':dd===0?'today':'in '+dd+' days'}</div></td><td class="muted">${d.con?esc(CON[d.con].name):'—'}</td><td>${pill(DST[d.st][0],DST[d.st][1])}</td><td class="num">${d.st==='late'||d.st==='soon'?`<button class="btn primary sm" onclick="bookDuty('${d.id}')">Book</button>`:''}</td></tr>`}).join('')}</tbody></table></div>
+  <p class="muted" style="font-size:12px;margin-top:10px">These deadlines are examples. We set the intervals for each building from your contracts and the regulations.</p>`}
+function bookDuty(id){const d=DUT.find(x=>x.id===id);d.st='booked';d.con=d.con||(/gasil|hidrant/.test(d.what)?'gsl':'ele');render();toast(`${d.what} (${BLD[d.b].name}) booked. Residents will be told 3 days before.`)}
+
+/* ---------- Izvajalci ---------- */
+function pContractors(){return head('Contractors','Your contractors','Unbusyness sends each report to the right contractor for that building. Contractors on call also get urgent reports at night.')+
+  `<div class="card tscroll"><table class="tbl"><thead><tr><th>Contractor</th><th>Trade</th><th>Phone</th><th>Average response</th><th class="num">Open jobs</th><th>On call</th></tr></thead><tbody>${Object.values(CON).map(c=>`<tr><td><b>${esc(c.name)}</b></td><td class="muted">${esc(c.trade)}</td><td>${esc(c.phone)}</td><td>${esc(c.resp)}</td><td class="num">${R.filter(r=>r.con===c.id&&r.st<3).length}</td><td><button class="switch" role="switch" aria-checked="${c.on}" aria-label="On call: ${esc(c.name)}" onclick="CON['${c.id}'].on=!CON['${c.id}'].on;render();toast(CON['${c.id}'].on?'${esc(c.name)} gets urgent reports at night.':'${esc(c.name)} no longer gets urgent reports at night.')"></button></td></tr>`).join('')}</tbody></table></div>`}
+
+/* ---------- Zbori ---------- */
+function pMeetings(){const m=MEET,b=BLD[m.b],v=m.vote;
+  return head('Owners’ meetings','Meeting of apartment owners · '+esc(b.name),esc(m.date)+' · '+esc(m.place),`<div class="btns"><button class="btn line" onclick="openInvite()">${svg('doc',16)}Invitation</button><button class="btn primary" onclick="openInvite()">${svg('send',16)}${S.sent?'Invitations sent':'Send invitations'}</button></div>`)+
+  `<div class="grid gmain"><div class="grid" style="gap:16px"><div class="card"><div class="ch"><h2>Agenda</h2>${S.sent?pill('Vabila poslana 46 lastnikom','ok'):pill('Invitations not sent yet','apricot')}</div><div class="cb">${m.agenda.map((a,i)=>`<div class="act"><b style="width:22px">${i+1}.</b><div>${esc(a)}</div></div>`).join('')}</div></div>
+    <div class="card"><div class="ch"><div><h2>Written vote pred zborom</h2><p>${esc(v.item)}</p></div>${pill(v.yes>v.need?'Decision passed':'Voting in progress',v.yes>v.need?'ok':'apricot')}</div><div class="cb" style="display:grid;gap:10px">
+      <div class="votebar" role="img" aria-label="${String(v.yes)} % of ownership shares for, ${String(v.no)} % against"><i class="y" style="width:${v.yes}%"></i><i class="n" style="width:${v.no}%"></i><span class="thr" style="left:${v.need}%"></span></div>
+      <div class="row" style="justify-content:space-between;flex-wrap:wrap;font-size:13px"><span><b style="color:var(--ok)">${String(v.yes)} % FOR</b> · <b style="color:var(--red)">${String(v.no)} % AGAINST</b> · ${v.ofOwners} of ${b.owners} owners voted</span><span class="muted">Needed: more than half of the ownership shares (regular management decision)</span></div>
+      <div class="okbox">${svg('check',18)}<div>Majority reached. Unbusyness will prepare the order with Elektro Medved and record the decision in the meeting minutes.</div></div></div></div>
+  </div><aside class="grid" style="gap:16px"><div class="card cb" style="display:grid;gap:8px"><b>What Unbusyness handles</b>${['Invitation with the agenda to all owners (email, post, notice board)','A reminder 2 days before the meeting','A written vote for those who can’t attend','Minutes and decisions, saved with the building','Orders to contractors after the decisions are passed'].map(x=>`<div class="row" style="gap:8px;align-items:flex-start"><span style="color:var(--green)">${svg('check',16)}</span><span>${x}</span></div>`).join('')}</div>
+  <div class="card cb" style="display:grid;gap:6px"><div class="kv"><span>Reserve fund</span><b>${eur(b.fund)}</b></div><div class="kv"><span>LED quote</span><b>${eur(4860)}</b></div><div class="kv"><span>After the work</span><b>${eur(b.fund-4860)}</b></div></div></aside></div>`}
+function openInvite(){const m=MEET,b=BLD[m.b];
+  layer(`<div class="scrim center" onclick="if(event.target===this)closeLayer()"><div class="modal" role="dialog" aria-label="Meeting invitation" style="width:min(760px,100%)"><div class="mh"><h2>Invitation to the meeting of apartment owners</h2><button class="x" onclick="closeLayer()" aria-label="Close">${svg('x')}</button></div>
+  <div class="sheet"><div class="sh"><div class="co"><b>${CO.name}</b><div>Building manager ${esc(b.name)}</div><div>Ljubljana</div></div><div class="meta"><span>Date</span><b>6 Nov 2026</b><span>No.</span><b>VOJ-ZB-2026-02</b></div></div>
+  <h3>Invitation to the meeting of apartment owners</h3><p>Dear owners of ${esc(b.name)},</p><p>we invite you to the meeting of apartment owners, on <b>${esc(m.date)}</b>, ${esc(m.place)}.</p>
+  <p style="margin-top:14px"><b>Proposed agenda:</b></p><ol style="margin:4px 0 0 18px;padding:0">${m.agenda.map(a=>`<li>${esc(a)}</li>`).join('')}</ol>
+  <p style="margin-top:14px">Documents for items 2 and 3 are attached. Owners who can’t attend can vote in writing through the link in the email or on the enclosed ballot.</p>
+  <p style="margin-top:auto">Kind regards,<br>${CO.manager}, ${CO.name}</p></div>
+  <div class="btns"><button class="btn primary" onclick="sendInvites()">${svg('send',16)}Send to 46 owners</button><button class="btn line" onclick="closeLayer()">Close</button></div></div></div>`)}
+function sendInvites(){S.sent=true;closeLayer();render();toast('Invitations sent: 39 by email, 7 by post. A PDF for the notice board is ready.')}
+
+/* ---------- Stroški ---------- */
+function pCosts(){const bs=Object.values(BLD);const month={voj:2840,cel:3410,tru:690,ker:1220,fuz:5180,zal:1760};const max=Math.max(...Object.values(month));
+  return head('Costs and funds','Costs by building','Contractor invoices land with the right building and report. Unbusyness also reads invoices from a PDF or a photo.')+
+  `<div class="grid g2" style="align-items:start"><div class="card"><div class="ch"><div><h2>Invoices to approve</h2><p>Read by Unbusyness, split by the building’s rules</p></div></div>${INV.map(i=>`<div class="need"><span class="ic ${i.st==='ok'?'green':'slate'}">${svg('receipt')}</span><div class="grow"><b>${esc(CON[i.con].name)} · ${eur2(i.amt)}</b><span>${esc(BLD[i.b].name)} · ${esc(i.what)} · ${esc(i.no)}</span><span>Paid by: ${esc(i.split)}</span></div>${i.st==='ok'?pill('Potrjeno','ok'):`<button class="btn primary sm" onclick="approveInv('${i.id}')">Approve</button>`}</div>`).join('')}</div>
+  <div class="card"><div class="ch"><div><h2>Costs in October</h2><p>Maintenance and running costs, excluding energy</p></div></div><div class="cb bars">${bs.map(b=>`<div class="br"><span>${esc(b.name)}</span><span class="bar"><i style="width:${month[b.id]/max*100}%;background:${b.color}"></i></span><b>${eur(month[b.id])}</b></div>`).join('')}</div></div></div>
+  <div class="card tscroll" style="margin-top:16px"><div class="ch"><div><h2>Reserve funds</h2><p>Balance on 31 Oct 2026</p></div></div><table class="tbl"><thead><tr><th>Building</th><th class="num">Status</th><th class="num">Contribution</th><th class="num">Per apartment</th><th>Planned</th></tr></thead><tbody>${bs.map(b=>`<tr><td><b>${esc(b.name)}</b></td><td class="num"><b>${eur(b.fund)}</b></td><td class="num">${b.fundMonth.toFixed(2)} €/m²</td><td class="num">${eur(b.fund/b.units)}</td><td class="muted">${{voj:'LED lighting (€4,860)',cel:'Lift renovation 2028',tru:'Basement damp repair',ker:'—',fuz:'Facade entrance C 2027',zal:'Intercom'}[b.id]}</td></tr>`).join('')}</tbody></table></div>`}
+function approveInv(id){const i=INV.find(x=>x.id===id);i.st='ok';render();toast(`Invoice ${i.no} potrjen. ${i.split==='Owner of apt. 11'?'Owner of apt. 11 gets the invoice with an explanation.':'Added to the building’s costs.'}`)}
+
+/* ---------- voice ---------- */
+const VOICE=[
+ {say:'Send the electrician to Fužine 21, entrance C, about the light.',plan:[['Report','#2485 · stairwell light'],['Contractor','Elektro Medved'],['Notice','SMS Jani Hribar']],done:()=>{if(rep(2485).st===0)sendTo(2485,'ele');else toast('Already sent to Elektro Medved.')}},
+ {say:'Tell everyone at Celovška 88 that the lift works again.',plan:[['Building','Celovška 88 · 64 apartments'],['Channels','SMS in oglasna deska'],['Report','#2484 I’ll mark as resolved']],done:()=>{const r=rep(2484);if(r.st<3)r.st=3;render();toast('Sent to 64 apartments: the lift is working again.')}},
+ {say:'When is the next lift inspection at Vojkova?',plan:[['Answer','18 Nov 2026, Lift-Servis d.o.o.'],['Status','Contractor booked']],done:()=>toast('Next lift inspection at Vojkova 12: 18 Nov 2026.')},
+];
+function openVoice(){S.v={i:-1,live:false};drawVoice()}
+function drawVoice(){const v=S.v,c=v.i>=0?VOICE[v.i]:null;
+  layer(`<div class="scrim center" onclick="if(event.target===this)closeLayer()"><div class="voice" role="dialog" aria-label="Voice command"><div class="mh"><b>Voice command</b><button class="x" style="background:rgba(255,255,255,.14);border:0;color:var(--linen)" onclick="closeLayer()" aria-label="Close">${svg('x')}</button></div>
+  <div class="orb ${v.live?'live':''}">${svg('mic',40)}</div><div class="said">${c?'»'+esc(c.say)+'«':'Tell me what to do. For example:'}</div>
+  ${c&&!v.live?`<div class="plan">${c.plan.map(([a,b])=>`<div class="pr"><span class="muted">${a}</span><b>${esc(b)}</b></div>`).join('')}<div class="btns" style="margin-top:10px"><button class="btn primary" onclick="const f=VOICE[${v.i}].done;closeLayer();f()">${svg('check',16)}Approve</button><button class="btn line" onclick="S.v={i:-1};drawVoice()">Another command</button></div></div>`:''}
+  ${!c?`<div class="ex">${VOICE.map((x,i)=>`<button onclick="sayV(${i})">»${esc(x.say)}«</button>`).join('')}</div>`:''}</div></div>`)}
+function sayV(i){S.v={i,live:true};drawVoice();setTimeout(()=>{if(S.v&&S.v.i===i){S.v.live=false;drawVoice()}},1300)}
+
+document.getElementById('fab').onclick=openVoice;
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeLayer()});
+render();
+
+</script>
+
+
+<!-- Link back to the waitlist page and SL/EN switch (added for the website) -->
+<style>
+.ub-demo-bar{position:fixed;left:16px;bottom:16px;z-index:35;display:flex;align-items:center;gap:2px;padding:3px;border-radius:999px;background:rgba(20,32,30,.9);box-shadow:0 6px 18px rgba(0,0,0,.18);font:700 13px "Plus Jakarta Sans",system-ui,sans-serif}
+.ub-demo-bar a{color:#FBFAF7;text-decoration:none;padding:7px 12px;border-radius:999px;white-space:nowrap}
+.ub-demo-bar a:hover{background:rgba(255,255,255,.12)}
+.ub-demo-bar .on{background:#FBFAF7;color:#14201E}
+.ub-demo-bar .sep{width:1px;height:18px;background:rgba(255,255,255,.25);margin:0 4px}
+.ub-demo-bar a:focus-visible{outline:2px solid #E8915F;outline-offset:2px}
+.ub-demo-bar{left:50%;bottom:auto;top:12px;transform:translateX(-50%)}
+@media (max-width:760px){.ub-demo-bar{top:auto;bottom:96px;left:12px;transform:none}}
+</style>
+<nav class="ub-demo-bar" aria-label="Demo">
+<a href="/building-managers/#join" aria-label="Back to the page and join the waitlist">← Join the waitlist</a><span class="sep" aria-hidden="true"></span>
+<a href="building-managers-desktop.html" lang="sl" hreflang="sl" class="" aria-current="false" onclick="try{localStorage.setItem('ub-lang','sl')}catch(e){}">SL</a><a href="building-managers-desktop-en.html" lang="en" hreflang="en" class="on" aria-current="true" onclick="try{localStorage.setItem('ub-lang','en')}catch(e){}">EN</a>
+</nav>
+</body>
+</html>

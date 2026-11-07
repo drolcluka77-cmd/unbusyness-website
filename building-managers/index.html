@@ -203,9 +203,9 @@ footer{padding-block:36px;color:var(--muted);font-size:14px;display:flex;flex-wr
         <span class="note" data-t="ctaNote">First managers get set up by our team, free during the pilot.</span>
       </div>
       <div class="demos" aria-label="Demo">
-        <span class="lab" data-t="demoLab">See how it works: a clickable demo (in Slovenian, with made-up data).</span>
-        <a class="btn ghost" href="/demo/building-managers-phone.html"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="7" y="2.5" width="10" height="19" rx="2.5"/><path d="M11 18.5h2"/></svg><span data-t="demo0">On the phone</span></a>
-        <a class="btn ghost" href="/demo/building-managers-desktop.html"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="4.5" width="16" height="11" rx="1.5"/><path d="M2 19.5h20"/></svg><span data-t="demo1">On the computer</span></a>
+        <span class="lab" data-t="demoLab">See how it works: a clickable demo with made-up data.</span>
+        <a class="btn ghost" data-demo="building-managers-phone" href="/demo/building-managers-phone.html"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="7" y="2.5" width="10" height="19" rx="2.5"/><path d="M11 18.5h2"/></svg><span data-t="demo0">On the phone</span></a>
+        <a class="btn ghost" data-demo="building-managers-desktop" href="/demo/building-managers-desktop.html"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="4.5" width="16" height="11" rx="1.5"/><path d="M2 19.5h20"/></svg><span data-t="demo1">On the computer</span></a>
       </div>
     </div>
 
@@ -430,6 +430,7 @@ function t(k) { return (lang === "sl" ? SL : EN)[k] ?? EN[k] ?? ""; }
 function setLang(l) {
   lang = l === "sl" ? "sl" : "en";
   document.documentElement.lang = lang;
+  document.querySelectorAll("[data-demo]").forEach((a) => (a.href = "/demo/" + a.dataset.demo + (lang === "en" ? "-en" : "") + ".html"));
   document.querySelectorAll("[data-t]").forEach((el) => {
     const v = t(el.dataset.t); if (!v) return;
     if (el.hasAttribute("data-html") || /<\w/.test(v)) el.innerHTML = v; else el.textContent = v;

@@ -1,0 +1,663 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+</head>
+<body>
+<title>Unbusyness Home demo</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Interactive demo of the Unbusyness Home app: a digital passport for your home, reminders, fault reports and reliable tradespeople.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+/* Consumer phone demo. Left: short pitch + "try this". Right: the app in a phone frame (full screen on phones).
+   Tabs: Domov · Potni list · (+) · Mojstri · Stavba. Bottom sheets for item detail, report flow, add flow. */
+:root{
+  --bg:#F8E8DE; --page:#FBF5F1; --surface:#FFFFFF; --sand:#FCF3EE; --line:#EFD8CA;
+  --ink:#1B2220; --muted:#5F6461; --soft:#8A8582;
+  --acc:#B0582F; --acc-deep:#7A3A21; --acc-ink:#A9532B; --acc-soft:#F7DCCB; --acc-mid:#E0915F;
+  --ok:#3E7D62; --ok-soft:#E2EFE8; --red:#B23A32; --red-soft:#F6DEDB;
+  --t1:#F7E1D4; --t2:#E8E9F1; --t3:#E4ECE8; --c2:#4D5578; --c3:#3E6355;
+  --onacc:#FFFFFF; --frame:#1B2220;
+  --font:'Plus Jakarta Sans','Segoe UI',system-ui,-apple-system,sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#1C1512; --page:#211915; --surface:#2A201B; --sand:#30251F; --line:#3D302A; --ink:#F4ECE7; --muted:#BFAEA5; --soft:#9C8D85;
+  --acc:#F0A57C; --acc-deep:#4A2416; --acc-ink:#F4B48F; --acc-soft:#43291D; --acc-mid:#F0A57C;
+  --ok:#86C9A8; --ok-soft:#1F3229; --red:#F08A80; --red-soft:#3F2220; --t1:#43291D; --t2:#2D2D3A; --t3:#26332D; --c2:#B9C0E0; --c3:#9CCBB6; --onacc:#1C1512; --frame:#000; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#1C1512; --page:#211915; --surface:#2A201B; --sand:#30251F; --line:#3D302A; --ink:#F4ECE7; --muted:#BFAEA5; --soft:#9C8D85;
+  --acc:#F0A57C; --acc-deep:#4A2416; --acc-ink:#F4B48F; --acc-soft:#43291D; --acc-mid:#F0A57C;
+  --ok:#86C9A8; --ok-soft:#1F3229; --red:#F08A80; --red-soft:#3F2220; --t1:#43291D; --t2:#2D2D3A; --t3:#26332D; --c2:#B9C0E0; --c3:#9CCBB6; --onacc:#1C1512; --frame:#000; color-scheme:dark}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);font-size:15px;line-height:1.45;-webkit-font-smoothing:antialiased}
+button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer;text-align:inherit}
+:focus-visible{outline:3px solid var(--acc-mid);outline-offset:2px;border-radius:10px}
+@media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
+
+.stage{min-height:100%;display:flex;align-items:center;justify-content:center;gap:64px;padding-block:32px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.side{max-width:340px;display:flex;flex-direction:column;gap:16px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:19px;letter-spacing:-.02em}
+.brand small{font-weight:600;color:var(--muted);font-size:19px}
+.side h1{margin:0;font-size:42px;line-height:1.04;letter-spacing:-.045em;font-weight:800;text-wrap:balance}
+.side h1 span{color:var(--acc)}
+.side p{margin:0;color:var(--muted);font-size:16px}
+.side ul{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:10px;font-size:15px}
+.side li{display:flex;gap:10px;align-items:flex-start}
+.side li:before{content:"";width:8px;height:8px;border-radius:50%;background:var(--acc);margin-top:7px;flex-shrink:0}
+.side .fine{font-size:13px;color:var(--soft)}
+
+.phone{position:relative;width:390px;height:844px;max-height:calc(100vh - 64px);border-radius:48px;background:var(--page);box-shadow:0 0 0 10px var(--frame),0 30px 80px rgba(90,40,20,.25);overflow:clip;display:flex;flex-direction:column}
+@media (max-width:820px){.side{display:none}.stage{padding:0;gap:0;align-items:stretch}.phone{width:100%;height:100vh;height:100dvh;max-height:none;border-radius:0;box-shadow:none}}
+.sbar{display:flex;justify-content:space-between;align-items:center;padding:14px 28px 4px;font-size:13px;font-weight:700;flex-shrink:0}
+@media (max-width:820px){.sbar{display:none}}
+.scr{flex:1;overflow-y:auto;overflow-x:hidden;padding:8px 18px 120px;scrollbar-width:none}
+.scr::-webkit-scrollbar{display:none}
+@media (max-width:820px){.scr{padding-top:calc(14px + env(safe-area-inset-top,0px))}}
+
+/* headings + cards */
+.hd{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin:6px 0 16px}
+.hd small{display:block;font-size:12px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--acc-ink)}
+.hd h2{margin:2px 0 0;font-size:27px;line-height:1.1;letter-spacing:-.035em;font-weight:800}
+.av{width:42px;height:42px;border-radius:50%;background:var(--acc-soft);color:var(--acc-ink);display:grid;place-items:center;font-weight:800;font-size:14px;flex-shrink:0}
+.lbl{font-size:12px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:22px 2px 10px;display:flex;justify-content:space-between;align-items:center}
+.lbl b{font-size:11px;background:var(--red);color:#fff;border-radius:999px;padding:2px 8px;letter-spacing:.06em}
+.card{background:var(--surface);border-radius:22px;padding:16px;display:grid;gap:10px}
+.row{display:grid;grid-template-columns:44px minmax(0,1fr) auto;gap:12px;align-items:center;background:var(--surface);border-radius:20px;padding:12px 14px;width:100%;margin-bottom:8px;min-height:68px}
+.row .tx b{display:block;font-size:15px;line-height:1.3}
+.row .tx span{display:block;font-size:13px;color:var(--muted);line-height:1.35}
+.ic{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;background:var(--t1);color:var(--acc)}
+.ic.c2{background:var(--t2);color:var(--c2)}.ic.c3{background:var(--t3);color:var(--c3)}
+.pill{font-size:11.5px;font-weight:800;padding:4px 9px;border-radius:999px;white-space:nowrap}
+.pill.soon{background:var(--acc-soft);color:var(--acc-ink)}.pill.ok{background:var(--ok-soft);color:var(--ok)}.pill.late{background:var(--red-soft);color:var(--red)}.pill.none{background:var(--sand);color:var(--muted)}
+.pill.new{background:var(--acc);color:var(--onacc)}
+.chev{color:var(--soft)}
+
+.hero{background:var(--acc-deep);color:#FBEDE4;border-radius:26px;padding:18px;display:grid;gap:12px}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .hero{background:#5A2C19}}
+.hero small{font-size:11.5px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#F6C3A3;display:flex;justify-content:space-between;gap:8px}
+.hero h3{margin:0;font-size:21px;line-height:1.2;letter-spacing:-.02em;color:#fff}
+.hero p{margin:0;color:#F3D6C6;font-size:14px}
+.track{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.track i{height:5px;border-radius:3px;background:rgba(255,255,255,.2)}.track i.on{background:#F6A97E}
+.track-l{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;font-size:11px;color:#F3D6C6;font-weight:600}
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;min-height:50px;border-radius:16px;padding:0 18px;font-weight:800;font-size:15px;background:var(--acc);color:var(--onacc);width:100%}
+.btn.line{background:transparent;border:1.5px solid var(--acc);color:var(--acc)}
+.btn.soft{background:var(--sand);color:var(--ink)}
+.hero .btn{background:#F6A97E;color:#2A140B}
+.hero .btn.line{background:transparent;border-color:rgba(255,255,255,.35);color:#fff}
+.btns{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.stat{background:var(--surface);border-radius:20px;padding:14px}
+.stat small{display:block;font-size:12.5px;color:var(--muted);font-weight:600}
+.stat b{display:block;font-size:26px;letter-spacing:-.03em;margin-top:2px}
+.stat span{font-size:12.5px;color:var(--muted)}
+.cats{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;margin:0 -18px 6px;padding-inline:18px;scrollbar-width:none}
+.cats::-webkit-scrollbar{display:none}
+.cat{flex-shrink:0;padding:9px 15px;border-radius:999px;background:var(--surface);font-weight:700;font-size:14px}
+.cat[aria-pressed="true"]{background:var(--acc);color:var(--onacc)}
+.search{display:flex;align-items:center;gap:8px;background:var(--surface);border-radius:16px;padding:0 14px;min-height:48px;color:var(--soft);margin-bottom:12px}
+.search input{border:0;background:transparent;font:inherit;color:var(--ink);flex:1;min-width:0;outline:none}
+
+/* tabs */
+.tabs{position:absolute;left:0;right:0;bottom:0;background:var(--surface);border-top:1px solid var(--line);display:grid;grid-template-columns:1fr 1fr 88px 1fr 1fr;align-items:end;padding:8px 6px calc(10px + env(safe-area-inset-bottom,0px));z-index:5}
+.tab{display:flex;flex-direction:column;align-items:center;gap:3px;min-height:54px;justify-content:center;font-size:11.5px;font-weight:700;color:var(--soft);border-radius:14px;position:relative;text-align:center}
+.tab[aria-current="page"]{color:var(--acc)}
+.tab[aria-current="page"]:before{content:"";position:absolute;top:-9px;width:26px;height:3px;border-radius:2px;background:var(--acc)}
+.tab .dotn{position:absolute;top:4px;right:calc(50% - 18px);width:9px;height:9px;border-radius:50%;background:var(--red);border:2px solid var(--surface)}
+.plus{justify-self:center;width:68px;height:68px;margin-top:-30px;border-radius:50%;background:var(--acc);color:var(--onacc);display:grid;place-items:center;box-shadow:0 0 0 6px var(--surface),0 10px 26px rgba(176,88,47,.4)}
+.plus:active{transform:scale(.96)}
+
+/* sheets */
+.scrim{position:absolute;inset:0;background:rgba(27,20,16,.42);z-index:8;animation:fade .2s ease}
+.sheet{position:absolute;left:0;right:0;bottom:0;max-height:92%;background:var(--page);border-radius:28px 28px 0 0;z-index:9;display:flex;flex-direction:column;animation:up .26s cubic-bezier(.2,.8,.2,1)}
+.sheet .grab{width:42px;height:5px;border-radius:3px;background:var(--line);margin:10px auto 2px;flex-shrink:0}
+.sheet .sh{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:8px 18px 6px;flex-shrink:0}
+.sheet .sh h3{margin:0;font-size:20px;letter-spacing:-.025em}
+.x{width:38px;height:38px;border-radius:50%;background:var(--surface);display:grid;place-items:center;flex-shrink:0}
+.sb{overflow-y:auto;padding:8px 18px calc(22px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:12px;scrollbar-width:none}
+.sb::-webkit-scrollbar{display:none}
+@keyframes up{from{transform:translateY(40px);opacity:0}to{transform:none;opacity:1}}
+@keyframes fade{from{opacity:0}}
+.kv{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.3fr);gap:8px 12px;font-size:14px}
+.kv span{color:var(--muted)}.kv b{font-weight:700;text-align:right}
+.wbar{height:8px;border-radius:4px;background:var(--sand);overflow:hidden}.wbar i{display:block;height:100%;background:var(--ok);border-radius:4px}
+.docs{display:flex;flex-wrap:wrap;gap:8px}
+.doc{display:flex;align-items:center;gap:7px;background:var(--surface);border-radius:12px;padding:9px 12px;font-size:13.5px;font-weight:600}
+.tl{display:grid;gap:0;margin:0;padding:0;list-style:none}
+.tl li{display:grid;grid-template-columns:16px minmax(0,1fr);gap:12px;padding-bottom:14px;position:relative}
+.tl li:before{content:"";width:12px;height:12px;border-radius:50%;background:var(--acc);margin-top:4px;box-shadow:0 0 0 4px var(--acc-soft)}
+.tl li:not(:last-child):after{content:"";position:absolute;left:5px;top:20px;bottom:0;width:2px;background:var(--line)}
+.tl b{display:block;font-size:14.5px}.tl span{display:block;font-size:13px;color:var(--muted)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{padding:10px 14px;border-radius:999px;background:var(--surface);font-weight:700;font-size:14px;border:1.5px solid transparent}
+.chip:hover{border-color:var(--acc)}
+.modes{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.mode{background:var(--surface);border-radius:18px;padding:14px 8px;display:grid;justify-items:center;gap:6px;font-weight:700;font-size:13.5px;text-align:center}
+.mode .ic{width:46px;height:46px}
+.ai{background:var(--surface);border-radius:20px;padding:14px;display:grid;gap:8px;border-left:4px solid var(--acc)}
+.ai small{font-size:11.5px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--acc-ink)}
+.pro{background:var(--surface);border-radius:22px;padding:14px;display:grid;gap:10px;border:2px solid transparent;width:100%}
+.pro[aria-pressed="true"]{border-color:var(--acc)}
+.pro .top{display:grid;grid-template-columns:48px minmax(0,1fr) auto;gap:12px;align-items:center}
+.pro .face{width:48px;height:48px;border-radius:50%;display:grid;place-items:center;font-weight:800;background:var(--t2);color:var(--c2)}
+.pro b{display:block;font-size:15.5px}.pro .tx span{display:block;font-size:13px;color:var(--muted)}
+.meta{display:flex;flex-wrap:wrap;gap:6px}
+.meta span{font-size:12.5px;font-weight:700;background:var(--sand);border-radius:999px;padding:5px 10px}
+.meta span.g{background:var(--ok-soft);color:var(--ok)}
+.star{color:#D9822B}
+.note{font-size:12.5px;color:var(--soft);margin:0}
+.scan{height:260px;border-radius:22px;background:#2A201B;position:relative;overflow:hidden;display:grid;place-items:center}
+.scan .paper{width:62%;height:78%;background:#FBF5F1;border-radius:6px;transform:rotate(-3deg);padding:16px 14px;display:grid;gap:7px;align-content:start;box-shadow:0 10px 30px rgba(0,0,0,.4)}
+.scan .paper i{display:block;height:7px;border-radius:3px;background:#E3D6CC}
+.scan .paper i.s{width:55%}.scan .paper i.m{width:80%}.scan .paper i.b{height:12px;width:40%;background:#C9B6A8}
+.scan .corner{position:absolute;inset:22px;border:3px solid #F6A97E;border-radius:18px;clip-path:polygon(0 0,22% 0,22% 4%,4% 4%,4% 22%,0 22%,0 78%,4% 78%,4% 96%,22% 96%,22% 100%,78% 100%,78% 96%,96% 96%,96% 78%,100% 78%,100% 22%,96% 22%,96% 4%,78% 4%,78% 0,100% 0,100% 100%,0 100%)}
+.scan .beam{position:absolute;left:10%;right:10%;height:3px;background:#F6A97E;box-shadow:0 0 18px #F6A97E;top:20%;animation:beam 1.2s ease-in-out infinite alternate}
+@keyframes beam{to{top:80%}}
+.field{display:grid;gap:5px}
+.field label{font-size:12.5px;font-weight:700;color:var(--muted)}
+.field input,.field textarea{font:inherit;font-size:15px;color:var(--ink);background:var(--surface);border:1.5px solid var(--line);border-radius:14px;padding:11px 13px;min-width:0;width:100%}
+.field textarea{min-height:120px;resize:vertical;line-height:1.45}
+.field input:focus,.field textarea:focus{outline:none;border-color:var(--acc)}
+.rate{display:flex;gap:6px}
+.rate button{font-size:28px;line-height:1;color:var(--line)}
+.rate button.on{color:#D9822B}
+.sw{display:flex;justify-content:space-between;align-items:center;gap:12px;background:var(--surface);border-radius:18px;padding:12px 14px;font-size:13.5px;font-weight:600}
+.sw button{width:50px;height:30px;border-radius:999px;background:var(--line);position:relative;flex-shrink:0}
+.sw button:after{content:"";position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:#fff;transition:left .2s}
+.sw button[aria-checked="true"]{background:var(--acc)}.sw button[aria-checked="true"]:after{left:23px}
+.toast{position:absolute;left:12px;right:12px;top:14px;z-index:12;background:var(--surface);border-radius:22px;padding:14px;box-shadow:0 18px 40px rgba(60,25,10,.25);display:grid;gap:10px;animation:drop .35s cubic-bezier(.2,.8,.2,1)}
+@media (max-width:820px){.toast{top:calc(10px + env(safe-area-inset-top,0px))}}
+@keyframes drop{from{transform:translateY(-30px);opacity:0}}
+.toast .th{display:flex;gap:10px;align-items:center;font-size:12px;font-weight:700;color:var(--muted)}
+.toast .th i{width:22px;height:22px;border-radius:6px;background:var(--acc);display:grid;place-items:center}
+.toast p{margin:0;font-size:14.5px}
+.toast .btns .btn{min-height:42px;font-size:14px}
+.mini{position:absolute;left:50%;bottom:104px;transform:translateX(-50%);background:var(--ink);color:var(--page);padding:10px 16px;border-radius:999px;font-size:13.5px;font-weight:700;z-index:13;white-space:nowrap;animation:fade .2s}
+.ok-big{display:grid;justify-items:center;text-align:center;gap:8px;padding:10px 0}
+.ok-big .ic{width:64px;height:64px;background:var(--ok-soft);color:var(--ok)}
+.ok-big h4{margin:0;font-size:20px;letter-spacing:-.02em}
+.ok-big p{margin:0;color:var(--muted);font-size:14px}
+.empty{color:var(--muted);font-size:14px;text-align:center;padding:16px}
+.vn{display:flex;align-items:center;gap:10px;background:var(--surface);border-radius:999px;padding:8px 14px 8px 8px}
+.vn .pb{width:34px;height:34px;border-radius:50%;background:var(--acc);color:var(--onacc);display:grid;place-items:center}
+.vn i{flex:1;height:20px;background:repeating-linear-gradient(90deg,var(--acc) 0 2px,transparent 2px 5px);opacity:.55;border-radius:2px}
+.vn small{font-family:var(--mono);font-size:12px;color:var(--muted)}
+.rec-dot{width:10px;height:10px;border-radius:50%;background:var(--red);animation:pulse 1s infinite}
+@keyframes pulse{50%{opacity:.3}}
+
+/* property passport (certificate) */
+.props{display:grid;gap:8px;margin-bottom:14px}
+.prop{display:grid;grid-template-columns:52px minmax(0,1fr) auto;gap:12px;align-items:center;background:var(--acc-deep);color:#FBEDE4;border-radius:22px;padding:14px;width:100%}
+.prop .ic{width:52px;height:52px;background:rgba(255,255,255,.12);color:#F6C3A3}
+.prop b{display:block;font-size:15.5px;color:#fff}.prop span.s{display:block;font-size:12.5px;color:#F3D6C6}
+.prop .go{font-size:12.5px;font-weight:800;color:#2A140B;background:#F6A97E;border-radius:999px;padding:7px 11px;white-space:nowrap}
+.prop.alt{background:var(--surface);color:var(--ink)}.prop.alt .ic{background:var(--t3);color:var(--c3)}.prop.alt b{color:var(--ink)}.prop.alt span.s{color:var(--muted)}
+.full{position:absolute;inset:0;z-index:7;background:var(--page);display:flex;flex-direction:column;animation:up .26s cubic-bezier(.2,.8,.2,1)}
+.fbar{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:14px 16px 8px;flex-shrink:0}
+@media (max-width:820px){.fbar{padding-top:calc(12px + env(safe-area-inset-top,0px))}}
+.fbar b{font-size:15px}
+.fbody{flex:1;overflow-y:auto;padding:4px 18px calc(28px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:12px;scrollbar-width:none}
+.fbody>*{flex-shrink:0}
+.fbody .lbl{margin-bottom:-2px}
+.sb>*{flex-shrink:0}
+.fbody::-webkit-scrollbar{display:none}
+.cert{position:relative;border-radius:26px;padding:20px 18px 18px;background:linear-gradient(160deg,#7A3A21,#A4512B);color:#FBEDE4;overflow:hidden;display:grid;gap:12px}
+.cert:after{content:"";position:absolute;right:-50px;top:-50px;width:170px;height:170px;border-radius:50%;border:18px solid rgba(255,255,255,.07)}
+.cert small{font-size:11.5px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:#F6C3A3}
+.cert h3{margin:0;font-size:25px;line-height:1.1;letter-spacing:-.035em;color:#fff}
+.cert p{margin:0;font-size:13.5px;color:#F3D6C6}
+.seal{display:flex;align-items:center;gap:12px;background:rgba(255,255,255,.1);border-radius:18px;padding:12px}
+.seal .ring{width:58px;height:58px;border-radius:50%;flex-shrink:0;display:grid;place-items:center;font-weight:800;font-size:16px;color:#fff;background:conic-gradient(#F6A97E calc(var(--v)*1%),rgba(255,255,255,.15) 0)}
+.seal .ring span{width:46px;height:46px;border-radius:50%;background:#8E4626;display:grid;place-items:center}
+.seal b{display:block;color:#fff;font-size:15px}.seal span.s{font-size:12.5px;color:#F3D6C6}
+.cgrid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.cgrid div{background:rgba(255,255,255,.1);border-radius:14px;padding:9px 10px}
+.cgrid b{display:block;font-size:17px;color:#fff;letter-spacing:-.02em}.cgrid span{font-size:11.5px;color:#F3D6C6}
+.ver{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:800;color:var(--ok);background:var(--ok-soft);border-radius:999px;padding:3px 8px 3px 6px;white-space:nowrap;vertical-align:middle}
+.ver.own{color:var(--muted);background:var(--sand)}
+.wk{display:grid;grid-template-columns:44px minmax(0,1fr);gap:12px;background:var(--surface);border-radius:20px;padding:12px 14px}
+.wk b{display:block;font-size:14.5px;line-height:1.3}.wk span.s{display:block;font-size:12.5px;color:var(--muted);margin:2px 0 6px}
+.dl{display:grid;gap:6px}
+.dlr{display:grid;grid-template-columns:22px minmax(0,1fr) auto;gap:10px;align-items:center;background:var(--surface);border-radius:14px;padding:10px 12px;font-size:13.5px;font-weight:600}
+.dlr .m{font-size:11.5px;color:var(--muted);font-weight:600}
+.legend{font-size:12px;color:var(--muted);display:grid;gap:6px;background:var(--surface);border-radius:16px;padding:12px}
+.linkbox{display:flex;align-items:center;gap:8px;background:var(--surface);border:1.5px dashed var(--acc);border-radius:14px;padding:12px;font-family:var(--mono);font-size:13px;word-break:break-all}
+.pill.soonx{background:var(--sand);color:var(--muted)}
+</style>
+
+<div class="stage">
+  <div class="side">
+    <div class="brand"><svg width="34" height="34" viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="24" fill="#B0582F"/><path d="M14.5 19 V25.5 a9.5 9.5 0 0 0 19 0 V19" fill="none" stroke="#FBFAF7" stroke-width="4" stroke-linecap="round"/><circle cx="24" cy="15.5" r="3.4" fill="#F7DCCB"/></svg><span>unbusyness <small>home</small></span></div>
+    <h1>The things you own <span>shouldn’t own you.</span></h1>
+    <p>A digital passport for everything you own, reminders at the right time, and tradespeople who turn up when they said they would.</p>
+    <ul>
+      <li>Home: what’s coming up and what’s in progress</li>
+      <li>Passport: home, car, appliances, warranties, invoices</li>
+      <li><b>New:</b> a property passport with Verified marks, to share with an estate agent when you sell</li>
+      <li>The + button: report a fault or add an invoice with a photo</li>
+      <li>Tradespeople: rated on punctuality and quality</li>
+      <li>Building: reports to your building manager, or a recommendation if they don’t use it yet</li>
+    </ul>
+    <p class="fine">Interactive demo with made-up data. Try <b>+ → Report a fault</b> and then <b>Next step</b> on the Home screen, or <b>Passport → View</b>.</p>
+  </div>
+  <div class="phone" id="phone">
+    <div class="sbar" aria-hidden="true"><span>9:41</span><span>●●● ▮</span></div>
+    <div class="scr" id="scr"></div>
+    <nav class="tabs" id="tabs" aria-label="Main menu"></nav>
+    <div id="layer"></div>
+  </div>
+</div>
+
+<script>
+/* ---------- icons ---------- */
+const P = {
+  home:'<path d="M4 11l8-7 8 7v9a1 1 0 0 1-1 1h-4v-6h-6v6H5a1 1 0 0 1-1-1z"/>',
+  book:'<rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h4"/>',
+  tool:'<path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.8-3.8a6 6 0 0 1-7.9 7.9l-6.9 6.9a2.1 2.1 0 0 1-3-3l6.9-6.9a6 6 0 0 1 7.9-7.9z"/>',
+  bld:'<path d="M5 21V4h10v17M15 9h4v12"/><path d="M8 8h1M11 8h1M8 12h1M11 12h1M8 16h1M11 16h1M3 21h18"/>',
+  plus:'<path d="M12 5v14M5 12h14"/>',
+  car:'<path d="M5 16l1.5-5A2 2 0 0 1 8.4 9.5h7.2a2 2 0 0 1 1.9 1.5L19 16"/><rect x="3" y="15" width="18" height="4" rx="1.5"/><circle cx="7.5" cy="19.5" r="1.3"/><circle cx="16.5" cy="19.5" r="1.3"/>',
+  flame:'<path d="M12 3c1 3 5 5 5 10a5 5 0 0 1-10 0c0-2 1-3.5 2-4.5 0 2 1 3 2 3 0-3-1-5.5 1-8.5z"/>',
+  wash:'<rect x="4" y="3" width="16" height="18" rx="2"/><circle cx="12" cy="13" r="4.5"/><path d="M8 6.5h.01M11 6.5h3"/>',
+  dish:'<rect x="4" y="3" width="16" height="18" rx="2"/><path d="M4 8h16M8 12v5M12 12v5M16 12v5"/>',
+  smoke:'<circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/><path d="M12 4v2M12 18v2"/>',
+  tap:'<path d="M4 10h9a3 3 0 0 1 3 3v1M10 10V6h3M7 6h9"/><path d="M16 18c0 1.1-.9 2-2 2"/><path d="M16 17.5l.5 1.5"/>',
+  snow:'<path d="M12 3v18M4.2 7.5l15.6 9M4.2 16.5l15.6-9"/>',
+  doc:'<path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h4"/>',
+  bell:'<path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>',
+  cam:'<path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/>',
+  mic:'<rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/>',
+  text:'<path d="M4 5h16v11H8l-4 4z"/>',
+  check:'<path d="M5 12.5l4.5 4.5L19 7.5"/>',
+  x:'<path d="M6 6l12 12M18 6L6 18"/>',
+  chev:'<path d="M9 6l6 6-6 6"/>',
+  phone:'<path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"/>',
+  bolt:'<path d="M13 2L4 14h7l-1 8 9-12h-7z"/>',
+  search:'<circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/>',
+  share:'<path d="M4 12v7a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-7M12 3v13M7 8l5-5 5 5"/>',
+  users:'<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><circle cx="17" cy="9" r="2.5"/><path d="M16 14.2a5 5 0 0 1 5.5 4.8"/>',
+  light:'<path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-4 10.5c.8.8 1 1.5 1 2.5h6c0-1 .2-1.7 1-2.5A6 6 0 0 0 12 3z"/>',
+  lift:'<rect x="5" y="3" width="14" height="18" rx="2"/><path d="M12 3v18M8.5 9l1.5-2 1.5 2M12.5 15l1.5 2 1.5-2"/>',
+  door:'<path d="M6 21V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v17M3 21h18M14 12h.01"/>',
+  ac:'<rect x="3" y="5" width="18" height="8" rx="2"/><path d="M7 17c0 1.5 1 2 1 3M12 17v3M17 17c0 1.5-1 2-1 3"/>',
+  key:'<circle cx="8" cy="15" r="4"/><path d="M11 12l9-9M17 6l3 3"/>',
+};
+const ic = (n, s = 20, w = 2) => `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${P[n] || ""}</svg>`;
+
+/* ---------- example data (izmišljeno) ---------- */
+const ME = { name: 'Maja', full: 'Maja Kranjc', ini: 'MK', addr: 'Celovška 100, Ljubljana', floor: '3rd floor, apartment 12' };
+const ITEMS = [
+  { id: 'smoke', cat: 'dom', name: 'Smoke alarm', sub: 'Hallway', icon: 'smoke', c: '', next: 'Battery change', due: '2 weeks overdue', st: 'late', kv: [['Model', 'optical, 9 V battery'], ['Installed', 'May 2022'], ['Last change', 'October 2025']], docs: ['Manual.pdf'], hist: [['Oct 2025', 'New battery', 'Yourself'], ['May 2022', 'Installation', '']], act: 'battery' },
+  { id: 'car', cat: 'avto', name: 'Volkswagen Golf', sub: 'LJ AB-123 · 2018', icon: 'car', c: 'c2', next: 'Switch to winter tyres', due: 'by 15 Nov', st: 'soon', kv: [['Registration valid until', '3 Mar 2027'], ['Insurance', 'renews 1 Feb 2027'], ['Mileage', 'about 96,000 km'], ['Winter tyres', 'stored at the tyre service']], docs: ['Registration certificate', 'Policy 2026', 'Service book'], hist: [['12 May 2026', 'Summer tyres', 'Vulkanizer Bežigrad (demo), €40'], ['3 Mar 2026', 'Registration and MOT', '€178'], ['Nov 2025', 'Minor service', 'Avtoservis Šiška (demo), €210']], act: 'tyres' },
+  { id: 'boiler', cat: 'dom', name: 'Gas boiler', sub: 'Bathroom · 2019', icon: 'flame', c: '', next: 'Yearly service', due: 'in 12 days', st: 'soon', kv: [['Type', 'condensing, 24 kW'], ['Installed', 'October 2019'], ['Service', 'every year, in November']], docs: ['Manual.pdf', 'Service 2025.pdf', 'Chimney sweep’s report'], hist: [['14 Nov 2025', 'Yearly service', 'Toplota servis (demo), €89'], ['10 Nov 2024', 'Yearly service', 'Toplota servis (demo), €85'], ['Oct 2019', 'Installed', '']], act: 'service' },
+  { id: 'dish', cat: 'aparati', name: 'Dishwasher', sub: 'Kitchen · 2024', icon: 'dish', c: 'c3', next: 'Warranty ends', due: 'March 2027', st: 'soon', kv: [['Bought', '18 Mar 2024'], ['Warranty until', '18 Mar 2027']], warr: 72, docs: ['Invoice.pdf', 'Warranty card'], hist: [['18 Mar 2024', 'Purchase and connection', '']] },
+  { id: 'wash', cat: 'aparati', name: 'Washing machine', sub: 'Bathroom · 2025', icon: 'wash', c: 'c3', next: 'Warranty ends', due: '3 Mar 2028', st: 'ok', kv: [['Bought', '3 Mar 2025'], ['Warranty until', '3 Mar 2028'], ['Filter cleaning', 'every 3 months']], warr: 28, docs: ['Invoice.pdf', 'Warranty card', 'Manual.pdf'], hist: [['3 Mar 2025', 'Purchase', '']] },
+  { id: 'ac', cat: 'dom', name: 'Air conditioner', sub: 'Bedroom · 2022', icon: 'ac', c: 'c2', next: 'Filter cleaning', due: 'April 2027', st: 'ok', kv: [['Installed', 'June 2022'], ['Service', 'every spring']], docs: ['Invoice.pdf'], hist: [['Apr 2026', 'Service and cleaning', 'Klima Center (demo), €65'], ['Jun 2022', 'Installed', '']] },
+  { id: 'tap', cat: 'dom', name: 'Kitchen tap', sub: 'Kitchen · 2021', icon: 'tap', c: '', next: 'Warranty expired', due: '2024', st: 'none', kv: [['Fitted', 'May 2021'], ['Warranty', 'expired May 2024']], docs: ['Invoice.pdf'], hist: [['May 2021', 'Installed', 'during the kitchen renovation']] },
+  { id: 'flat', cat: 'dokumenti', name: 'Apartment', sub: 'Celovška 100 · 3rd floor', icon: 'key', c: 'c3', next: 'Home insurance', due: 'renews 1 Jan 2027', st: 'ok', kv: [['Size', '68 m²'], ['Energy class', 'C'], ['Building manager', 'Upravnik Center (demo)']], docs: ['Sale contract', 'Energy certificate', 'Floor plan', 'Policy 2026'], hist: [['May 2021', 'Kitchen renovation', ''], ['2019', 'Purchase', '']] },
+];
+const PROS = {
+  matej: { id: 'matej', name: 'Matej Novak', trade: 'Plumber', ini: 'MN', stars: 4.9, jobs: 212, punct: 98, slot: 'Thu 8:00–9:00', price: '40–€80', mine: 'At your place: 1× (2023)' },
+  kos: { id: 'kos', name: 'Instalacije Kos', trade: 'Plumber', ini: 'IK', stars: 4.7, jobs: 154, punct: 93, slot: 'pet 12:00–14:00', price: '45–€90' },
+  nejc: { id: 'nejc', name: 'Nejc Zupan', trade: 'Electrician', ini: 'NZ', stars: 4.8, jobs: 178, punct: 97, slot: 'tomorrow 16:00–17:00', price: '50–€90', mine: 'At your place: 2× (2024, 2025)' },
+  volt: { id: 'volt', name: 'Elektro Volt', trade: 'Electrician', ini: 'EV', stars: 4.6, jobs: 96, punct: 91, slot: 'pon 9:00–11:00', price: '45–€85' },
+  toplota: { id: 'toplota', name: 'Toplota servis', trade: 'Boiler service', ini: 'TS', stars: 4.8, jobs: 640, punct: 96, slot: 'Wed 10:00–12:00', price: '85–€95', mine: 'At your place: 2× (2024, 2025)' },
+  vulk: { id: 'vulk', name: 'Vulkanizer Bežigrad', trade: 'Tyre service', ini: 'VB', stars: 4.7, jobs: 1200, punct: 95, slot: 'Sat 9:00', price: '€40', mine: 'At your place: 4×' },
+};
+const FAULTS = {
+  tap: { label: 'Kitchen tap dripping', say: '“The kitchen tap is dripping again, even when it’s turned off.”', item: 'tap', what: 'Kitchen tap leak', urg: 'Not urgent, but water keeps running', need: 'Plumber', why: 'The warranty ended in May 2024, so I’m looking for a tradesperson.', pros: ['matej', 'kos'], price: 64, fix: 'New cartridge' },
+  elec: { label: 'Bathroom socket not working', say: '“The socket by the bathroom mirror isn’t working.”', item: null, what: 'Faulty bathroom socket', urg: 'Fairly urgent, don’t use it', need: 'Electrician', why: 'From your passport: Nejc has already worked at your place twice.', pros: ['nejc', 'volt'], price: 55, fix: 'New protected socket' },
+  heat: { label: 'Boiler not heating water', say: '“The boiler isn’t heating water, the display shows error F28.”', item: 'boiler', what: 'Boiler: ignition fault (F28)', urg: 'Urgent, no hot water', need: 'Boiler technician', why: 'From your passport: Toplota servis has looked after your boiler since 2024.', pros: ['toplota'], price: 92, fix: 'Ignition electrode cleaned' },
+};
+
+/* property passports (izmišljeno) */
+const PROPS = {
+  cel: { id: 'cel', icon: 'key', name: 'Apartment, Celovška 100', place: 'Ljubljana · 3rd floor, no. 12', score: 94,
+    facts: [['Type', 'Apartment in a block of flats'], ['Size', '68 m², 3 rooms'], ['Year built', '1974, building renovated 2016'], ['Energy class', 'C (certificate valid until 2031)'], ['Heating', 'gas condensing boiler'], ['Property unit ID', '1737-512-12 (demo)'], ['Building manager', 'Upravnik Center (demo)'], ['Reserve fund', 'paid regularly']],
+    nums: [['14', 'work records'], ['9', 'Verified'], ['6', 'warranties']],
+    works: [
+      ['danes', 'Kitchen tap repair', 'Matej Novak, plumber · new cartridge', 'v', 'tap', 'jobOnly'],
+      ['Feb 2025', 'Water heater replacement (80 l)', 'Matej Novak · warranty until Feb 2030', 'v', 'tap'],
+      ['14 Nov 2025', 'Yearly gas boiler service', 'Toplota servis · measurement report', 'v', 'flame'],
+      ['10 Nov 2024', 'Yearly gas boiler service', 'Toplota servis', 'v', 'flame'],
+      ['2025', 'New protected electrical socket', 'Nejc Zupan, electrician', 'v', 'bolt'],
+      ['Apr 2026', 'Air conditioner service', 'Klima Center', 'v', 'ac'],
+      ['2023', 'New roof on the building', 'Through the building manager · Krovstvo Hribar', 'b', 'bld'],
+      ['2016', 'Energy renovation of the facade and windows', 'Through the building manager, co-funded', 'b', 'bld'],
+      ['May 2021', 'Kitchen renovation', 'Added manually, invoices attached', 'o', 'doc'],
+    ],
+    docs: [['Energy certificate', 'until 2031'], ['Building occupancy permit', '1975'], ['Sale contract', '2019'], ['Land register extract', 'Oct 2026'], ['Apartment floor plan', 'PDF'], ['Owners’ meeting minutes', '2023–2026'], ['Home insurance policy', 'until 1 Jan 2027'], ['Appliance warranties', '6 documents']] },
+  boh: { id: 'boh', icon: 'home', name: 'House, Bohinjska Bistrica', place: 'Holiday home · 142 m², plot 610 m²', score: 88,
+    facts: [['Type', 'Detached house'], ['Size', '142 m², plot 610 m²'], ['Year built', '1988, extended 2012'], ['Energy class', 'B1 (after the heating change)'], ['Heating', 'air-to-water heat pump, 2024'], ['Plot', 'cadastral area Bohinjska Bistrica, 512/3 (demo)']],
+    nums: [['11', 'work records'], ['6', 'Verified'], ['4', 'warranties']],
+    works: [
+      ['Jun 2023', 'New roof covering and insulation', 'Krovstvo Hribar · 10-year warranty', 'v', 'home'],
+      ['Sep 2024', 'Air-to-water heat pump', 'Toplota servis · Eco Fund subsidy', 'v', 'flame'],
+      ['Oct 2025', 'Chimney inspection and cleaning', 'Dimnikarstvo Gorenjska · report', 'v', 'flame'],
+      ['Aug 2025', 'Electrical wiring inspection', 'Nejc Zupan · test report', 'v', 'bolt'],
+      ['2018', 'New facade', 'Added manually, invoice attached', 'o', 'doc'],
+    ],
+    docs: [['Building permit', '1987, extension 2011'], ['Occupancy permit', '2012'], ['Energy certificate', 'until 2034'], ['Land register extract', 'Sep 2026'], ['Survey plan', 'PDF'], ['Eco Fund decision', '2024'], ['Roof warranty', 'until 2033']] },
+};
+const STAGES = ['Booked', 'On the way', 'Arrived', 'Done'];
+
+/* ---------- state ---------- */
+const S = { tab: 'home', cat: 'vse', q: '', job: null, booked: {}, done: {}, mgr: true, recSent: false, bReports: [
+  { t: 'Light on the 3rd floor not working', s: 'Electrician booked for Wednesday', st: 'soon', by: 'Reported by: you' },
+  { t: 'Stairwell cleaning', s: 'Every Tuesday at 8:00', st: 'ok', by: 'Notice from the building manager' },
+], added: [], toasted: false };
+let sheetState = null;
+const scr = document.getElementById('scr'), layer = document.getElementById('layer');
+const itm = (id) => ITEMS.find((x) => x.id === id) || S.added.find((x) => x.id === id);
+const all = () => [...S.added, ...ITEMS];
+const stOf = (it) => (S.done[it.id] ? 'ok' : S.booked[it.id] ? 'soon' : it.st);
+const dueOf = (it) => (S.done[it.id] ? S.done[it.id] : S.booked[it.id] ? S.booked[it.id] : it.due);
+const pillTxt = { late: 'Overdue', soon: 'Soon', ok: 'OK', none: 'Record' };
+
+function mini(t) { const m = document.createElement('div'); m.className = 'mini'; m.textContent = t; document.getElementById('phone').appendChild(m); setTimeout(() => m.remove(), 2200); }
+
+/* ---------- tabs ---------- */
+function tabs() {
+  const tb = (id, n, l) => `<button class="tab" data-tab="${id}" ${S.tab === id ? 'aria-current="page"' : ''}>${ic(n, 23)}${l}${id === 'pass' && all().some((x) => stOf(x) === 'late') ? '<i class="dotn"></i>' : ''}</button>`;
+  document.getElementById('tabs').innerHTML = tb('home', 'home', 'Home') + tb('pass', 'book', 'Passport') + `<button class="plus" id="plus" aria-label="Add or report">${ic('plus', 30, 2.4)}</button>` + tb('pros', 'tool', 'Tradespeople') + tb('bld', 'bld', 'Building');
+  document.querySelectorAll('[data-tab]').forEach((b) => (b.onclick = () => { S.tab = b.dataset.tab; render(); scr.scrollTop = 0; }));
+  document.getElementById('plus').onclick = () => openSheet({ k: 'plus' });
+}
+
+/* ---------- screens ---------- */
+function rowItem(it) {
+  const st = stOf(it);
+  return `<button class="row" data-item="${it.id}"><span class="ic ${it.c}">${ic(it.icon)}</span><span class="tx"><b>${it.name}</b><span>${S.done[it.id] ? 'Done' : S.booked[it.id] ? 'Booked' : it.next} · ${dueOf(it)}</span></span>${S.added.includes(it) ? '<span class="pill new">Novo</span>' : `<span class="pill ${st}">${pillTxt[st]}</span>`}</button>`;
+}
+function home() {
+  const up = all().filter((x) => ['late', 'soon'].includes(stOf(x)) || S.booked[x.id]).sort((a, b) => ['late', 'soon', 'ok', 'none'].indexOf(stOf(a)) - ['late', 'soon', 'ok', 'none'].indexOf(stOf(b)));
+  const j = S.job;
+  let jobCard = '';
+  if (j) {
+    const f = FAULTS[j.f], p = PROS[j.pro];
+    const sub = ['Confirmation sent. You’ll get a reminder the evening before.', `On the way, arriving in about 15 min.`, 'Arrived at 7:56, within the agreed time.', `${f.fix}. Invoice €${f.price} has been saved to your passport.`][j.stage];
+    jobCard = `<div class="hero"><small><span>V teku · ${f.need}</span><span>${STAGES[j.stage]}</span></small><h3>${f.what}</h3><p>${p.name} · ${p.slot}. ${sub}</p>
+      <div class="track">${STAGES.map((_, i) => `<i class="${i <= j.stage ? 'on' : ''}"></i>`).join('')}</div><div class="track-l">${STAGES.map((s) => `<span>${s}</span>`).join('')}</div>
+      <div class="btns"><button class="btn line" id="jCall">${ic('phone', 18)}Call</button>${j.stage < 3 ? `<button class="btn" id="jNext">Next step</button>` : `<button class="btn" id="jRate">Oceni obisk</button>`}</div>
+      <p style="font-size:12px;opacity:.75">Demo: “Next step” shows what you see during the visit.</p></div>`;
+  }
+  scr.innerHTML = `<div class="hd"><div><small>Friday, 6 November</small><h2>Good morning, ${ME.name}</h2></div><button class="av" id="me" aria-label="Profile">${ME.ini}</button></div>
+    ${jobCard || `<div class="hero"><small><span>All under control</span><span>${ic('check', 14)}</span></small><h3>Nothing is broken. Two things are due soon.</h3><p>When something breaks, press + and say what’s wrong.</p><button class="btn" id="goReport">${ic('tool', 18)}Report a fault</button></div>`}
+    <div class="lbl"><span>Coming up</span>${up.filter((x) => stOf(x) === 'late').length ? `<b>${up.filter((x) => stOf(x) === 'late').length} overdue</b>` : ''}</div>
+    ${up.slice(0, 5).map(rowItem).join('') || '<p class="empty">Nothing this month.</p>'}
+    <div class="lbl"><span>Your home</span></div>
+    <div class="stats"><div class="stat"><small>In your passport</small><b>${all().length + 15}</b><span>items and documents</span></div><div class="stat"><small>Warranties</small><b>${6 + S.added.length}</b><span>valid</span></div></div>
+    <div class="lbl"><span>Recent</span></div>
+    <div class="card"><ul class="tl">${(S.done.tap ? [['Today', 'Kitchen tap fixed', 'Matej Novak · invoice saved']] : []).concat([['14 Nov 2025', 'Yearly boiler service', 'Toplota servis · €89'], ['12 May 2026', 'Summer tyres', 'Vulkanizer Bežigrad · €40']]).map((x) => `<li><div><b>${x[1]}</b><span>${x[0]} · ${x[2]}</span></div></li>`).join('')}</ul></div>`;
+  bindItems();
+  const g = (id, fn) => { const e = document.getElementById(id); if (e) e.onclick = fn; };
+  g('goReport', () => openSheet({ k: 'report', step: 0 }));
+  g('me', () => openSheet({ k: 'me' }));
+  g('jNext', () => { S.job.stage++; if (S.job.stage === 3) { const f = FAULTS[S.job.f]; if (f.item) S.done[f.item] = 'popravljeno danes'; } render(); });
+  g('jRate', () => openSheet({ k: 'rate' }));
+  g('jCall', () => mini('Demo: you would call the tradesperson here'));
+  if (!S.toasted) { S.toasted = true; setTimeout(toast, 1600); }
+}
+function pass() {
+  const cats = [['vse', 'All'], ['dom', 'Home'], ['avto', 'Car'], ['aparati', 'Appliances'], ['dokumenti', 'Documents']];
+  const q = S.q.toLowerCase();
+  const list = all().filter((x) => (S.cat === 'vse' || x.cat === S.cat) && (!q || (x.name + ' ' + x.sub).toLowerCase().includes(q)));
+  scr.innerHTML = `<div class="hd"><div><small>${ME.addr}</small><h2>Passport</h2></div><button class="av" id="addBtn" aria-label="Add">${ic('plus', 20, 2.4)}</button></div>
+    <div class="props">${Object.values(PROPS).map((pp, i) => `<button class="prop ${i ? 'alt' : ''}" data-prop="${pp.id}"><span class="ic">${ic(pp.icon, 24)}</span><span><b>${pp.name}</b><span class="s">Property passport · ${pp.score} % popoln</span></span><span class="go">View</span></button>`).join('')}</div>
+    <label class="search">${ic('search', 18)}<input id="q" placeholder="Search: warranty, boiler, policy …" value="${S.q.replace(/"/g, '&quot;')}" aria-label="Search"></label>
+    <div class="cats">${cats.map(([k, l]) => `<button class="cat" data-cat="${k}" aria-pressed="${S.cat === k}">${l}</button>`).join('')}</div>
+    ${list.map(rowItem).join('') || '<p class="empty">No results.</p>'}
+    <button class="btn line" id="addBtn2" style="margin-top:8px">${ic('cam', 18)}Add with a photo of the invoice</button>`;
+  bindItems();
+  document.querySelectorAll('[data-cat]').forEach((b) => (b.onclick = () => { S.cat = b.dataset.cat; render(); }));
+  document.querySelectorAll('[data-prop]').forEach((b) => (b.onclick = () => openProp(b.dataset.prop)));
+  const qi = document.getElementById('q'); qi.oninput = () => { S.q = qi.value; const pos = qi.selectionStart; render(); const n = document.getElementById('q'); n.focus(); n.setSelectionRange(pos, pos); };
+  document.getElementById('addBtn').onclick = document.getElementById('addBtn2').onclick = () => openSheet({ k: 'add', step: 0 });
+}
+function pros() {
+  const mine = ['matej', 'nejc', 'toplota', 'vulk'];
+  scr.innerHTML = `<div class="hd"><div><small>Checked and rated</small><h2>My tradespeople</h2></div></div>
+    <div class="card" style="grid-template-columns:44px minmax(0,1fr);align-items:center"><span class="ic c3">${ic('check')}</span><p style="margin:0;font-size:13.5px;color:var(--muted)">You and other residents rate tradespeople on <b style="color:var(--ink)">punctuality</b> in <b style="color:var(--ink)">quality</b>. Anyone who keeps turning up late gets no new jobs.</p></div>
+    <div class="lbl"><span>They’ve worked at your place</span></div>
+    ${mine.map((id) => proCard(PROS[id], true)).join('')}
+    <div class="lbl"><span>Need someone else?</span></div>
+    <div class="chips">${['Electrician', 'Plumber', 'Painter', 'Locksmith', 'Cleaning', 'Roofer', 'Carpenter', 'Appliance repair'].map((x) => `<button class="chip" data-need>${x}</button>`).join('')}</div>`;
+  document.querySelectorAll('[data-pro]').forEach((b) => (b.onclick = () => openSheet({ k: 'pro', id: b.dataset.pro })));
+  document.querySelectorAll('[data-need]').forEach((b) => (b.onclick = () => openSheet({ k: 'report', step: 0 })));
+}
+function proCard(p, btn) {
+  return `<${btn ? 'button' : 'div'} class="pro" ${btn ? `data-pro="${p.id}"` : ''} style="margin-bottom:8px"><div class="top"><span class="face">${p.ini}</span><span class="tx"><b>${p.name}</b><span>${p.trade}${p.mine ? ' · ' + p.mine : ''}</span></span>${btn ? `<span class="chev">${ic('chev', 18)}</span>` : ''}</div>
+    <div class="meta"><span><span class="star">★</span> ${p.stars.toFixed(1).replace('.', ',')} (${p.jobs})</span><span class="g">Punctuality ${p.punct} %</span><span>First slot: ${p.slot}</span></div></${btn ? 'button' : 'div'}>`;
+}
+function bld() {
+  scr.innerHTML = `<div class="hd"><div><small>${ME.floor}</small><h2>${ME.addr.split(',')[0]}</h2></div><span class="ic c2">${ic('bld')}</span></div>
+    <div class="sw"><span>Demo: building manager uses Unbusyness</span><button role="switch" aria-checked="${S.mgr}" id="mgrSw" aria-label="Your building manager uses Unbusyness"></button></div>
+    ${S.mgr ? `
+      <div class="lbl"><span>Building manager</span></div>
+      <div class="row" style="cursor:default"><span class="ic c3">${ic('bld')}</span><span class="tx"><b>Upravnik Center (demo)</b><span>Reports go straight to the building manager</span></span><span class="pill ok">Connected</span></div>
+      <button class="btn" id="bRep">${ic('tool', 18)}Report a fault in the shared areas</button>
+      <div class="lbl"><span>Reports and notices</span></div>
+      ${S.bReports.map((r) => `<div class="row" style="cursor:default"><span class="ic ${r.st === 'ok' ? 'c3' : ''}">${ic(r.st === 'ok' ? 'bell' : 'light')}</span><span class="tx"><b>${r.t}</b><span>${r.s}<br>${r.by}</span></span><span class="pill ${r.st}">${r.st === 'ok' ? 'Info' : 'In progress'}</span></div>`).join('')}
+      <div class="row" style="cursor:default"><span class="ic c2">${ic('users')}</span><span class="tx"><b>Owners’ meeting</b><span>Thursday 20 Nov at 18:00 · the facade vote is also in the app</span></span><span class="pill none">Info</span></div>`
+    : `
+      <div class="card" style="margin-top:14px"><span class="ic">${ic('share')}</span><b style="font-size:18px;letter-spacing:-.02em">Your building manager doesn’t use Unbusyness yet</b><p style="margin:0;color:var(--muted);font-size:14px">Recommend it to them. Once they connect, you’ll report faults in the shared areas with one message and follow the repair.</p>
+        <div class="field"><label for="recMsg">Message to the building manager</label><textarea id="recMsg">Hello,
+
+I live in the building at ${ME.addr}. I'd like to recommend Unbusyness (unbusyness.com), an assistant for building managers. We would report faults with one message, and you would get ready-made jobs with a photo and a suggested tradesperson.
+
+Kind regards, ${ME.full}</textarea></div>
+        <div class="btns"><a class="btn line" id="recMail" style="text-decoration:none" href="#">Email</a><a class="btn line" id="recWa" style="text-decoration:none" target="_blank" rel="noopener" href="#">WhatsApp</a></div>
+        <button class="btn" id="recUs">${S.recSent ? ic('check', 18) + 'We’ll contact them' : 'Let Unbusyness contact them'}</button>
+        <p class="note">3 neighbours in your building have already recommended it to the manager.${S.recSent ? ' With you, 4.' : ''}</p></div>
+      <div class="lbl"><span>Meanwhile</span></div>
+      <div class="row" style="cursor:default"><span class="ic c3">${ic('doc')}</span><span class="tx"><b>You can still log faults</b><span>Unbusyness prepares a message for the building manager and keeps a record of when you reported it.</span></span></div>`}`;
+  document.getElementById('mgrSw').onclick = () => { S.mgr = !S.mgr; render(); };
+  const g = (id) => document.getElementById(id);
+  if (g('bRep')) g('bRep').onclick = () => openSheet({ k: 'brep' });
+  if (g('recMsg')) {
+    const upd = () => { const t = g('recMsg').value; g('recMail').href = 'mailto:?subject=' + encodeURIComponent('Suggestion: Unbusyness for our building') + '&body=' + encodeURIComponent(t); g('recWa').href = 'https://wa.me/?text=' + encodeURIComponent(t); };
+    g('recMsg').oninput = upd; upd();
+    g('recUs').onclick = () => { if (!S.recSent) { S.recSent = true; render(); mini('Noted. We’ll call the building manager.'); } };
+  }
+}
+function bindItems() { document.querySelectorAll('[data-item]').forEach((b) => (b.onclick = () => openSheet({ k: 'item', id: b.dataset.item }))); }
+
+/* ---------- sheets ---------- */
+function openSheet(s) { sheetState = s; drawSheet(); }
+function closeSheet() { sheetState = null; layer.innerHTML = ''; render(); }
+function drawSheet() {
+  const s = sheetState; if (!s) { layer.innerHTML = ''; return; }
+  let title = '', body = '';
+  if (s.k === 'plus') {
+    title = 'What would you like to do?';
+    body = `<button class="row" id="pRep"><span class="ic">${ic('tool')}</span><span class="tx"><b>Report a fault</b><span>Photo, voice or text. I’ll find a tradesperson.</span></span><span class="chev">${ic('chev', 18)}</span></button>
+      <button class="row" id="pAdd"><span class="ic c3">${ic('cam')}</span><span class="tx"><b>Add to your passport</b><span>Take a photo of an invoice, a rating plate or a document.</span></span><span class="chev">${ic('chev', 18)}</span></button>`;
+  } else if (s.k === 'item') {
+    const it = itm(s.id); const st = stOf(it); title = it.name;
+    body = `<div class="row" style="cursor:default;margin:0"><span class="ic ${it.c}">${ic(it.icon)}</span><span class="tx"><b>${S.done[it.id] ? 'Done' : S.booked[it.id] ? 'Booked' : it.next}</b><span>${dueOf(it)}</span></span><span class="pill ${st}">${pillTxt[st]}</span></div>
+      ${it.warr != null ? `<div class="card"><div style="display:flex;justify-content:space-between;font-size:13.5px"><b>Warranty</b><span style="color:var(--muted)">${it.kv.find((x) => x[0] === 'Warranty until')[1]}</span></div><div class="wbar"><i style="width:${100 - it.warr}%"></i></div><span class="note">Before the warranty ends, I’ll remind you to check the machine.</span></div>` : ''}
+      <div class="card"><div class="kv">${it.kv.map(([k, v]) => `<span>${k}</span><b>${v}</b>`).join('')}</div></div>
+      <div><div class="lbl" style="margin-top:4px"><span>Documents</span></div><div class="docs">${it.docs.map((d) => `<span class="doc">${ic('doc', 16)}${d}</span>`).join('')}</div></div>
+      <div><div class="lbl" style="margin-top:4px"><span>History</span></div><div class="card"><ul class="tl">${(S.done[it.id] && S.job && FAULTS[S.job.f].item === it.id ? [['today', FAULTS[S.job.f].fix, PROS[S.job.pro].name + ', €' + FAULTS[S.job.f].price]] : []).concat(it.hist).map((h) => `<li><div><b>${h[1]}</b><span>${h[0]}${h[2] ? ' · ' + h[2] : ''}</span></div></li>`).join('')}</ul></div></div>
+      ${it.act === 'tyres' && !S.booked.car ? `<button class="btn" id="iAct">Book the tyre change</button>` : ''}
+      ${it.act === 'service' && !S.booked.boiler ? `<button class="btn" id="iAct">Book a boiler service</button>` : ''}
+      ${it.act === 'battery' && !S.done.smoke ? `<button class="btn" id="iAct">${ic('check', 18)}I changed the battery</button>` : ''}
+      ${it.id === 'flat' ? `<button class="btn" id="iProp">${ic('book', 18)}Open the property passport</button>` : `<button class="btn line" id="iRep">${ic('tool', 18)}Report a fault</button>`}`;
+  } else if (s.k === 'report') {
+    title = ['What’s wrong?', 'Got it', 'Choose a tradesperson', 'Booked'][s.step];
+    if (s.step === 0) {
+      body = `<div class="modes"><button class="mode" data-mode="cam"><span class="ic">${ic('cam')}</span>Photo</button><button class="mode" data-mode="mic"><span class="ic c2">${ic('mic')}</span>Voice</button><button class="mode" data-mode="text"><span class="ic c3">${ic('text')}</span>Text</button></div>
+        ${s.rec ? `<div class="vn"><span class="rec-dot" aria-hidden="true"></span><i></i><small>0:0${s.rec}</small></div>` : ''}
+        <div class="lbl" style="margin-top:6px"><span>Or pick an example</span></div>
+        <div class="chips">${Object.entries(FAULTS).map(([k, f]) => `<button class="chip" data-f="${k}">${f.label}</button>`).join('')}</div>
+        <p class="note">Demo: photo and voice message use the first example.</p>`;
+    } else if (s.step === 1) {
+      const f = FAULTS[s.f];
+      body = `<div class="vn"><span class="pb">${ic('mic', 16)}</span><i></i><small>0:05</small></div><p class="note" style="margin-top:-4px">${f.say}</p>
+        <div class="ai"><small>Unbusyness understood</small><div class="kv"><span>What</span><b>${f.what}</b><span>Urgency</span><b>${f.urg}</b><span>You need</span><b>${f.need}</b>${f.item ? `<span>From your passport</span><b>${itm(f.item).name}</b>` : ''}</div><p style="margin:0;font-size:13.5px;color:var(--muted)">${f.why}</p></div>
+        <button class="btn" id="rNext">Find tradespeople</button><button class="btn soft" id="rBack">Not right, fix it</button>`;
+    } else if (s.step === 2) {
+      const f = FAULTS[s.f];
+      body = `<p class="note">The nearest checked tradespeople for “${f.need.toLowerCase()}”, sorted by punctuality.</p>
+        ${f.pros.map((id) => `<button class="pro" data-pick="${id}" aria-pressed="${s.pick === id}"><div class="top"><span class="face">${PROS[id].ini}</span><span class="tx"><b>${PROS[id].name}</b><span>${PROS[id].trade}${PROS[id].mine ? ' · ' + PROS[id].mine : ''}</span></span><span class="pill soon">${PROS[id].price}</span></div><div class="meta"><span><span class="star">★</span> ${PROS[id].stars.toFixed(1).replace('.', ',')}</span><span class="g">Punctuality ${PROS[id].punct} %</span><span>${PROS[id].slot}</span></div></button>`).join('')}
+        <p class="note">The price is an estimate, the tradesperson confirms it on site. The slot is a guaranteed time window, not “sometime in the morning”.</p>
+        <button class="btn" id="rBook" ${s.pick ? '' : 'disabled style="opacity:.45"'}>Book a slot</button>`;
+    } else {
+      const f = FAULTS[s.f], p = PROS[s.pick];
+      body = `<div class="ok-big"><span class="ic">${ic('check', 30, 2.4)}</span><h4>${p.name} pride ${p.slot}</h4><p>I’ll remind you the evening before, and on the day you’ll see when they’re on the way. After the visit the invoice is saved to your passport.</p></div>
+        <div class="card"><div class="kv"><span>Address</span><b>${ME.addr}</b><span>Fault</span><b>${f.what}</b><span>Estimated price</span><b>${p.price}</b></div></div>
+        <button class="btn" id="rDone">Back to the home screen</button>`;
+    }
+  } else if (s.k === 'add') {
+    title = ['Add to your passport', 'Reading …', 'Check the details'][s.step];
+    if (s.step < 2) body = `<div class="scan"><div class="paper"><i class="b"></i><i class="m"></i><i class="s"></i><i></i><i class="m"></i><i class="s"></i><i></i><i class="b" style="margin-top:8px"></i></div><span class="corner"></span>${s.step === 1 ? '<span class="beam"></span>' : ''}</div>
+      <p class="note" style="text-align:center">An invoice, a warranty card, a rating plate or a policy.</p>
+      ${s.step === 0 ? `<button class="btn" id="aShot">${ic('cam', 18)}Take a photo (demo)</button>` : '<button class="btn soft" disabled>Reading the invoice …</button>'}`;
+    else body = `<div class="ai"><small>Read from the invoice</small><p style="margin:0;font-size:13.5px;color:var(--muted)">Check and save. I’ll set the warranty reminder myself.</p></div>
+      <div class="field"><label for="aN">Item</label><input id="aN" value="Bagless vacuum cleaner"></div>
+      <div class="field"><label for="aD">Bought</label><input id="aD" value="2 Nov 2026"></div>
+      <div class="field"><label for="aW">Warranty until</label><input id="aW" value="2 Nov 2029"></div>
+      <div class="field"><label for="aP">Price</label><input id="aP" value="€249.00"></div>
+      <button class="btn" id="aSave">Save to your passport</button>`;
+  } else if (s.k === 'rate') {
+    const p = PROS[S.job.pro]; title = 'How was it?';
+    body = `<p class="note">Your rating helps neighbours and decides who gets the next jobs.</p>
+      ${['Punctuality', 'Kakovost dela'].map((l, k) => `<div class="card"><b>${l}</b><div class="rate" data-r="${k}">${[1, 2, 3, 4, 5].map((n) => `<button data-n="${n}" class="${n <= (s.r?.[k] || 0) ? 'on' : ''}" aria-label="${n} of 5">★</button>`).join('')}</div></div>`).join('')}
+      <button class="btn" id="rtSave">Send rating for ${p.name}</button>`;
+  } else if (s.k === 'pro') {
+    const p = PROS[s.id]; title = p.name;
+    body = proCard(p, false) + `<div class="card"><div class="kv"><span>Jobs done</span><b>${p.jobs}</b><span>Arrived on time</span><b>${p.punct} %</b><span>Estimated price</span><b>${p.price}</b><span>First free slot</span><b>${p.slot}</b></div></div>
+      <div class="btns"><button class="btn line" id="pCall">${ic('phone', 18)}Call</button><button class="btn" id="pBook">Book</button></div>`;
+  } else if (s.k === 'brep') {
+    title = 'Fault in the shared areas';
+    body = s.sent ? `<div class="ok-big"><span class="ic">${ic('check', 30, 2.4)}</span><h4>Sent to the building manager</h4><p>Upravnik Center got a ready-made job with the photo. I’ll let you know when a tradesperson is booked.</p></div><button class="btn" id="bDone">OK</button>`
+      : `<p class="note">What’s wrong? Send a photo or pick an example.</p><div class="modes"><button class="mode" data-b="Lift stuck between floors"><span class="ic">${ic('lift')}</span>Lift</button><button class="mode" data-b="Basement light not working"><span class="ic c2">${ic('light')}</span>Lighting</button><button class="mode" data-b="Front door won’t close"><span class="ic c3">${ic('door')}</span>Front door</button></div>`;
+  } else if (s.k === 'share') {
+    const pp = PROPS[s.id]; title = 'Share the passport';
+    s.opt = s.opt || { docs: true, works: true, warr: true, price: false };
+    const sw = (k, l, d) => `<div class="sw"><span>${l}<br><span style="font-weight:500;color:var(--muted);font-size:12.5px">${d}</span></span><button role="switch" aria-checked="${s.opt[k]}" data-opt="${k}" aria-label="${l}"></button></div>`;
+    body = s.link ? `<div class="ok-big"><span class="ic">${ic('check', 30, 2.4)}</span><h4>The link is ready</h4><p>${s.agent || 'Agent'} can see the passport for the ${pp.name.split(',')[0].toLowerCase()} for 30 days. You can revoke access at any time.</p></div>
+        <div class="linkbox">${ic('share', 16)}unbusyness.com/p/${pp.id.toUpperCase()}-7KQ2</div>
+        <div class="btns"><button class="btn line" id="shCopy">Copy</button><button class="btn" id="shSend">Send to the agent</button></div>
+        <p class="note">You see every time the link is opened in the app.</p>`
+      : `<p class="note" style="margin:0">${pp.name}. The agent gets a link to the passport, without signing in to the app.</p>
+        <div class="field"><label for="shA">Estate agent</label><input id="shA" placeholder="Name or agency" value="${s.agent || ''}"></div>
+        <div class="field"><label for="shE">Agent’s email</label><input id="shE" type="email" placeholder="agent@agency.com"></div>
+        <div class="lbl" style="margin-top:4px"><span>What you share</span></div>
+        ${sw('works', 'Maintenance history', 'All work with Verified marks')}${sw('docs', 'Documents', 'Energy certificate, permits, land register')}${sw('warr', 'Valid warranties', 'Roof, appliances, heating')}${sw('price', 'Prices of work', 'Hidden by default')}
+        <button class="btn" id="shMake">Create a link for 30 days</button>`;
+  } else if (s.k === 'me') {
+    title = ME.full;
+    body = `<div class="card"><div class="kv"><span>Address</span><b>${ME.addr}</b><span>Household</span><b>Maja, Luka (partner)</b><span>Reminders</span><b>7 days before, at 9:00</b><span>Channel</span><b>App and email</b></div></div>
+      <div class="row" style="cursor:default"><span class="ic c2">${ic('users')}</span><span class="tx"><b>Invite a household member</b><span>They see the same passport and get reminders.</span></span></div>
+      <p class="note">Demo with made-up data.</p>`;
+  }
+  layer.innerHTML = `<div class="scrim" id="scrim"></div><div class="sheet" role="dialog" aria-modal="true" aria-label="${title}"><div class="grab"></div><div class="sh"><h3>${title}</h3><button class="x" id="sx" aria-label="Close">${ic('x', 18)}</button></div><div class="sb">${body}</div></div>`;
+  document.getElementById('scrim').onclick = closeSheet; document.getElementById('sx').onclick = closeSheet;
+  const g = (id, fn) => { const e = document.getElementById(id); if (e) e.onclick = fn; };
+  g('pRep', () => openSheet({ k: 'report', step: 0 })); g('pAdd', () => openSheet({ k: 'add', step: 0 }));
+  g('iRep', () => openSheet({ k: 'report', step: 0 }));
+  g('iProp', () => { sheetState = null; layer.innerHTML = ''; openProp('cel'); });
+  g('iAct', () => { const it = itm(s.id); if (it.act === 'tyres') { S.booked.car = 'Sat 9:00, Vulkanizer Bežigrad'; mini('Booked: Saturday at 9:00'); } else if (it.act === 'service') { S.booked.boiler = 'Wed 10:00–12:00, Toplota servis'; mini('Boiler service booked'); } else { S.done.smoke = 'zamenjano danes'; mini('Great. The next reminder is in a year.'); } drawSheet(); render(); });
+  document.querySelectorAll('[data-mode]').forEach((b) => (b.onclick = () => {
+    if (b.dataset.mode === 'mic') { let n = 0; s.rec = 1; drawSheet(); const t = setInterval(() => { n++; if (sheetState !== s) return clearInterval(t); if (n < 4) { s.rec = n + 1; drawSheet(); } else { clearInterval(t); openSheet({ k: 'report', step: 1, f: 'tap' }); } }, 600); }
+    else openSheet({ k: 'report', step: 1, f: 'tap' });
+  }));
+  document.querySelectorAll('[data-f]').forEach((b) => (b.onclick = () => openSheet({ k: 'report', step: 1, f: b.dataset.f })));
+  g('rNext', () => openSheet({ k: 'report', step: 2, f: s.f, pick: FAULTS[s.f].pros[0] })); g('rBack', () => openSheet({ k: 'report', step: 0 }));
+  document.querySelectorAll('[data-pick]').forEach((b) => (b.onclick = () => { s.pick = b.dataset.pick; drawSheet(); }));
+  g('rBook', () => { if (!s.pick) return; S.job = { f: s.f, pro: s.pick, stage: 0 }; openSheet({ k: 'report', step: 3, f: s.f, pick: s.pick }); });
+  g('rDone', () => { S.tab = 'home'; closeSheet(); scr.scrollTop = 0; });
+  g('aShot', () => { s.step = 1; drawSheet(); setTimeout(() => { if (sheetState === s) { s.step = 2; drawSheet(); } }, 1500); });
+  g('aSave', () => { const v = (id) => document.getElementById(id).value.trim(); S.added.unshift({ id: 'n' + Date.now(), cat: 'aparati', name: v('aN') || 'New item', sub: 'Bought ' + v('aD'), icon: 'doc', c: 'c3', next: 'Warranty ends', due: v('aW'), st: 'ok', kv: [['Bought', v('aD')], ['Warranty until', v('aW')], ['Price', v('aP')]], warr: 0, docs: ['Invoice (photo)'], hist: [[v('aD'), 'Purchase', 'added with a photo of the invoice']] }); S.tab = 'pass'; S.cat = 'vse'; closeSheet(); mini('Added to your passport'); });
+  document.querySelectorAll('.rate button').forEach((b) => (b.onclick = () => { s.r = s.r || [0, 0]; s.r[+b.parentElement.dataset.r] = +b.dataset.n; drawSheet(); }));
+  g('rtSave', () => { const p = PROS[S.job.pro]; S.job = null; closeSheet(); mini(`Thanks! Your rating for ${p.name} has been sent.`); });
+  g('pCall', () => mini('Demo: you would call the tradesperson here')); g('pBook', () => openSheet({ k: 'report', step: 0 }));
+  document.querySelectorAll('[data-b]').forEach((b) => (b.onclick = () => { S.bReports.unshift({ t: b.dataset.b, s: 'Sent to the building manager, waiting for a tradesperson', st: 'soon', by: 'Reported by: you, just now' }); s.sent = true; drawSheet(); render(); }));
+  g('bDone', closeSheet);
+  document.querySelectorAll('[data-opt]').forEach((b) => (b.onclick = () => { s.opt[b.dataset.opt] = !s.opt[b.dataset.opt]; s.agent = (document.getElementById('shA') || {}).value || s.agent; drawSheet(); }));
+  g('shMake', () => { s.agent = document.getElementById('shA').value.trim(); s.link = true; drawSheet(); });
+  g('shCopy', () => { try { navigator.clipboard.writeText('https://unbusyness.com/p/' + s.id.toUpperCase() + '-7KQ2'); } catch {} mini('Link copied'); });
+  g('shSend', () => { sheetState = null; layer.innerHTML = ''; mini('Demo: link sent to the agent'); });
+
+}
+
+
+/* ---------- property passport (full screen) ---------- */
+let propOpen = null;
+function openProp(id) { propOpen = id; drawProp(); }
+function drawProp() {
+  let f = document.getElementById('propFull');
+  if (!propOpen) { if (f) f.remove(); return; }
+  const pp = PROPS[propOpen];
+  const works = pp.works.filter((w) => w[5] !== 'jobOnly' || S.done.tap);
+  const badge = (k) => k === 'v' ? `<span class="ver">${ic('check', 12, 3)}Verified</span>` : k === 'b' ? `<span class="ver">${ic('check', 12, 3)}Verified · building</span>` : `<span class="ver own">Added manually</span>`;
+  const html = `<div class="fbar"><button class="x" id="pfBack" aria-label="Back">${ic('chev', 18).replace('M9 6l6 6-6 6', 'M15 6l-6 6 6 6')}</button><b>Property passport</b><button class="x" id="pfShare" aria-label="Share">${ic('share', 18)}</button></div>
+    <div class="fbody">
+      <div class="cert"><small>Unbusyness · property passport</small><h3>${pp.name}</h3><p>${pp.place}</p>
+        <div class="seal"><span class="ring" style="--v:${pp.score}"><span>${pp.score}%</span></span><div><b>Well maintained</b><span class="s">Passport completeness. Work marked Verified was done and paid for through Unbusyness.</span></div></div>
+        <div class="cgrid">${pp.nums.map(([n, l]) => `<div><b>${n}</b><span>${l}</span></div>`).join('')}</div>
+        <p style="font-size:12px;opacity:.8">Last updated: today · passport ID UB-${pp.id.toUpperCase()}-2026 (demo)</p></div>
+      <div class="btns"><button class="btn" id="pfShare2">${ic('share', 18)}Share with an agent</button><button class="btn line" id="pfPdf">${ic('doc', 18)}PDF</button></div>
+      <button class="btn soft" id="pfMarket" style="justify-content:space-between"><span>Publish on the Unbusyness marketplace</span><span class="pill soonx">Soon</span></button>
+      <div class="lbl"><span>Property details</span></div>
+      <div class="card"><div class="kv">${pp.facts.map(([k, v]) => `<span>${k}</span><b>${v}</b>`).join('')}</div></div>
+      <div class="lbl"><span>Maintenance history</span></div>
+      ${works.map((w) => `<div class="wk"><span class="ic ${w[3] === 'o' ? 'c2' : w[3] === 'b' ? 'c3' : ''}">${ic(w[4])}</span><div><b>${w[1]}</b><span class="s">${w[0]} · ${w[2]}</span>${badge(w[3])}</div></div>`).join('')}
+      <div class="lbl"><span>Documents</span></div>
+      <div class="dl">${pp.docs.map(([d, m]) => `<div class="dlr">${ic('doc', 18)}<span>${d}</span><span class="m">${m}</span></div>`).join('')}</div>
+      <div class="legend"><b style="color:var(--ink);font-size:13px">What the marks mean</b>
+        <span><span class="ver">${ic('check', 12, 3)}Verified</span> the work was booked, done and paid for through Unbusyness. The invoice, photos and warranty are attached.</span>
+        <span><span class="ver">${ic('check', 12, 3)}Verified · building</span> work on the shared parts of the building, recorded by a building manager who uses Unbusyness.</span>
+        <span><span class="ver own">Added manually</span> the owner’s record, with proof that Unbusyness hasn’t checked.</span></div>
+      <p class="note">When you sell or rent out the property, the buyer sees everything in one place: work done, warranties and documents. Demo with made-up data.</p>
+    </div>`;
+  if (!f) { f = document.createElement('div'); f.className = 'full'; f.id = 'propFull'; f.setAttribute('role', 'dialog'); f.setAttribute('aria-label', 'Property passport'); document.getElementById('phone').appendChild(f); }
+  f.innerHTML = html;
+  const g = (id, fn) => { const e = document.getElementById(id); if (e) e.onclick = fn; };
+  g('pfBack', () => { propOpen = null; drawProp(); });
+  g('pfShare', () => openSheet({ k: 'share', id: pp.id })); g('pfShare2', () => openSheet({ k: 'share', id: pp.id }));
+  g('pfPdf', () => mini('Demo: the passport PDF is ready'));
+  g('pfMarket', () => mini('The marketplace comes later. We’ll let you know.'));
+}
+
+/* ---------- push reminder ---------- */
+function toast() {
+  if (sheetState || S.tab !== 'home' || S.booked.car) return;
+  const t = document.createElement('div'); t.className = 'toast'; t.setAttribute('role', 'status');
+  t.innerHTML = `<div class="th"><i>${ic('bell', 13, 2.4).replace('currentColor', '#fff')}</i>Unbusyness Home · now</div><p><b>Winter tyres by 15 Nov</b> Vulkanizer Bežigrad has a free slot on Saturday at 9:00. Your tyres are already there. Shall I book it?</p><div class="btns"><button class="btn soft" data-t="no">Later</button><button class="btn" data-t="yes">Book</button></div>`;
+  document.getElementById('phone').appendChild(t);
+  t.querySelectorAll('[data-t]').forEach((b) => (b.onclick = () => { if (b.dataset.t === 'yes') { S.booked.car = 'Sat 9:00, Vulkanizer Bežigrad'; render(); mini('Booked: Saturday at 9:00'); } t.remove(); }));
+  setTimeout(() => t.remove(), 12000);
+}
+
+function render() {
+  ({ home, pass, pros, bld })[S.tab]();
+  tabs();
+}
+render();
+</script>
+
+
+<!-- Link back to the waitlist page and SL/EN switch (added for the website) -->
+<style>
+.ub-demo-bar{position:fixed;left:16px;bottom:16px;z-index:35;display:flex;align-items:center;gap:2px;padding:3px;border-radius:999px;background:rgba(20,32,30,.9);box-shadow:0 6px 18px rgba(0,0,0,.18);font:700 13px "Plus Jakarta Sans",system-ui,sans-serif}
+.ub-demo-bar a{color:#FBFAF7;text-decoration:none;padding:7px 12px;border-radius:999px;white-space:nowrap}
+.ub-demo-bar a:hover{background:rgba(255,255,255,.12)}
+.ub-demo-bar .on{background:#FBFAF7;color:#14201E}
+.ub-demo-bar .sep{width:1px;height:18px;background:rgba(255,255,255,.25);margin:0 4px}
+.ub-demo-bar a:focus-visible{outline:2px solid #E8915F;outline-offset:2px}
+@media (max-width:820px){.ub-demo-bar{bottom:calc(92px + env(safe-area-inset-bottom));left:12px}.ub-demo-bar a{padding:7px 10px;font-size:12px}}
+</style>
+<nav class="ub-demo-bar" aria-label="Demo">
+<a href="/home/#join" aria-label="Back to the page and join the waitlist">← Join the waitlist</a><span class="sep" aria-hidden="true"></span>
+<a href="home-phone.html" lang="sl" hreflang="sl" class="" aria-current="false" onclick="try{localStorage.setItem('ub-lang','sl')}catch(e){}">SL</a><a href="home-phone-en.html" lang="en" hreflang="en" class="on" aria-current="true" onclick="try{localStorage.setItem('ub-lang','en')}catch(e){}">EN</a>
+</nav>
+</body>
+</html>

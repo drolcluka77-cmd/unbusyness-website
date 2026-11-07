@@ -1,0 +1,646 @@
+<!doctype html>
+<html lang="sl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+</head>
+<body>
+<title>Unbusyness Home</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Unbusyness Home: a digital passport of everything you own, reminders before things are due, and reliable, punctual tradespeople when something breaks. Join the waitlist.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+/* Layout: calm editorial page. Hero = thesis + a staff chat turning a voice note into a job with an escalation clock; then the shift today, what changes, the manager view, how it starts, the form. */
+:root{
+  --bg:#F8E8DE; --surface:#FFFFFF; --sand:#FCF3EE; --line:#EFD8CA;
+  --ink:#1B2220; --muted:#5F6461;
+  --green:#B0582F; --green-deep:#7A3A21; --on-green:#F7DFD0;
+  --apricot:#E0915F; --apricot-ink:#A9532B; --apricot-soft:#F7DCCB;
+  --ok:#3E7D62; --red:#B23A32;
+  --tint1:#F7E1D4; --tint2:#E8E9F1; --tint3:#E4ECE8;
+  --display:'Plus Jakarta Sans','Segoe UI',system-ui,-apple-system,sans-serif;
+  --body:'Plus Jakarta Sans','Segoe UI',system-ui,-apple-system,sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,'SFMono-Regular',Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#1C1512; --surface:#271E1A; --sand:#2F2520; --line:#3D302A; --ink:#F4ECE7; --muted:#BFAEA5;
+  --green:#F0A57C; --green-deep:#4A2416; --on-green:#F3D6C6; --apricot:#F0A57C; --apricot-ink:#F4B48F; --apricot-soft:#43291D;
+  --ok:#86C9A8; --red:#F08A80; --tint1:#43291D; --tint2:#2D2D3A; --tint3:#26332D; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#1C1512; --surface:#271E1A; --sand:#2F2520; --line:#3D302A; --ink:#F4ECE7; --muted:#BFAEA5;
+  --green:#F0A57C; --green-deep:#4A2416; --on-green:#F3D6C6; --apricot:#F0A57C; --apricot-ink:#F4B48F; --apricot-soft:#43291D;
+  --ok:#86C9A8; --red:#F08A80; --tint1:#43291D; --tint2:#2D2D3A; --tint3:#26332D; color-scheme:dark}
+
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1120px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--apricot);outline-offset:3px;border-radius:6px}
+h1,h2,h3{text-wrap:balance;margin:0}
+h1,h2{font-family:var(--display);font-weight:800;letter-spacing:-.04em}
+p{margin:0}
+.eyebrow{font-size:12.5px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--apricot-ink)}
+
+/* top bar */
+.top{display:flex;align-items:center;justify-content:space-between;gap:16px;padding-block:20px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:19px;letter-spacing:-.02em;text-decoration:none}
+.lang{display:inline-flex;border:1px solid var(--line);border-radius:999px;padding:3px;background:var(--surface)}
+.lang button{all:unset;cursor:pointer;font-size:13px;font-weight:700;padding:5px 11px;border-radius:999px;color:var(--muted)}
+.lang button[aria-pressed="true"]{background:var(--green);color:var(--bg)}
+.lang button:focus-visible{outline:3px solid var(--apricot)}
+
+/* hero */
+.hero{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:56px;align-items:center;padding-block:40px 72px}
+.hero h1{font-size:clamp(38px,5.4vw,64px);line-height:1.04;margin-top:14px}
+.hero h1 em{font-style:normal;color:var(--green)}
+.lede{font-size:19px;color:var(--muted);margin-top:22px;max-width:34em}
+.cta{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-top:30px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:52px;padding:0 24px;border-radius:14px;font:700 16px var(--body);text-decoration:none;border:0;cursor:pointer}
+.btn.primary{background:var(--green);color:var(--bg)}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
+.note{font-size:14px;color:var(--muted)}
+
+/* the ticket */
+.ticket{background:var(--surface);border:1px solid var(--line);border-radius:22px;box-shadow:0 30px 60px -30px rgba(20,32,30,.28);overflow:hidden;min-width:0}
+.t-head{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:16px 20px;border-bottom:1px dashed var(--line);font-family:var(--mono);font-size:12.5px;color:var(--muted)}
+.urg{font-family:var(--body);font-size:12px;font-weight:800;color:var(--red);background:color-mix(in srgb,var(--red) 12%,transparent);padding:3px 10px;border-radius:999px;white-space:nowrap}
+.t-body{padding:18px 20px 6px}
+.t-title{font-size:20px;font-weight:800;letter-spacing:-.01em}
+.t-where{color:var(--muted);font-size:14.5px;margin-top:2px}
+.t-quote{margin-top:12px;background:var(--sand);border-radius:12px;padding:12px 14px;font-size:14.5px}
+.t-quote small{display:block;color:var(--muted);font-size:12px;font-weight:700;margin-bottom:2px}
+.steps{list-style:none;margin:14px 0 0;padding:0 20px 20px;display:grid;gap:0}
+.steps li{display:grid;grid-template-columns:54px 18px minmax(0,1fr);gap:10px;align-items:start;padding-block:9px;position:relative}
+.steps time{font-family:var(--mono);font-size:12.5px;color:var(--muted);padding-top:2px;font-variant-numeric:tabular-nums}
+.dot{width:12px;height:12px;border-radius:50%;margin-top:5px;background:var(--green);box-shadow:0 0 0 4px color-mix(in srgb,var(--green) 16%,transparent);position:relative;z-index:1}
+.steps li:not(:last-child)::after{content:"";position:absolute;left:69px;top:24px;bottom:-9px;width:2px;background:var(--line)}
+.steps li.you .dot{background:var(--apricot);box-shadow:0 0 0 4px var(--apricot-soft)}
+.steps b{display:block;font-size:14.5px}
+.steps span{display:block;color:var(--muted);font-size:13.5px;line-height:1.45}
+@media (prefers-reduced-motion:no-preference){
+  .steps li{animation:rise .5s both}
+  .steps li:nth-child(2){animation-delay:.15s}.steps li:nth-child(3){animation-delay:.3s}.steps li:nth-child(4){animation-delay:.45s}.steps li:nth-child(5){animation-delay:.6s}
+  @keyframes rise{from{transform:translateY(6px);opacity:.35}to{transform:none;opacity:1}}
+}
+
+/* sections */
+section{padding-block:72px;border-top:1px solid var(--line)}
+.sec-head{display:grid;gap:12px;max-width:40em;margin-bottom:36px}
+.sec-head h2{font-size:clamp(30px,3.6vw,44px);line-height:1.1}
+.sec-head p{color:var(--muted);font-size:17.5px}
+
+.pains{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:28px}
+.pain{display:grid;gap:8px;align-content:start}
+.pain .k{font-family:var(--mono);font-size:13px;color:var(--apricot-ink)}
+.pain h3{font-size:19px;font-weight:800;letter-spacing:-.01em}
+.pain p{color:var(--muted)}
+
+.feats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.feat{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:22px;display:grid;gap:8px;align-content:start}
+.feat .ic{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:var(--sand);color:var(--green)}
+.feat h3{font-size:17.5px;font-weight:800;margin-top:6px}
+.feat p{color:var(--muted);font-size:15px}
+
+.cal{margin-top:28px;background:var(--surface);border:1px solid var(--line);border-radius:18px;overflow-x:auto}
+.cal table{border-collapse:collapse;width:100%;min-width:620px;font-size:14px}
+.cal th,.cal td{padding:12px 16px;text-align:left;border-bottom:1px solid var(--line)}
+.cal th{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:800}
+.cal tr:last-child td{border-bottom:0}
+.cal td.m{font-family:var(--mono);font-size:13px;white-space:nowrap;font-variant-numeric:tabular-nums}
+.st{font-size:12px;font-weight:800;padding:3px 10px;border-radius:999px;white-space:nowrap}
+.st.ok{color:var(--ok);background:color-mix(in srgb,var(--ok) 13%,transparent)}
+.st.soon{color:var(--apricot-ink);background:var(--apricot-soft)}
+.st.late{color:var(--red);background:color-mix(in srgb,var(--red) 12%,transparent)}
+.cap{font-size:13px;color:var(--muted);margin-top:10px}
+
+.how{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:28px;counter-reset:s}
+.how li{list-style:none;display:grid;gap:8px;align-content:start}
+.how li::before{counter-increment:s;content:counter(s);font-family:var(--display);font-size:44px;line-height:1;color:var(--green)}
+.how h3{font-size:18px;font-weight:800}
+.how p{color:var(--muted)}
+.how{padding:0;margin:0}
+
+/* form */
+.join{background:var(--green-deep);color:#F3F6F4;border-top:0}
+.join .sec-head h2{color:#fff}
+.join .sec-head p,.join .note{color:var(--on-green)}
+.join .eyebrow{color:#F2A57A}
+.joingrid{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:48px;align-items:start}
+.perks{list-style:none;padding:0;margin:8px 0 0;display:grid;gap:14px}
+.perks li{display:grid;grid-template-columns:22px minmax(0,1fr);gap:10px;color:var(--on-green)}
+.perks li b{color:#fff;font-weight:700}
+form{background:var(--surface);color:var(--ink);border-radius:22px;padding:28px;display:grid;gap:16px;min-width:0}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.field{display:grid;gap:6px;min-width:0}
+label,.lbl{font-size:13.5px;font-weight:700}
+.opt{font-weight:500;color:var(--muted)}
+input[type=text],input[type=email],input[type=tel],select,textarea{width:100%;font:500 15.5px var(--body);color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:12px 14px;min-height:48px}
+textarea{min-height:88px;resize:vertical}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--green);box-shadow:0 0 0 3px color-mix(in srgb,var(--green) 18%,transparent)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{position:relative}
+.chip input{position:absolute;opacity:0;inset:0;cursor:pointer}
+.chip span{display:inline-block;border:1px solid var(--line);border-radius:999px;padding:8px 14px;font-size:14px;font-weight:600;background:var(--bg);cursor:pointer}
+.chip input:checked+span{background:var(--green);border-color:var(--green);color:var(--bg)}
+.chip input:focus-visible+span{outline:3px solid var(--apricot);outline-offset:2px}
+.consent{display:grid;grid-template-columns:20px minmax(0,1fr);gap:10px;font-size:13.5px;color:var(--muted);font-weight:500}
+.consent input{width:18px;height:18px;margin-top:2px;accent-color:var(--green)}
+.err{color:var(--red);font-size:13.5px;font-weight:600}
+form .btn.primary{width:100%;min-height:56px;font-size:17px}
+.done{background:var(--surface);color:var(--ink);border-radius:22px;padding:32px;display:grid;gap:12px}
+.done h3{font-family:var(--display);font-size:30px;font-weight:600}
+.done p{color:var(--muted)}
+.preview{font-size:13px;background:var(--apricot-soft);color:var(--apricot-ink);border-radius:10px;padding:10px 12px;font-weight:600}
+
+.faq{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 40px}
+details{border-bottom:1px solid var(--line);padding-block:16px}
+summary{cursor:pointer;font-weight:800;font-size:17px;list-style:none;display:flex;justify-content:space-between;gap:12px}
+summary::after{content:"+";font-family:var(--mono);color:var(--green)}
+details[open] summary::after{content:"–"}
+details p{color:var(--muted);margin-top:8px}
+footer{padding-block:36px;color:var(--muted);font-size:14px;display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;border-top:1px solid var(--line)}
+
+@media (max-width:900px){
+  .hero,.joingrid{grid-template-columns:minmax(0,1fr);gap:36px}
+  .pains,.feats,.how{grid-template-columns:minmax(0,1fr)}
+  .faq{grid-template-columns:minmax(0,1fr)}
+}
+@media (max-width:520px){
+  .row2{grid-template-columns:minmax(0,1fr)}
+  form,.done{padding:20px}
+  section{padding-block:52px}
+  .hero{padding-block:20px 52px}
+  .lede{font-size:17.5px}
+}
+/* hotel additions */
+.chat{background:var(--sand);padding:16px 16px 6px;display:grid;gap:8px}
+.msg{max-width:86%;border-radius:16px;padding:9px 12px;font-size:14.5px;line-height:1.45;background:var(--surface);border:1px solid var(--line)}
+.msg.me{justify-self:end;background:color-mix(in srgb,var(--green) 14%,var(--surface));border-color:transparent}
+.msg small{display:block;font-family:var(--mono);font-size:11px;color:var(--muted);margin-top:3px;text-align:right}
+.msg .vn{display:flex;align-items:center;gap:8px;font-weight:700}
+.msg .vn i{display:block;height:18px;flex:1;min-width:90px;background:repeating-linear-gradient(90deg,var(--green) 0 2px,transparent 2px 5px);opacity:.55;border-radius:2px}
+.clock{display:flex;gap:8px;flex-wrap:wrap;padding:12px 20px 0}
+.clock span{font-family:var(--mono);font-size:12px;border:1px dashed var(--line);border-radius:999px;padding:4px 10px;color:var(--muted)}
+.ladder{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.ladder li{display:grid;grid-template-columns:120px minmax(0,1fr);gap:14px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px 16px}
+.ladder .when{font-family:var(--mono);font-size:12.5px;color:var(--apricot-ink)}
+.ladder b{display:block}
+.ladder span{color:var(--muted);font-size:14.5px}
+.split2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:40px;align-items:start}
+.ovw{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:20px;display:grid;gap:16px;min-width:0}
+.tiles{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.tile{background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:12px}
+.tile small{display:block;font-size:12px;color:var(--muted);font-weight:700}
+.tile b{font-size:24px;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.bars2{display:grid;gap:8px}
+.bar2{display:grid;grid-template-columns:130px minmax(0,1fr) 54px;gap:10px;align-items:center;font-size:14px}
+.bar2 .tr{height:10px;border-radius:5px;background:var(--sand);overflow:hidden}.bar2 .tr i{display:block;height:100%;background:var(--green);border-radius:5px}
+.bar2 b{text-align:right;font-family:var(--mono);font-size:13px;font-variant-numeric:tabular-nums}
+.late{display:grid;gap:6px}
+.late div{display:flex;justify-content:space-between;gap:10px;font-size:14px;border-top:1px solid var(--line);padding-top:8px}
+.late em{font-style:normal;color:var(--red);font-weight:700;font-family:var(--mono);font-size:13px}
+@media (max-width:900px){.split2{grid-template-columns:minmax(0,1fr)}.tiles{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:520px){.ladder li{grid-template-columns:minmax(0,1fr);gap:4px}.bar2{grid-template-columns:96px minmax(0,1fr) 48px}}
+
+.rec{background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:22px;display:grid;gap:14px;min-width:0;box-shadow:0 30px 60px -34px rgba(20,32,30,.25)}
+.rec h3{margin:0;font-size:19px}
+.rec p{margin:0;color:var(--muted);font-size:14.5px;line-height:1.5}
+.rec textarea{width:100%;min-height:150px;font:inherit;font-size:14.5px;line-height:1.5;padding:12px 14px;border:1px solid var(--line);border-radius:14px;background:var(--sand);color:var(--ink);resize:vertical;box-sizing:border-box}
+.rec .acts{display:flex;flex-wrap:wrap;gap:10px}
+.rec .acts .btn{font-size:14.5px;padding:10px 16px}
+.rec .ok{font-size:13px;color:var(--ok);font-weight:700;min-height:1em}
+.bld{display:grid;gap:12px;margin-top:6px}
+.bld div{display:grid;grid-template-columns:28px minmax(0,1fr);gap:10px;align-items:start}
+.bld i{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;font-style:normal;font-weight:800;font-size:13px;background:var(--apricot-soft);color:var(--apricot-ink)}
+.bld b{display:block}.bld span{color:var(--muted);font-size:14.5px;line-height:1.45}
+
+/* Home palette: blush background, terracotta accent, white rounded cards */
+.btn{border-radius:16px}
+.btn.ghost{color:var(--green);border:1.5px solid var(--green);background:transparent}
+.btn.primary:hover{background:color-mix(in srgb,var(--green) 88%,#000)}
+.ticket,.feat,.rec,.cal{border-color:transparent;border-radius:24px}
+.feat .ic{border-radius:50%;width:46px;height:46px}
+.feat:nth-child(3n+1) .ic{background:var(--tint1);color:var(--green)}
+.feat:nth-child(3n+2) .ic{background:var(--tint2);color:#4D5578}
+.feat:nth-child(3n) .ic{background:var(--tint3);color:#3E6355}
+.pain{background:var(--surface);border-radius:24px;padding:22px}
+.msg{border-color:transparent}
+.msg.me{background:var(--apricot-soft)}
+.join .eyebrow{color:#F6C3A3}
+.lang button[aria-pressed="true"]{color:#fff}
+.btn.primary,.chip input:checked+span{color:#fff}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .btn.primary,:root:not([data-theme="light"]) .lang button[aria-pressed="true"],:root:not([data-theme="light"]) .chip input:checked+span{color:#1C1512}
+:root:not([data-theme="light"]) .feat:nth-child(3n+2) .ic{color:#B9C0E0}:root:not([data-theme="light"]) .feat:nth-child(3n) .ic{color:#9CCBB6}}
+:root[data-theme="dark"] .btn.primary,:root[data-theme="dark"] .lang button[aria-pressed="true"],:root[data-theme="dark"] .chip input:checked+span{color:#1C1512}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <a class="brand" href="#join" aria-label="Unbusyness Home">
+      <svg width="34" height="34" viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="24" fill="#B0582F"/><path d="M14.5 19 V25.5 a9.5 9.5 0 0 0 19 0 V19" fill="none" stroke="#FBFAF7" stroke-width="4" stroke-linecap="round"/><circle cx="24" cy="15.5" r="3.4" fill="#F7DCCB"/></svg>
+      <span>unbusyness <span style="font-weight:600;color:var(--muted)">home</span></span>
+    </a>
+    <div class="lang" role="group" aria-label="Language">
+      <button type="button" data-lang="sl" aria-pressed="false">SL</button>
+      <button type="button" data-lang="en" aria-pressed="true">EN</button>
+    </div>
+  </header>
+
+  <div class="hero">
+    <div>
+      <div class="eyebrow" data-t="eyebrow">For residents, homeowners and tenants</div>
+      <h1 data-t="h1" data-html>The things you own <em>shouldn't own you.</em></h1>
+      <p class="lede" data-t="lede">Unbusyness Home is a digital passport of everything you own: your home, car, appliances, warranties and invoices. It reminds you before something is due, and when something breaks it finds a reliable tradesperson who turns up on time.</p>
+      <div class="cta">
+        <a class="btn primary" href="#join" data-t="cta">Join the waitlist</a>
+        <a class="btn ghost" href="#building" data-t="cta2">My building manager should use it</a>
+      </div>
+    </div>
+
+    <article class="ticket" aria-label="Example: a dripping tap gets fixed">
+      <div class="t-head"><span data-t="tNo">UNBUSYNESS HOME · KITCHEN</span><span class="urg" style="color:var(--apricot-ink);background:var(--apricot-soft)" data-t="tUrg">Repair</span></div>
+      <div class="chat">
+        <div class="msg me"><span data-t="m1">📷 The kitchen tap is dripping again.</span><small>19:42 · Maja</small></div>
+        <div class="msg"><span data-t="m2">From your passport: kitchen tap fitted in 2021, warranty ended in 2024. I asked two verified plumbers near you.</span><small>19:42</small></div>
+        <div class="msg"><span data-t="m3">Matej (plumber) can come Thursday between 8:00 and 9:00. Shall I book it?</span><small>19:51</small></div>
+        <div class="msg me"><span data-t="m4">Yes, please.</span><small>19:52 · Maja</small></div>
+      </div>
+      <ol class="steps">
+        <li><time>07:41</time><i class="dot"></i><div><b data-t="s1">Matej is on the way</b><span data-t="s1d">You see when he leaves and roughly when he arrives.</span></div></li>
+        <li class="you"><time>07:56</time><i class="dot"></i><div><b data-t="s2">Arrived on time</b><span data-t="s2d">Inside the agreed window, as promised.</span></div></li>
+        <li><time>08:24</time><i class="dot"></i><div><b data-t="s3">Fixed and saved</b><span data-t="s3d">New cartridge. Invoice, photos and the new warranty go into your passport.</span></div></li>
+      </ol>
+    </article>
+  </div>
+</div>
+
+<section>
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="eyebrow" data-t="p0">Sound familiar?</div>
+      <h2 data-t="p1">Running a home is a second job.</h2>
+      <p data-t="p2">Nobody has time to keep track of service dates, warranties and phone numbers. Then something breaks on a Friday evening.</p>
+    </div>
+    <div class="pains">
+      <div class="pain"><span class="k" data-t="pk1">"Where's the receipt?"</span><h3 data-t="ph1">Warranties you can't find</h3><p data-t="pp1">The washing machine breaks a month before the warranty ends, and the receipt is somewhere in a drawer or an old inbox.</p></div>
+      <div class="pain"><span class="k" data-t="pk2">"He said Tuesday."</span><h3 data-t="ph2">Tradespeople who don't show up</h3><p data-t="pp2">You take a morning off, wait at home, and nobody comes. Then you start calling around again.</p></div>
+      <div class="pain"><span class="k" data-t="pk3">"When did we last…?"</span><h3 data-t="ph3">Deadlines that sneak up</h3><p data-t="pp3">Boiler service, chimney sweep, car registration, winter tyres. Each one is easy to forget, and some are costly to miss.</p></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="eyebrow" data-t="v0">Your digital passport</div>
+      <h2 data-t="v1">Everything you own, in one place.</h2>
+      <p data-t="v2">Take a photo of a receipt, a type plate or an invoice. Unbusyness reads it, files it and keeps track of what comes next.</p>
+    </div>
+    <div class="cal" role="region" aria-label="Example passport" tabindex="0">
+      <table>
+        <thead><tr><th data-t="c0">Item</th><th data-t="c1">Saved</th><th data-t="c2">Next</th><th data-t="c3">Status</th></tr></thead>
+        <tbody>
+          <tr><td data-t="r1n">Gas boiler</td><td data-t="r1s">Manual, last 3 services</td><td data-t="r1x">Yearly service</td><td><span class="st soon" data-t="r1t">In 3 weeks</span></td></tr>
+          <tr><td data-t="r2n">Car</td><td data-t="r2s">Registration, insurance, tyres</td><td data-t="r2x">Registration</td><td><span class="st soon" data-t="r2t">In 12 days</span></td></tr>
+          <tr><td data-t="r3n">Washing machine</td><td data-t="r3s">Receipt, warranty card</td><td data-t="r3x">Warranty ends</td><td><span class="st ok" data-t="r3t">March 2028</span></td></tr>
+          <tr><td data-t="r4n">Smoke detector</td><td data-t="r4s">Model, battery type</td><td data-t="r4x">Battery change</td><td><span class="st late" data-t="r4t">Overdue</span></td></tr>
+          <tr><td data-t="r5n">Kitchen tap</td><td data-t="r5s">Invoice, photos, plumber</td><td data-t="r5x">Nothing due</td><td><span class="st ok" data-t="r5t">Fixed 8 Oct</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="cap" data-t="cap">Example passport, not real data.</p>
+  </div>
+</section>
+
+
+<section id="property">
+  <div class="wrap split2">
+    <div style="display:grid;gap:20px">
+      <div class="sec-head" style="margin-bottom:0">
+        <div class="eyebrow" data-t="pp0">Property passport</div>
+        <h2 data-t="pp1">A home with a history sells differently.</h2>
+        <p data-t="pp2">Every repair, service and document is saved to your property's passport as it happens. When you sell or rent out, you don't promise that the home was looked after. You show it.</p>
+      </div>
+      <div class="bld">
+        <div><i>✓</i><p style="margin:0"><b data-t="pa">Stand out from other listings</b><span data-t="pad">Most listings say "well maintained". Yours shows when the roof was replaced, who changed the boiler and which warranties still apply.</span></p></div>
+        <div><i>✓</i><p style="margin:0"><b data-t="pb">Verified work</b><span data-t="pbd">Work ordered and paid through Unbusyness is marked Verified, with the invoice, photos and warranty attached. Work you add yourself is marked separately, so buyers know what has been checked.</span></p></div>
+        <div><i>✓</i><p style="margin:0"><b data-t="pc">All documents in one place</b><span data-t="pcd">Energy performance certificate, building and occupancy permits, land register extract, floor plans, owners' meeting minutes and insurance. No more searching when the agent asks.</span></p></div>
+        <div><i>✓</i><p style="margin:0"><b data-t="pdx">Fewer questions, more trust</b><span data-t="pdd">Buyers and their surveyors see the facts up front. That means fewer surprises at viewings and fewer reasons to haggle over the price.</span></p></div>
+        <div><i>✓</i><p style="margin:0"><b data-t="pe">Share with one link</b><span data-t="ped">Send the passport to your estate agent and choose what they see. Prices stay hidden unless you show them, and you can withdraw access at any time. Later you'll be able to list it on the Unbusyness marketplace too.</span></p></div>
+        <div><i>✓</i><p style="margin:0"><b data-t="pf">Useful long before you sell</b><span data-t="pfd">For insurance claims, renting out, applying for subsidies, or handing the home over to your family, everything is ready.</span></p></div>
+      </div>
+    </div>
+    <div class="ovw" role="img" aria-label="Example property passport" style="display:grid;gap:14px">
+      <div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap"><b data-t="po0">Property passport</b><span class="note" style="font-size:12.5px" data-t="o1">Example, not real data</span></div>
+      <div style="background:linear-gradient(160deg,#7A3A21,#A4512B);color:#FBEDE4;border-radius:20px;padding:18px;display:grid;gap:10px">
+        <span style="font-size:11.5px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:#F6C3A3" data-t="po1">Flat, Celovška 100</span>
+        <b style="font-size:22px;letter-spacing:-.03em;color:#fff" data-t="po2">Regularly maintained · 94 %</b>
+        <span style="font-size:13.5px;color:#F3D6C6" data-t="po3">14 recorded jobs · 9 Verified · 6 warranties · 8 documents</span>
+      </div>
+      <div class="tiles" style="grid-template-columns:1fr">
+        <div class="tile" style="display:flex;justify-content:space-between;gap:10px;align-items:center"><span><small data-t="pw1d">Feb 2025</small><b style="font-size:15px" data-t="pw1">Boiler replaced</b></span><span class="st ok">Verified</span></div>
+        <div class="tile" style="display:flex;justify-content:space-between;gap:10px;align-items:center"><span><small data-t="pw2d">Nov 2025</small><b style="font-size:15px" data-t="pw2">Gas boiler service</b></span><span class="st ok">Verified</span></div>
+        <div class="tile" style="display:flex;justify-content:space-between;gap:10px;align-items:center"><span><small data-t="pw3d">2023 · via the building manager</small><b style="font-size:15px" data-t="pw3">New roof on the building</b></span><span class="st ok" data-t="pw3b">Verified · building</span></div>
+        <div class="tile" style="display:flex;justify-content:space-between;gap:10px;align-items:center"><span><small data-t="pw4d">2021 · invoices attached</small><b style="font-size:15px" data-t="pw4">Kitchen renovation</b></span><span class="st soon" data-t="pw4b">Added by owner</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="eyebrow" data-t="f0">What Unbusyness Home does</div>
+      <h2 data-t="f1">Organises your home, and connects you with people who turn up.</h2>
+    </div>
+    <div class="feats">
+      <div class="feat"><span class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg></span><h3 data-t="fa">A passport for everything</h3><p data-t="fad">Home, car, appliances, warranties, invoices and manuals. A photo is enough, nothing to type.</p></div>
+      <div class="feat"><span class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg></span><h3 data-t="fb">Reminders before it's due</h3><p data-t="fbd">Services, registrations, warranties and filter changes. You're reminded in time, with a tradesperson ready to book if you need one.</p></div>
+      <div class="feat"><span class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg></span><h3 data-t="fc">Report with one message</h3><p data-t="fcd">A photo, a text or a voice note is enough. Unbusyness works out what is broken and who should fix it.</p></div>
+      <div class="feat"><span class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 7v5l3 2"/></svg></span><h3 data-t="fd">Reliable, punctual tradespeople</h3><p data-t="fdd">Verified plumbers, electricians and other trades, rated on whether they arrive on time and do the job right. You get a fixed arrival window.</p></div>
+      <div class="feat"><span class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 11l3 3 8-8"/><path d="M20 12v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h9"/></svg></span><h3 data-t="fe">Every repair on record</h3><p data-t="fed">Invoices, photos and new warranties are saved automatically. That history is useful when you sell, rent out or claim on insurance.</p></div>
+      <div class="feat"><span class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><circle cx="17" cy="9" r="2.5"/><path d="M16 14.2a5 5 0 0 1 5.5 4.8"/></svg></span><h3 data-t="ff">Shared with your household</h3><p data-t="ffd">Your partner sees the same passport. A tenant can report faults without having your phone number for everything.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="building">
+  <div class="wrap split2">
+    <div style="display:grid;gap:18px">
+      <div class="sec-head" style="margin-bottom:0">
+        <div class="eyebrow" data-t="b0">Living in an apartment building?</div>
+        <h2 data-t="b1">Faults in shared areas go straight to your building manager.</h2>
+        <p data-t="b2">When your building manager uses Unbusyness, a broken lift, a dark stairwell or a leaking roof is reported with one message, and you can follow the repair until it's done.</p>
+      </div>
+      <div class="bld">
+        <div><i>1</i><p style="margin:0"><b data-t="ba">You report it</b><span data-t="bad">A photo or voice note: "The light on the 3rd floor isn't working."</span></p></div>
+        <div><i>2</i><p style="margin:0"><b data-t="bb">The manager gets a ready job</b><span data-t="bbd">With the address, the photo and a suggested tradesperson.</span></p></div>
+        <div><i>3</i><p style="margin:0"><b data-t="bc">You see the progress</b><span data-t="bcd">Who is coming, when, and when it's fixed. No more asking around.</span></p></div>
+      </div>
+    </div>
+    <div class="rec">
+      <h3 data-t="rh">Your building manager doesn't use Unbusyness yet?</h3>
+      <p data-t="rp">Recommend it to them. Edit the message below and send it by email or WhatsApp, or tick the box in the sign-up form and we'll contact them for you.</p>
+      <label for="recAddr" class="lbl" style="font-weight:700;font-size:14px" data-t="raddr">Your building's address</label>
+      <input id="recAddr" type="text" autocomplete="street-address" placeholder="Celovška 100, Ljubljana" style="font:inherit;padding:11px 14px;border:1px solid var(--line);border-radius:14px;background:var(--surface);color:var(--ink);min-width:0">
+      <label for="recMsg" class="lbl" style="font-weight:700;font-size:14px" data-t="rmsg">Message</label>
+      <textarea id="recMsg"></textarea>
+      <div class="acts">
+        <button class="btn primary" type="button" id="recCopy" data-t="rcopy">Copy message</button>
+        <a class="btn ghost" id="recMail" href="#" data-t="rmail">Send by email</a>
+        <a class="btn ghost" id="recWa" href="#" target="_blank" rel="noopener" data-t="rwa">Send on WhatsApp</a>
+      </div>
+      <span class="ok" id="recOk" role="status"></span>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="eyebrow" data-t="h0">How it starts</div>
+      <h2 data-t="h1b">Ten minutes to set up, then it runs in the background.</h2>
+    </div>
+    <ol class="how">
+      <li><h3 data-t="ha">Add what you own</h3><p data-t="had">Take photos of receipts, type plates and documents. Unbusyness fills in the passport for you.</p></li>
+      <li><h3 data-t="hb">Get reminded in time</h3><p data-t="hbd">You get a message before a service, registration or warranty is due, not after.</p></li>
+      <li><h3 data-t="hc">One message when it breaks</h3><p data-t="hcd">Unbusyness finds a reliable tradesperson, books the visit and saves the repair.</p></li>
+    </ol>
+  </div>
+</section>
+
+<section class="join" id="join">
+  <div class="wrap joingrid">
+    <div>
+      <div class="sec-head" style="margin-bottom:20px">
+        <div class="eyebrow" data-t="j0">Waitlist</div>
+        <h2 data-t="j1">Be among the first homes on Unbusyness.</h2>
+        <p data-t="j2">We're starting in Slovenia with a small group of residents and homeowners.</p>
+      </div>
+      <ul class="perks">
+        <li><span aria-hidden="true">✓</span><span data-t="k1" data-html><b>Early access</b> to Unbusyness Home before the public launch.</span></li>
+        <li><span aria-hidden="true">✓</span><span data-t="k2" data-html><b>Founding terms</b> for everyone on the waitlist.</span></li>
+        <li><span aria-hidden="true">✓</span><span data-t="k3" data-html><b>We'll contact your building manager</b> for you, if you want us to.</span></li>
+      </ul>
+    </div>
+
+    <div id="formBox">
+      <form id="wl" novalidate>
+        <div class="row2">
+          <div class="field"><label for="name" data-t="lName">Your name</label><input id="name" name="name" type="text" autocomplete="name" required></div>
+          <div class="field"><label for="email" data-t="lEmail">Email</label><input id="email" name="email" type="email" autocomplete="email" required></div>
+        </div>
+        <div class="row2">
+          <div class="field"><label for="phone"><span data-t="lPhone">Phone</span> <span class="opt" data-t="optional">(optional)</span></label><input id="phone" name="phone" type="tel" autocomplete="tel" placeholder="+386 …"></div>
+          <div class="field"><label for="city" data-t="lCity">Town or city</label><input id="city" name="city" type="text" autocomplete="address-level2" required></div>
+        </div>
+        <div class="row2">
+          <div class="field"><label for="home" data-t="lHome">I live in</label>
+            <select id="home" name="home" required>
+              <option value="" data-t="choose">Choose…</option>
+              <option value="flat-own" data-t="h1o">My own flat in a building</option><option value="flat-rent" data-t="h2o">A rented flat</option><option value="house" data-t="h3o">A house</option><option value="landlord" data-t="h4o">I rent out property</option>
+            </select></div>
+          <div class="field"><label for="mgrUses" data-t="lMgr">Does your building manager use Unbusyness?</label>
+            <select id="mgrUses" name="mgrUses">
+              <option value="unknown" data-t="m0">I don't know</option><option value="yes" data-t="m1o">Yes</option><option value="no" data-t="m2o">No</option><option value="none" data-t="m3o">No building manager</option>
+            </select></div>
+        </div>
+        <div class="field"><label for="mgr"><span data-t="lMgrName">Building manager's name or company</span> <span class="opt" data-t="optional">(optional)</span></label><input id="mgr" name="mgr" type="text" autocomplete="off"></div>
+        <label class="consent" style="margin-top:-4px"><input id="contactMgr" type="checkbox"><span data-t="lContact">Please contact my building manager and tell them about Unbusyness.</span></label>
+        <fieldset class="field" style="border:0;padding:0;margin:0">
+          <legend class="lbl" style="padding:0;margin-bottom:8px" data-t="lWant">What would help you most? <span class="opt">(pick any)</span></legend>
+          <div class="chips">
+            <label class="chip"><input type="checkbox" name="want" value="passport"><span data-t="x1">Everything in one place</span></label>
+            <label class="chip"><input type="checkbox" name="want" value="reminders"><span data-t="x2">Reminders</span></label>
+            <label class="chip"><input type="checkbox" name="want" value="trades"><span data-t="x3">Reliable tradespeople</span></label>
+            <label class="chip"><input type="checkbox" name="want" value="warranty"><span data-t="x4">Warranties and receipts</span></label>
+            <label class="chip"><input type="checkbox" name="want" value="car"><span data-t="x5">Car</span></label>
+            <label class="chip"><input type="checkbox" name="want" value="building"><span data-t="x6">Reporting faults in my building</span></label>
+          </div>
+        </fieldset>
+        <label class="consent"><input id="consent" type="checkbox" required><span data-t="consent">Unbusyness may contact me about early access. My details are used only for this and I can ask for them to be deleted at any time.</span></label>
+        <p class="err" id="err" role="alert" hidden></p>
+        <button class="btn primary" type="submit" id="submit" data-t="send">Join the waitlist</button>
+      </form>
+      <div class="done" id="done" hidden tabindex="-1">
+        <h3 data-t="d1x">You're on the list.</h3>
+        <p data-t="d2x">We'll let you know as soon as Unbusyness Home is ready for you. If you asked us to, we'll also get in touch with your building manager.</p>
+        <p class="preview" id="previewNote" hidden data-t="d3x">Preview: this page is not connected to the waitlist yet, so nothing was sent.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="sec-head"><div class="eyebrow" data-t="q0">Questions</div><h2 data-t="q1">What residents ask us first</h2></div>
+    <div class="faq">
+      <details><summary data-t="qa">Does my building manager have to use Unbusyness?</summary><p data-t="qad">No. The passport, reminders and tradespeople work on their own. If your building manager uses Unbusyness too, you can also report faults in shared areas and follow the repairs.</p></details>
+      <details><summary data-t="qb">How do you choose tradespeople?</summary><p data-t="qbd">We work with verified tradespeople and track whether they arrive within the agreed window and how residents rate the work. Those who keep missing appointments don't get new jobs.</p></details>
+      <details><summary data-t="qc">What will it cost?</summary><p data-t="qcd">We're still deciding on pricing. Everyone on the waitlist gets early access and founding terms.</p></details>
+      <details><summary data-t="qd">Who sees my data?</summary><p data-t="qdd">Only you and the people you share your passport with. A tradesperson sees only what is needed for the job, such as the address and the photo of the fault.</p></details>
+      <details><summary data-t="qe">I'm renting. Is it for me?</summary><p data-t="qed">Yes. You can report faults to your landlord or building manager and keep a record of what was reported and when.</p></details>
+    </div>
+  </div>
+</section>
+
+<div class="wrap"><footer><span>© 2026 Unbusyness · unbusyness.com</span><span data-t="foot">Questions? Write to info@unbusyness.com or call +386 40 290 963</span></footer></div>
+
+<script>
+// Where sign-ups go. Set this when the page is hosted (e.g. "/api/waitlist" on the Unbusyness app).
+// Left empty, the page runs as a preview and clearly says that nothing was sent.
+const WAITLIST_ENDPOINT = "";
+
+const SL = {
+  eyebrow:"Za stanovalce, lastnike in najemnike",
+  h1:"Stvari, ki jih imate, <em>naj ne upravljajo vas.</em>",
+  lede:"Unbusyness Home je digitalni potni list vsega, kar imate: stanovanja ali hiše, avta, aparatov, garancij in računov. Opomni vas, preden kaj poteče, in ko se kaj pokvari, najde zanesljivega mojstra, ki pride ob dogovorjeni uri.",
+  cta:"Prijava na čakalni seznam", cta2:"Moj upravnik bi to moral uporabljati",
+  tNo:"UNBUSYNESS HOME · KUHINJA", tUrg:"Popravilo",
+  m1:"📷 Pipa v kuhinji spet kaplja.", m2:"Iz vašega potnega lista: pipa vgrajena 2021, garancija je potekla 2024. Vprašal sem dva preverjena vodoinštalaterja v bližini.", m3:"Matej (vodoinštalater) lahko pride v četrtek med 8:00 in 9:00. Rezerviram?", m4:"Ja, prosim.",
+  s1:"Matej je na poti", s1d:"Vidite, kdaj je krenil in približno kdaj pride.",
+  s2:"Prišel je pravočasno", s2d:"V dogovorjenem terminu, kot obljubljeno.",
+  s3:"Popravljeno in shranjeno", s3d:"Nova kartuša. Račun, fotografije in nova garancija gredo v vaš potni list.",
+  p0:"Vam je znano?", p1:"Skrb za dom je druga služba.", p2:"Nihče nima časa slediti servisom, garancijam in telefonskim številkam. Potem se nekaj pokvari v petek zvečer.",
+  pk1:"»Kje je račun?«", ph1:"Garancije, ki jih ne najdete", pp1:"Pralni stroj se pokvari mesec pred koncem garancije, račun pa je nekje v predalu ali starem e-poštnem nabiralniku.",
+  pk2:"»Rekel je, da v torek.«", ph2:"Mojstri, ki ne pridejo", pp2:"Vzamete si dopoldne prosto, čakate doma, in nihče ne pride. Potem spet začnete klicati naokoli.",
+  pk3:"»Kdaj smo nazadnje …?«", ph3:"Roki, ki pridejo nenadoma", pp3:"Servis peči, dimnikar, registracija avta, zimske gume. Vsako je lahko pozabiti, nekatere zamude pa so drage.",
+  v0:"Vaš digitalni potni list", v1:"Vse, kar imate, na enem mestu.", v2:"Fotografirajte račun, tablico z oznako ali predračun. Unbusyness ga prebere, shrani in spremlja, kaj sledi.",
+  c0:"Stvar", c1:"Shranjeno", c2:"Naslednje", c3:"Stanje",
+  r1n:"Plinska peč", r1s:"Navodila, zadnji 3 servisi", r1x:"Letni servis", r1t:"Čez 3 tedne",
+  r2n:"Avto", r2s:"Prometno, zavarovanje, gume", r2x:"Registracija", r2t:"Čez 12 dni",
+  r3n:"Pralni stroj", r3s:"Račun, garancijski list", r3x:"Garancija poteče", r3t:"Marec 2028",
+  r4n:"Javljalnik dima", r4s:"Model, vrsta baterije", r4x:"Menjava baterije", r4t:"Zamuja",
+  r5n:"Kuhinjska pipa", r5s:"Račun, fotografije, mojster", r5x:"Nič ne poteka", r5t:"Popravljeno 8. 10.",
+  cap:"Primer potnega lista, niso pravi podatki.",
+  pp0:"Potni list nepremičnine", pp1:"Dom z zgodovino se prodaja drugače.", pp2:"Vsako popravilo, servis in dokument se sproti shrani v potni list vaše nepremičnine. Ko jo prodajate ali oddajate, ne obljubljate, da je bila vzdrževana. To pokažete.",
+  pa:"Izstopate med drugimi oglasi", pad:"Večina oglasov piše »lepo vzdrževano«. Vaš pokaže, kdaj je bila zamenjana streha, kdo je menjal bojler in katere garancije še veljajo.",
+  pb:"Preverjena dela", pbd:"Dela, naročena in plačana prek Unbusyness, so označena z Verified, z računom, fotografijami in garancijo. Dela, ki jih dodate sami, so označena posebej, zato kupec ve, kaj je preverjeno.",
+  pc:"Vsi dokumenti na enem mestu", pcd:"Energetska izkaznica, gradbeno in uporabno dovoljenje, izpisek iz zemljiške knjige, tlorisi, zapisniki zbora lastnikov in zavarovanje. Brez iskanja, ko agent vpraša.",
+  pdx:"Manj vprašanj, več zaupanja", pdd:"Kupci in njihovi cenilci dejstva vidijo vnaprej. To pomeni manj presenečenj na ogledih in manj razlogov za barantanje o ceni.",
+  pe:"Delite z eno povezavo", ped:"Potni list pošljete svojemu nepremičninskemu agentu in izberete, kaj vidi. Cene ostanejo skrite, če jih ne pokažete, dostop pa lahko kadar koli prekličete. Kasneje ga boste lahko objavili tudi na Unbusyness marketplacu.",
+  pf:"Koristen že dolgo pred prodajo", pfd:"Pri škodi za zavarovalnico, oddaji, prijavi na subvencije ali predaji doma družini je vse pripravljeno.",
+  o1:"Primer, niso pravi podatki", po0:"Potni list nepremičnine", po1:"Stanovanje, Celovška 100", po2:"Redno vzdrževana · 94 %", po3:"14 zapisanih del · 9 Verified · 6 garancij · 8 dokumentov",
+  pw1d:"feb. 2025", pw1:"Menjava bojlerja", pw2d:"nov. 2025", pw2:"Servis plinske peči", pw3d:"2023 · prek upravnika", pw3:"Nova streha stavbe", pw3b:"Verified · stavba", pw4d:"2021 · računi priloženi", pw4:"Prenova kuhinje", pw4b:"Dodano ročno",
+  f0:"Kaj naredi Unbusyness Home", f1:"Organizira vaš dom in vas poveže z mojstri, ki pridejo.",
+  fa:"Potni list za vse", fad:"Dom, avto, aparati, garancije, računi in navodila. Dovolj je fotografija, ničesar ni treba tipkati.",
+  fb:"Opomniki, preden poteče", fbd:"Servisi, registracije, garancije in menjave filtrov. Opomni vas pravočasno, mojster pa je pripravljen, če ga potrebujete.",
+  fc:"Prijava z enim sporočilom", fcd:"Dovolj je fotografija, besedilo ali glasovno sporočilo. Unbusyness ugotovi, kaj je pokvarjeno in kdo naj popravi.",
+  fd:"Zanesljivi in točni mojstri", fdd:"Preverjeni vodoinštalaterji, električarji in drugi obrtniki, ocenjeni po tem, ali pridejo pravočasno in delo opravijo prav. Dobite točen termin prihoda.",
+  fe:"Vsako popravilo zabeleženo", fed:"Računi, fotografije in nove garancije se shranijo samodejno. Zgodovina pride prav pri prodaji, oddaji ali zavarovalnici.",
+  ff:"Skupno z gospodinjstvom", ffd:"Partner vidi isti potni list. Najemnik lahko prijavi okvaro, ne da bi potreboval vašo številko za vse.",
+  b0:"Živite v bloku?", b1:"Okvare v skupnih prostorih gredo naravnost upravniku.", b2:"Če vaš upravnik uporablja Unbusyness, pokvarjeno dvigalo, temno stopnišče ali pušečo streho prijavite z enim sporočilom in popravilo spremljate do konca.",
+  ba:"Vi prijavite", bad:"Fotografija ali glasovno sporočilo: »Luč v 3. nadstropju ne dela.«",
+  bb:"Upravnik dobi pripravljeno nalogo", bbd:"Z naslovom, fotografijo in predlaganim mojstrom.",
+  bc:"Vi vidite napredek", bcd:"Kdo pride, kdaj in kdaj je popravljeno. Brez spraševanja naokoli.",
+  rh:"Vaš upravnik še ne uporablja Unbusyness?", rp:"Priporočite mu ga. Spodnje sporočilo uredite in ga pošljite po e-pošti ali WhatsAppu, ali pa v prijavi označite polje in ga kontaktiramo mi.",
+  raddr:"Naslov vaše stavbe", rmsg:"Sporočilo", rcopy:"Kopiraj sporočilo", rmail:"Pošlji po e-pošti", rwa:"Pošlji na WhatsApp", copied:"Sporočilo je kopirano.", copyFail:"Kopiranje ni uspelo. Označite besedilo in ga kopirajte ročno.",
+  recSubj:"Predlog: Unbusyness za našo stavbo",
+  recBody:"Pozdravljeni,\n\nsem stanovalec/-ka stavbe {addr}. Priporočam vam Unbusyness (unbusyness.com), pomočnika za upravnike. Stanovalci bi okvare prijavljali z enim sporočilom, vi pa bi dobili pripravljene naloge s fotografijo in predlaganim mojstrom ter manj klicev.\n\nLep pozdrav",
+  addrPh:"[naslov]",
+  h0:"Kako začnete", h1b:"Deset minut za nastavitev, potem dela v ozadju.",
+  ha:"Dodajte, kar imate", had:"Fotografirajte račune, tablice z oznakami in dokumente. Unbusyness izpolni potni list namesto vas.",
+  hb:"Pravočasni opomniki", hbd:"Sporočilo dobite pred servisom, registracijo ali koncem garancije, ne po njem.",
+  hc:"Eno sporočilo, ko se pokvari", hcd:"Unbusyness najde zanesljivega mojstra, rezervira obisk in shrani popravilo.",
+  j0:"Čakalni seznam", j1:"Bodite med prvimi domovi na Unbusyness.", j2:"Začenjamo v Sloveniji z manjšo skupino stanovalcev in lastnikov.",
+  k1:"<b>Zgodnji dostop</b> do Unbusyness Home pred javnim zagonom.", k2:"<b>Ustanovni pogoji</b> za vse s čakalnega seznama.", k3:"<b>Kontaktiramo vašega upravnika</b> namesto vas, če želite.",
+  lName:"Ime in priimek", lEmail:"E-pošta", lPhone:"Telefon", optional:"(neobvezno)", lCity:"Kraj", lHome:"Živim v", choose:"Izberite …",
+  h1o:"Svojem stanovanju v bloku", h2o:"Najemniškem stanovanju", h3o:"Hiši", h4o:"Oddajam nepremičnino",
+  lMgr:"Ali vaš upravnik uporablja Unbusyness?", m0:"Ne vem", m1o:"Da", m2o:"Ne", m3o:"Nimamo upravnika",
+  lMgrName:"Ime upravnika ali podjetja", lContact:"Prosim, kontaktirajte mojega upravnika in mu predstavite Unbusyness.",
+  lWant:"Kaj bi vam najbolj pomagalo? <span class=\"opt\">(izberite poljubno)</span>",
+  x1:"Vse na enem mestu", x2:"Opomniki", x3:"Zanesljivi mojstri", x4:"Garancije in računi", x5:"Avto", x6:"Prijava okvar v stavbi",
+  consent:"Unbusyness me lahko kontaktira glede zgodnjega dostopa. Moji podatki se uporabijo samo za to in lahko kadar koli zahtevam izbris.",
+  send:"Prijava na čakalni seznam", d1x:"Ste na seznamu.", d2x:"Sporočili vam bomo, ko bo Unbusyness Home pripravljen za vas. Če ste želeli, se bomo oglasili tudi vašemu upravniku.",
+  d3x:"Predogled: ta stran še ni povezana s čakalnim seznamom, zato ni bilo nič poslano.",
+  q0:"Vprašanja", q1:"Kaj stanovalci najprej vprašajo",
+  qa:"Ali mora moj upravnik uporabljati Unbusyness?", qad:"Ne. Potni list, opomniki in mojstri delujejo tudi brez njega. Če ga uporablja tudi upravnik, lahko prijavljate še okvare v skupnih prostorih in spremljate popravila.",
+  qb:"Kako izbirate mojstre?", qbd:"Sodelujemo s preverjenimi mojstri in spremljamo, ali pridejo v dogovorjenem terminu in kako stanovalci ocenijo delo. Kdor ponavljajoče zamuja, ne dobi novih del.",
+  qc:"Koliko bo stalo?", qcd:"Cene še določamo. Vsi s čakalnega seznama dobijo zgodnji dostop in ustanovne pogoje.",
+  qd:"Kdo vidi moje podatke?", qdd:"Samo vi in tisti, s katerimi delite potni list. Mojster vidi le, kar potrebuje za delo, na primer naslov in fotografijo okvare.",
+  qe:"Sem najemnik. Je to zame?", qed:"Da. Okvare lahko prijavite najemodajalcu ali upravniku in imate zapis, kaj in kdaj ste prijavili.",
+  foot:"Vprašanja? Pišite na info@unbusyness.com ali pokličite +386 40 290 963",
+  errReq:"Izpolnite ime, e-pošto, kraj in kje živite.", errEmail:"Vpišite veljaven e-poštni naslov.", errConsent:"Za prijavo potrdite soglasje.", errMgr:"Da vašega upravnika lahko kontaktiramo, vpišite njegovo ime ali podjetje.", errSend:"Prijave ni bilo mogoče poslati. Poskusite znova ali pišite na info@unbusyness.com.", sending:"Pošiljam …"
+};
+const EN_EXTRA = {
+  copied:"Message copied.", copyFail:"Couldn't copy. Select the text and copy it yourself.",
+  recSubj:"Suggestion: Unbusyness for our building",
+  recBody:"Hello,\n\nI live at {addr}. I'd like to recommend Unbusyness (unbusyness.com), an assistant for building managers. Residents could report faults with one message, and you would get ready jobs with a photo and a suggested tradesperson, and fewer phone calls.\n\nBest regards",
+  addrPh:"[address]",
+  errReq:"Please fill in your name, email, town and where you live.", errEmail:"Please enter a valid email address.", errConsent:"Please tick the consent box to join.", errMgr:"So we can contact your building manager, please add their name or company.", errSend:"We couldn't send your sign-up. Try again or write to info@unbusyness.com.", sending:"Sending…"
+};
+
+const EN = {};
+document.querySelectorAll("[data-t]").forEach((el) => { EN[el.dataset.t] = el.hasAttribute("data-html") || el.querySelector("span.opt") ? el.innerHTML : el.textContent; });
+Object.assign(EN, EN_EXTRA);
+let lang = "en";
+function t(k) { return (lang === "sl" ? SL : EN)[k] ?? EN[k] ?? ""; }
+
+// Recommend-to-your-manager message
+const recAddr = document.getElementById("recAddr"), recMsg = document.getElementById("recMsg"), recOk = document.getElementById("recOk");
+let recEdited = false;
+function recText() { return recMsg.value; }
+function fillRec() { if (!recEdited) recMsg.value = t("recBody").replace("{addr}", recAddr.value.trim() || t("addrPh")); updRecLinks(); }
+function updRecLinks() {
+  document.getElementById("recMail").href = "mailto:?subject=" + encodeURIComponent(t("recSubj")) + "&body=" + encodeURIComponent(recText());
+  document.getElementById("recWa").href = "https://wa.me/?text=" + encodeURIComponent(recText());
+}
+recAddr.addEventListener("input", fillRec);
+recMsg.addEventListener("input", () => { recEdited = true; updRecLinks(); });
+document.getElementById("recCopy").addEventListener("click", async () => {
+  try { await navigator.clipboard.writeText(recText()); recOk.textContent = t("copied"); }
+  catch { recMsg.select(); recOk.textContent = t("copyFail"); }
+});
+
+function setLang(l) {
+  lang = l === "sl" ? "sl" : "en";
+  document.documentElement.lang = lang;
+  document.querySelectorAll("[data-t]").forEach((el) => {
+    const v = t(el.dataset.t); if (!v) return;
+    if (el.hasAttribute("data-html") || /<\w/.test(v)) el.innerHTML = v; else el.textContent = v;
+  });
+  document.querySelectorAll(".lang button").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.lang === lang)));
+  recEdited = false; recOk.textContent = ""; fillRec();
+  try { localStorage.setItem("ub-lang", lang); } catch {}
+}
+document.querySelectorAll(".lang button").forEach((b) => b.addEventListener("click", () => setLang(b.dataset.lang)));
+const navSl = (navigator.language || "").toLowerCase().startsWith("sl") ? "sl" : "en";
+let start = navSl; try { start = new URLSearchParams(location.search).get("lang") || localStorage.getItem("ub-lang") || navSl; } catch {}
+setLang(start);
+
+// Pre-fill the form's manager fields when the visitor says their manager doesn't use Unbusyness
+const mgrUses = document.getElementById("mgrUses");
+mgrUses.addEventListener("change", () => { if (mgrUses.value === "no") document.getElementById("contactMgr").checked = true; });
+
+const form = document.getElementById("wl"); const err = document.getElementById("err"); const btn = document.getElementById("submit");
+form.addEventListener("submit", async (e) => {
+  e.preventDefault(); err.hidden = true;
+  const v = (id) => document.getElementById(id).value.trim();
+  const fail = (k, id) => { err.textContent = t(k); err.hidden = false; if (id) document.getElementById(id).focus(); };
+  const miss = ["name", "email", "city", "home"].find((id) => !v(id));
+  if (miss) return fail("errReq", miss);
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v("email"))) return fail("errEmail", "email");
+  const contactMgr = document.getElementById("contactMgr").checked;
+  if (contactMgr && !v("mgr")) return fail("errMgr", "mgr");
+  if (!document.getElementById("consent").checked) return fail("errConsent", "consent");
+  const data = { segment: "residents", name: v("name"), email: v("email"), phone: v("phone"), city: v("city"), home: v("home"),
+    managerUsesUnbusyness: v("mgrUses"), manager: v("mgr"), contactManager: contactMgr, address: recAddr.value.trim(),
+    wants: [...form.querySelectorAll('input[name="want"]:checked')].map((x) => x.value), language: lang, consent: true };
+  const label = btn.textContent; btn.disabled = true; btn.textContent = t("sending");
+  try {
+    if (WAITLIST_ENDPOINT) {
+      const r = await fetch(WAITLIST_ENDPOINT, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(data) });
+      if (!r.ok) throw new Error("send failed");
+    } else document.getElementById("previewNote").hidden = false;
+    form.hidden = true; const d = document.getElementById("done"); d.hidden = false; d.focus();
+  } catch { fail("errSend"); }
+  finally { btn.disabled = false; btn.textContent = label; }
+});
+</script>
+
+</body>
+</html>

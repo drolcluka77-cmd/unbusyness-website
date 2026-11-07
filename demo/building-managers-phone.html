@@ -1,0 +1,558 @@
+<!doctype html>
+<html lang="sl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+</head>
+<body>
+<title>Unbusyness za upravnike · telefon</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<style>
+/* Layout: phone-first app; on wide screens it sits in a device frame. One primary action per card, 56px+ targets, bottom tab bar with a raised voice button. */
+:root{
+  --green:#1F4D45; --green-dark:#173D37; --green-soft:#E6EEEB; --green-line:#3D6C62; --on-green:#CFE0DA;
+  --apricot:#E8915F; --apricot-light:#F2A57A; --apricot-ink:#A84E22; --apricot-soft:#FBE8DC;
+  --slate:#4F5F80; --slate-soft:#E9ECF3;
+  --sand:#F4EFE6; --linen:#FBFAF7; --white:#FFFFFF;
+  --ink:#14201E; --muted:#56615F; --line:#E7E3DA;
+  --red:#B23A32; --red-soft:#FBEAE8; --ok:#2F7A55; --ok-soft:#E4F1E8;
+  --font:'Plus Jakarta Sans','Segoe UI',system-ui,-apple-system,sans-serif;
+  color-scheme:light;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{margin:0;background:var(--sand);color:var(--ink);font-family:var(--font);font-size:17px;line-height:1.45;-webkit-font-smoothing:antialiased}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none;padding:0}
+input,textarea{font:inherit;color:inherit}
+@media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
+
+/* stage + device */
+.stage{min-height:100%;display:flex;align-items:center;justify-content:center;gap:56px;padding-block:32px;padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px))}
+.side{max-width:330px;display:flex;flex-direction:column;gap:16px}
+.side h1{margin:0;font-size:40px;line-height:1.05;letter-spacing:-1.5px;font-weight:700;text-wrap:balance}
+.side h1 span{color:var(--green)}
+.side p{margin:0;color:var(--muted);font-size:16px}
+.side ul{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:10px;font-size:15px}
+.side li{display:flex;gap:10px;align-items:flex-start}
+.side li:before{content:"";width:8px;height:8px;border-radius:50%;background:var(--apricot);margin-top:8px;flex-shrink:0}
+.brandrow{display:flex;align-items:center;gap:10px;font-size:20px;font-weight:700;letter-spacing:-.5px}
+.phone{position:relative;width:390px;height:844px;max-height:calc(100vh - 64px);border-radius:48px;background:var(--linen);box-shadow:0 0 0 10px #14201E,0 30px 80px rgba(20,32,30,.28);overflow:hidden;display:flex;flex-direction:column}
+@media (max-width:820px){.side{display:none}.stage{padding:0;gap:0;align-items:stretch}.phone{width:100%;height:100vh;height:100dvh;max-height:none;border-radius:0;box-shadow:none}}
+
+/* app chrome */
+.screen{flex:1;overflow-y:auto;overflow-x:hidden;padding:18px 18px 130px;scroll-behavior:smooth}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:20px 18px 6px;background:var(--linen)}
+@media (max-width:820px){.topbar{padding-top:calc(14px + env(safe-area-inset-top, 0px))}}
+.hello small{display:block;font-size:13px;font-weight:600;letter-spacing:1.2px;text-transform:uppercase;color:var(--muted)}
+.hello strong{font-size:26px;font-weight:700;letter-spacing:-.8px}
+.avatar{width:44px;height:44px;border-radius:50%;background:var(--apricot-soft);color:var(--apricot-ink);display:grid;place-items:center;font-weight:700;font-size:15px}
+.back{display:flex;align-items:center;gap:6px;min-height:48px;padding:0 14px 0 8px;margin-left:-8px;border-radius:99px;font-weight:700;font-size:16px;color:var(--green)}
+.back:active{background:var(--green-soft)}
+.title{font-size:20px;font-weight:700;letter-spacing:-.4px}
+
+/* tab bar */
+.tabs{position:absolute;left:0;right:0;bottom:0;background:var(--white);border-top:1px solid var(--line);display:grid;grid-template-columns:1fr 1fr 96px 1fr 1fr;align-items:end;padding:8px 6px calc(10px + env(safe-area-inset-bottom, 0px));z-index:5}
+.tab{display:flex;flex-direction:column;align-items:center;gap:3px;min-height:56px;justify-content:center;font-size:12px;font-weight:600;color:var(--muted);border-radius:14px;position:relative}
+.tab.on{color:var(--green)}
+.tab.on:after{content:"";position:absolute;top:2px;width:22px;height:3px;border-radius:3px;background:var(--green)}
+.tab .badge{position:absolute;top:4px;left:calc(50% + 6px);min-width:18px;height:18px;padding:0 5px;border-radius:9px;background:var(--red);color:#fff;font-size:11px;font-weight:700;display:grid;place-items:center}
+.mic{justify-self:center;width:76px;height:76px;margin-top:-34px;border-radius:50%;background:var(--green);color:var(--linen);display:grid;place-items:center;box-shadow:0 0 0 6px var(--white),0 10px 26px rgba(31,77,69,.38);position:relative}
+.mic:after{content:"";position:absolute;inset:-12px;border-radius:50%;border:2px solid var(--apricot-light);opacity:.0;animation:ring 2.6s ease-out infinite}
+@keyframes ring{0%{transform:scale(.85);opacity:.7}100%{transform:scale(1.15);opacity:0}}
+.mic:active{transform:scale(.96)}
+.miclabel{grid-column:3;justify-self:center;font-size:12px;font-weight:700;color:var(--green);margin-top:4px}
+
+/* building blocks */
+.eyebrow{font-size:13px;font-weight:700;letter-spacing:1.3px;text-transform:uppercase;color:var(--muted);margin:26px 2px 10px;display:flex;justify-content:space-between;align-items:center}
+.eyebrow .count{background:var(--red);color:#fff;border-radius:99px;padding:2px 9px;font-size:12px;letter-spacing:0}
+.ailine{display:flex;gap:12px;align-items:center;background:var(--sand);border-radius:20px;padding:14px 16px;font-size:15px;margin-top:10px}
+.ailine .dot{width:36px;height:36px;border-radius:50%;background:var(--green);color:var(--apricot-light);display:grid;place-items:center;flex-shrink:0}
+.card{background:var(--white);border:1px solid var(--line);border-radius:22px;padding:16px;display:flex;flex-direction:column;gap:12px}
+.card+.card{margin-top:12px}
+.need{padding:12px 12px 12px 14px}
+.need .main strong{font-size:16px}.need .main span{font-size:14px}
+.pbtn{min-height:48px;min-width:84px;padding:0 16px;border-radius:14px;background:var(--green-soft);color:var(--green);font-weight:700;font-size:15px;flex-shrink:0}
+.pbtn.hot{background:var(--green);color:var(--linen)}
+.pbtn:active{transform:scale(.97)}
+.row{display:flex;align-items:center;gap:12px}
+.ic{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;flex-shrink:0}
+.ic.green{background:var(--green-soft);color:var(--green)} .ic.red{background:var(--red-soft);color:var(--red)} .ic.apricot{background:var(--apricot-soft);color:var(--apricot-ink)} .ic.slate{background:var(--slate-soft);color:var(--slate)}
+.main{flex:1;min-width:0}
+.main strong{display:block;font-size:17px;font-weight:700;line-height:1.3}
+.main span{display:block;font-size:15px;color:var(--muted);overflow:hidden;text-overflow:ellipsis}
+.tag{display:inline-flex;align-items:center;border-radius:99px;padding:3px 10px;font-size:12px;font-weight:700;white-space:nowrap}
+.tag.red{background:var(--red-soft);color:var(--red)} .tag.green{background:var(--green-soft);color:var(--green)} .tag.apricot{background:var(--apricot-soft);color:var(--apricot-ink)} .tag.ok{background:var(--ok-soft);color:var(--ok)} .tag.slate{background:var(--slate-soft);color:var(--slate)}
+.btn{min-height:56px;border-radius:16px;padding:0 18px;font-weight:700;font-size:17px;display:inline-flex;align-items:center;justify-content:center;gap:10px;width:100%;transition:transform .1s}
+.btn:active{transform:scale(.98)}
+.btn.primary{background:var(--green);color:var(--linen)}
+.btn.primary:active{background:var(--green-dark)}
+.btn.apricot{background:var(--apricot);color:var(--ink)}
+.btn.soft{background:var(--green-soft);color:var(--green)}
+.btn.line{background:var(--white);border:1.5px solid var(--line);color:var(--ink)}
+.btn.danger{background:var(--red);color:#fff}
+.btns{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.btns.three{grid-template-columns:1fr 1fr 1fr}
+.btns.three .btn{flex-direction:column;gap:4px;min-height:72px;font-size:14px;padding:0 6px}
+:focus-visible{outline:3px solid var(--apricot);outline-offset:2px}
+
+/* next job hero */
+.next{background:var(--green);color:var(--linen);border-radius:26px;padding:20px;display:flex;flex-direction:column;gap:14px}
+.next .when{display:flex;justify-content:space-between;align-items:center;font-size:14px;font-weight:700;color:var(--on-green);letter-spacing:.4px}
+.next h2{margin:0;font-size:24px;letter-spacing:-.6px;line-height:1.2}
+.next p{margin:0;color:var(--on-green);font-size:16px}
+.next .btn.primary{background:var(--apricot);color:var(--ink)}
+.next .btn.soft{background:rgba(255,255,255,.12);color:var(--linen)}
+.next .btns.three .btn{background:rgba(255,255,255,.12);color:var(--linen)}
+
+/* lists */
+.list .item{display:flex;align-items:center;gap:12px;padding:14px 4px;border-bottom:1px solid var(--line);width:100%;text-align:left;min-height:72px}
+.list .item:last-child{border-bottom:0}
+.time{width:56px;font-weight:800;font-size:17px;flex-shrink:0}
+.chev{color:#8A938F;flex-shrink:0}
+
+/* detail */
+.field{display:flex;flex-direction:column;gap:2px;padding:12px 0;border-bottom:1px solid var(--line)}
+.field:last-child{border-bottom:0}
+.field small{font-size:13px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:1px}
+.field b{font-size:18px;font-weight:700}
+.summary{background:var(--sand);border-radius:18px;padding:16px;font-size:16px}
+.steps{display:flex;gap:6px;margin:4px 0 2px}
+.steps i{flex:1;height:6px;border-radius:6px;background:var(--line)}
+.steps i.on{background:var(--green)}
+.stepname{font-size:14px;font-weight:700;color:var(--green)}
+.slot{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:64px;padding:0 16px;border-radius:16px;border:1.5px solid var(--line);background:var(--white);font-weight:700;width:100%;text-align:left}
+.slot.sel{border-color:var(--green);background:var(--green-soft);color:var(--green)}
+.slot span{font-weight:500;color:var(--muted);font-size:14px}
+.stack{display:flex;flex-direction:column;gap:10px}
+.price{display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--sand);border-radius:20px;padding:10px}
+.price button{width:56px;height:56px;border-radius:16px;background:var(--white);font-size:26px;font-weight:700;color:var(--green)}
+.price output{font-size:34px;font-weight:800;letter-spacing:-1px}
+.lines .ln{display:flex;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid var(--line);font-size:16px}
+.lines .ln:last-child{border-bottom:0}
+.photo{height:96px;border-radius:16px;border:2px dashed #CFC8BA;display:flex;align-items:center;justify-content:center;gap:8px;font-weight:700;color:var(--muted);width:100%}
+.who{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.who button{min-height:58px;border-radius:14px;border:1.5px solid var(--line);background:var(--white);color:var(--ink);text-align:left;padding:8px 12px;display:flex;flex-direction:column;justify-content:center;gap:1px}
+.who button b{font-size:16px}.who button span{font-size:12.5px;color:var(--muted)}
+.who button.on{border-color:var(--green);background:var(--green-soft);box-shadow:inset 0 0 0 1px var(--green)}
+.thumbs{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0}
+.thumb{position:relative;aspect-ratio:1;border-radius:14px;overflow:hidden;background:var(--sand);display:grid;place-items:center;color:var(--green)}
+.thumb img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0}
+.thumb.inv{background:#fff;border:1px solid var(--line);color:var(--apricot-ink)}
+.thumb.job{background:linear-gradient(135deg,#C9D9D3,#8FB0A6);color:#fff}
+.thumb .lbl{position:absolute;left:6px;bottom:6px;right:6px;border-radius:8px;padding:2px 6px;font-size:11px;font-weight:800;text-align:center;background:var(--green);color:#fff}
+.thumb.inv .lbl{background:var(--apricot);color:var(--ink)}
+.scrim{position:absolute;inset:0;z-index:25;background:rgba(20,32,30,.42);display:flex;align-items:flex-end}
+.psheet{background:var(--linen);width:100%;max-height:92%;overflow-y:auto;border-radius:26px 26px 0 0;padding:18px 18px calc(22px + env(safe-area-inset-bottom, 0px));display:flex;flex-direction:column;gap:12px;animation:up .25s ease}
+.orb{flex-shrink:0}.orb.small{width:84px;height:84px;margin:4px auto 10px;box-shadow:0 0 0 10px rgba(242,165,122,.16)}
+.voice{overflow-y:auto}.voice .close{flex-shrink:0}
+.psheet h2{margin:0;font-size:22px;letter-spacing:-.4px}
+.lblpick{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.lblpick button{border:2px solid var(--line);background:var(--white);border-radius:18px;padding:14px 12px;text-align:left;display:flex;flex-direction:column;gap:4px;color:var(--ink)}
+.lblpick button b{font-size:17px}.lblpick button span{font-size:13px;color:var(--muted);line-height:1.35}
+.lblpick button.on{border-color:var(--green);background:var(--green-soft)}
+.btn.off{opacity:.4;pointer-events:none}
+.photo.done{border-style:solid;border-color:var(--green);background:var(--green-soft);color:var(--green)}
+textarea{width:100%;min-height:90px;border:1.5px solid var(--line);border-radius:16px;padding:14px;font-size:16px;resize:vertical;background:var(--white)}
+textarea:focus{outline:none;border-color:var(--green)}
+.bigok{display:flex;flex-direction:column;align-items:center;text-align:center;gap:10px;padding:36px 10px 10px}
+.bigok .ic{width:84px;height:84px;background:var(--ok-soft);color:var(--ok)}
+.bigok h2{margin:0;font-size:26px;letter-spacing:-.6px}
+.bigok p{margin:0;color:var(--muted)}
+.money{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.money .card{gap:4px;margin-top:0}
+.money b{font-size:26px;letter-spacing:-.6px}
+.money small{color:var(--muted);font-size:14px;font-weight:600}
+
+/* voice sheet */
+.voice{position:absolute;inset:0;background:var(--green);color:var(--linen);z-index:20;display:flex;flex-direction:column;padding:20px 20px calc(24px + env(safe-area-inset-bottom, 0px));animation:up .25s ease}
+@media (max-width:820px){.voice{padding-top:calc(16px + env(safe-area-inset-top, 0px))}}
+@keyframes up{from{transform:translateY(30px);opacity:0}to{transform:none;opacity:1}}
+.voice .close{align-self:flex-end;width:48px;height:48px;border-radius:50%;background:rgba(255,255,255,.12);display:grid;place-items:center}
+.voice .hint{color:var(--on-green);font-size:15px;text-align:center}
+.orb{width:150px;height:150px;border-radius:50%;margin:28px auto 18px;background:radial-gradient(circle at 50% 45%,var(--apricot-light),var(--apricot) 60%);display:grid;place-items:center;color:var(--ink);box-shadow:0 0 0 18px rgba(242,165,122,.16),0 0 0 36px rgba(242,165,122,.08)}
+.orb.live{animation:pulse 1.4s ease-in-out infinite}
+@keyframes pulse{50%{box-shadow:0 0 0 26px rgba(242,165,122,.2),0 0 0 50px rgba(242,165,122,.07)}}
+.said{font-size:22px;line-height:1.4;font-weight:600;min-height:96px;text-align:center;letter-spacing:-.3px}
+.said .caret{display:inline-block;width:2px;height:22px;background:var(--apricot-light);vertical-align:-3px;margin-left:2px;animation:blink 1s step-end infinite}
+@keyframes blink{50%{opacity:0}}
+.plan{background:var(--linen);color:var(--ink);border-radius:24px;padding:18px;display:flex;flex-direction:column;gap:6px;margin-top:auto}
+.plan .field b{font-size:17px}
+.examples{display:flex;flex-direction:column;gap:8px;margin-top:auto}
+.examples button{min-height:52px;border-radius:16px;background:rgba(255,255,255,.1);color:var(--linen);font-size:15px;font-weight:600;text-align:left;padding:10px 16px}
+
+/* translator + crew */
+.explain{display:flex;gap:10px;align-items:flex-start;background:var(--apricot-soft);border-radius:16px;padding:12px 14px;font-size:14px;line-height:1.45;color:#5A3A26;margin:14px 0 4px}
+.explain b{color:var(--apricot-ink)}
+.explain .ei{width:26px;height:26px;border-radius:50%;background:var(--white);color:var(--apricot-ink);display:grid;place-items:center;flex-shrink:0;font-weight:800;font-size:14px}
+.langbar{display:flex;align-items:center;justify-content:space-between;gap:8px;background:var(--green);color:var(--linen);border-radius:20px;padding:12px 14px}
+.langbar .who{display:flex;flex-direction:column;font-size:13px;color:var(--on-green);font-weight:600}
+.langbar .who b{font-size:17px;color:var(--linen)}
+.langbar .swap{width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.14);display:grid;place-items:center;color:var(--apricot-light);flex-shrink:0}
+.convo{display:flex;flex-direction:column;gap:10px;margin-top:14px}
+.bub{border-radius:20px;padding:12px 14px;max-width:92%;display:flex;flex-direction:column;gap:4px;animation:up .2s ease}
+.bub.w{align-self:flex-end;background:var(--green-soft)}
+.bub.c{align-self:flex-start;background:var(--white);border:1px solid var(--line)}
+.bub .lbl{font-size:12px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--muted)}
+.bub .orig{font-size:15px;color:var(--muted)}
+.bub .big{font-size:21px;font-weight:700;line-height:1.3;color:var(--ink)}
+.bub .gloss{font-size:13px;color:#7A8481;font-style:italic}
+.speak2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+.speak2 .btn{flex-direction:column;gap:4px;min-height:84px;font-size:15px}
+.phr{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.phr button{min-height:76px;border-radius:16px;background:var(--white);border:1.5px solid var(--line);text-align:left;padding:10px 12px;font-weight:700;font-size:14px;line-height:1.3;display:flex;flex-direction:column;gap:6px}
+.phr button span{color:var(--green)}
+.showcard{position:absolute;inset:0;z-index:25;background:var(--white);display:flex;flex-direction:column;padding:22px 22px calc(24px + env(safe-area-inset-bottom, 0px));animation:up .2s ease}
+@media (max-width:820px){.showcard{padding-top:calc(18px + env(safe-area-inset-top, 0px))}}
+.showcard .for{font-size:13px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--muted)}
+.showcard .huge{font-size:38px;line-height:1.15;font-weight:800;letter-spacing:-1px;margin:18px 0 14px;color:var(--ink)}
+.showcard .sub{font-size:17px;color:var(--muted)}
+.brief .seg{display:grid;grid-template-columns:1fr 1fr;background:var(--sand);border-radius:14px;padding:4px;gap:4px}
+.brief .seg button{min-height:44px;border-radius:11px;font-weight:700;font-size:14px;color:var(--muted)}
+.brief .seg button.on{background:var(--white);color:var(--green)}
+.brief .txt{font-size:19px;line-height:1.5}
+.check{display:flex;gap:12px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--line);font-size:16px}
+.check:last-child{border-bottom:0}
+.check i{width:24px;height:24px;border-radius:8px;border:2px solid var(--green);flex-shrink:0;margin-top:1px}
+.crewline{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--on-green);font-weight:600}
+.crewline .flag{background:rgba(255,255,255,.14);color:var(--linen);border-radius:99px;padding:3px 10px;font-size:12px}
+.lang{display:inline-flex;align-items:center;gap:6px;border-radius:99px;padding:4px 10px;font-size:13px;font-weight:700;background:var(--slate-soft);color:var(--slate)}
+
+/* owner view */
+.brief-card{background:var(--green);color:var(--linen);border-radius:24px;padding:18px;display:flex;flex-direction:column;gap:12px}
+.brief-card .top{display:flex;align-items:center;gap:12px}
+.playbtn{width:56px;height:56px;border-radius:50%;background:var(--apricot);color:var(--ink);display:grid;place-items:center;flex-shrink:0}
+.brief-card .lines{display:flex;flex-direction:column;gap:6px;font-size:16px;line-height:1.4}
+.brief-card .lines p{margin:0;color:rgba(251,250,247,.45);transition:color .3s}
+.brief-card .lines p.on{color:var(--linen)}
+.brief-card .lines p.done{color:var(--on-green)}
+.value{background:var(--white);border:1px solid var(--line);border-radius:24px;padding:18px;display:flex;flex-direction:column;gap:12px}
+.value .roi{display:flex;align-items:baseline;gap:8px}
+.value .roi b{font-size:40px;letter-spacing:-1.5px;color:var(--green);line-height:1}
+.funnel{display:flex;flex-direction:column;gap:8px}
+.funnel .fr{display:grid;grid-template-columns:136px 1fr 40px;align-items:center;gap:10px;font-size:14px}
+.funnel .bar{height:14px;border-radius:7px;background:var(--green-soft);overflow:hidden}
+.funnel .bar i{display:block;height:100%;border-radius:7px;background:var(--green)}
+.funnel .fr b{text-align:right;font-variant-numeric:tabular-nums}
+.prof .pr{display:grid;grid-template-columns:1fr 70px;gap:6px 10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}
+.prof .pr:last-child{border-bottom:0}
+.prof .pr .bar{grid-column:1 / -1;height:10px;border-radius:5px;background:var(--sand);overflow:hidden}
+.prof .pr .bar i{display:block;height:100%;border-radius:5px}
+.prof .pr b{text-align:right;font-variant-numeric:tabular-nums}
+.switch{width:58px;height:34px;border-radius:17px;background:#CFC8BA;position:relative;flex-shrink:0;transition:background .2s}
+.switch:after{content:"";position:absolute;top:3px;left:3px;width:28px;height:28px;border-radius:50%;background:#fff;transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+.switch[aria-checked="true"]{background:var(--green)}
+.switch[aria-checked="true"]:after{transform:translateX(24px)}
+.offbanner{display:flex;gap:12px;align-items:center;background:var(--slate);color:#fff;border-radius:18px;padding:12px 14px;font-size:15px;margin-top:14px}
+.offbanner b{display:block}
+.mrow{display:flex;align-items:center;gap:12px;width:100%;text-align:left;min-height:64px}
+
+/* week view */
+.week{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-top:8px}
+.week button{min-height:64px;border-radius:14px;background:var(--white);border:1.5px solid var(--line);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:12px;font-weight:700;color:var(--muted)}
+.week button b{font-size:17px;color:var(--ink)}
+.week button.today{border-color:var(--green)}
+.week button.sel{background:var(--green);border-color:var(--green);color:var(--on-green)}
+.week button.sel b{color:var(--linen)}
+.week .dots{display:flex;gap:2px;height:6px}
+.week .dots i{width:5px;height:5px;border-radius:50%;background:var(--apricot)}
+.week button.past .dots i{background:#B9C7C2}
+.week button.sel .dots i{background:var(--apricot-light)}
+.wsum{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
+.wsum div{background:var(--sand);border-radius:16px;padding:10px 12px;display:flex;flex-direction:column}
+.wsum b{font-size:20px;letter-spacing:-.4px}
+.wsum span{font-size:12px;font-weight:600;color:var(--muted)}
+
+/* toast */
+.toast{position:absolute;left:16px;right:16px;bottom:118px;background:var(--ink);color:var(--linen);border-radius:18px;padding:14px 16px;font-weight:600;font-size:15px;display:flex;gap:10px;align-items:center;z-index:30;animation:up .2s ease}
+
+/* building-manager additions */
+.muted{color:var(--muted)}
+.seg{display:grid;grid-template-columns:repeat(3,1fr);background:var(--white);border:1px solid var(--line);border-radius:16px;padding:4px;gap:4px}
+.seg button{min-height:46px;border-radius:12px;font-weight:700;font-size:15px;color:var(--muted)}
+.seg button.on{background:var(--green-soft);color:var(--green)}
+.vbar{position:relative;height:20px;border-radius:10px;background:var(--sand);display:flex}
+.vbar i{display:block;height:100%;background:var(--ok);border-radius:10px 0 0 10px}.vbar i.n{background:var(--red);border-radius:0}
+.vbar span{position:absolute;top:-5px;bottom:-5px;width:2px;background:var(--ink)}
+.voice .convo .bub.c{background:var(--white)}
+.money button.card{gap:4px;margin-top:0}
+.tabs{grid-template-columns:1fr 1fr 96px 1fr 1fr}
+
+</style>
+
+<div class="stage">
+  <div class="side">
+    <div class="brandrow">
+      <svg width="36" height="36" viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="24" fill="#1F4D45"/><path d="M14.5 19 V25.5 a9.5 9.5 0 0 0 19 0 V19" fill="none" stroke="#FBFAF7" stroke-width="4" stroke-linecap="round"/><circle cx="24" cy="15.5" r="3.4" fill="#F2A57A"/></svg>
+      unbusyness
+    </div>
+    <h1>Vse vaše stavbe, <span>v žepu.</span></h1>
+    <p>Unbusyness za upravnike na telefonu. Stanovalci kličejo kot doslej, Unbusyness uredi prijavo, vi samo potrdite.</p>
+    <ul>
+      <li>Danes: kaj je nujno in kaj potrebuje vas</li>
+      <li>Prijave okvar s pogovorom, fotografijami in potekom</li>
+      <li>Pošlji izvajalcu in obvesti stanovalce z enim dotikom</li>
+      <li>Roki: pregledi dvigal, gasilni aparati, dimnikar, čiščenje</li>
+      <li>Zbori lastnikov, glasovanje in računi (dotaknite se MK)</li>
+      <li>Držite mikrofon in povejte, kaj naj naredim</li>
+    </ul>
+    <p style="font-size:13px">Interaktivni demo z izmišljenimi podatki. Poskusite <b>Simuliraj klic stanovalca</b> na zaslonu Danes.</p>
+  </div>
+
+  <div class="phone" id="phone">
+    <div class="topbar" id="topbar"></div>
+    <main class="screen" id="screen"></main>
+    <nav class="tabs" aria-label="Glavni meni">
+      <button class="tab" data-tab="today"><span data-i="home"></span>Danes</button>
+      <button class="tab" data-tab="reports"><span data-i="alert"></span>Prijave<span class="badge" id="repBadge"></span></button>
+      <button class="mic" id="micBtn" aria-label="Glasovni ukaz"><span data-i="mic" data-s="32"></span></button>
+      <button class="tab" data-tab="buildings"><span data-i="build"></span>Stavbe</button>
+      <button class="tab" data-tab="duties"><span data-i="cal"></span>Roki</button>
+    </nav>
+    <div id="overlay"></div>
+    <div id="toastHost"></div>
+  </div>
+</div>
+
+<script>
+/* ---------- Example data (izmišljeno) ---------- */
+const CO = { name: 'Upravnik Demo d.o.o.', short: 'UD', manager: 'Maja Kovač', mi: 'MK' };
+const BLD = {
+  voj: { id: 'voj', name: 'Vojkova 12', city: 'Ljubljana', units: 48, entr: 'vhoda A in B', lift: true, year: 1978, fund: 41820, fundMonth: 0.30, owners: 46, color: '#1F4D45' },
+  cel: { id: 'cel', name: 'Celovška 88', city: 'Ljubljana', units: 64, entr: '1 vhod', lift: true, year: 1985, fund: 23410, fundMonth: 0.28, owners: 61, color: '#4F5F80' },
+  tru: { id: 'tru', name: 'Trubarjeva 3', city: 'Ljubljana', units: 12, entr: '1 vhod', lift: false, year: 1912, fund: 9730, fundMonth: 0.45, owners: 12, color: '#A84E22' },
+  ker: { id: 'ker', name: 'Kersnikova 7', city: 'Ljubljana', units: 24, entr: '1 vhod', lift: true, year: 2004, fund: 18260, fundMonth: 0.25, owners: 23, color: '#8A5A9E' },
+  fuz: { id: 'fuz', name: 'Pot na Fužine 21', city: 'Ljubljana', units: 96, entr: 'vhodi A, B in C', lift: true, year: 1982, fund: 66140, fundMonth: 0.32, owners: 90, color: '#2F7A55' },
+  zal: { id: 'zal', name: 'Zaloška 140', city: 'Ljubljana', units: 36, entr: '1 vhod', lift: true, year: 1996, fund: 15980, fundMonth: 0.27, owners: 35, color: '#B23A32' },
+};
+const CON = {
+  vod: { id: 'vod', name: 'Vodoinštalacije Kranjc', trade: 'Vodovod in ogrevanje', phone: '041 555 210', resp: '38 min', jobs: 3, on: true },
+  ele: { id: 'ele', name: 'Elektro Medved', trade: 'Elektrika in razsvetljava', phone: '031 555 377', resp: '2 h', jobs: 2, on: false },
+  dvi: { id: 'dvi', name: 'Lift-Servis d.o.o.', trade: 'Dvigala (pogodbeni servis)', phone: '01 555 9090', resp: '45 min', jobs: 1, on: true },
+  klj: { id: 'klj', name: 'Ključavničar Hitri', trade: 'Vrata, ključavnice, domofon', phone: '040 555 118', resp: '3 h', jobs: 1, on: false },
+  cis: { id: 'cis', name: 'Čistilni servis Bleščica', trade: 'Čiščenje stopnišč', phone: '051 555 640', resp: 'po urniku', jobs: 0, on: false },
+  dim: { id: 'dim', name: 'Dimnikarstvo Oblak', trade: 'Dimnikarski pregledi', phone: '041 555 902', resp: 'po dogovoru', jobs: 0, on: false },
+  gsl: { id: 'gsl', name: 'Gasilna oprema Vidmar', trade: 'Gasilni aparati, hidranti', phone: '041 555 736', resp: 'po dogovoru', jobs: 0, on: false },
+  pln: { id: 'pln', name: 'Dežurna služba za plin', trade: 'Distributer zemeljskega plina', phone: '080 555 00', resp: '20 min', jobs: 0, on: true },
+  gra: { id: 'gra', name: 'Gradnje Zupan', trade: 'Gradbena dela, vlaga, fasada', phone: '031 555 455', resp: '1 dan', jobs: 1, on: false },
+};
+// Fault reports. st: 0 nova · 1 poslano izvajalcu · 2 v delu · 3 rešeno · 4 zaprto
+const ST = ['Nova', 'Poslano izvajalcu', 'Izvajalec na poti', 'Rešeno', 'Zaprto'];
+const R = [
+  { id: 2481, b: 'voj', where: 'vhod B · stan. 7, 3. nad.', who: 'Ana Zupančič', ph: '040 555 731', ch: 'Klic', t: '23:40', day: 'Ponoči', cat: 'Voda', urg: 'nujno', st: 3, con: 'vod', title: 'Voda teče s stropa na hodniku',
+    sum: 'Iz stropa nad hodnikom kaplja voda na luč. Soseda v stan. 11 ni doma. Stanovalki je Unbusyness svetoval, naj izklopi varovalko za luč na hodniku.',
+    talk: [['ai', 'Unbusyness, upravnik stavb, dober večer. Kako vam lahko pomagam?'], ['r', 'Dober večer, na Vojkovi 12 mi s stropa teče voda, kar na luč na hodniku.'], ['ai', 'Razumem, to je nujno. Ali ste v vhodu B, stanovanje 7?'], ['r', 'Ja, B, sedmica. Zgoraj ni nikogar doma.'], ['ai', 'Prosim, izklopite varovalko za luč na hodniku in ne dotikajte se svetila. Pošiljam dežurnega vodoinštalaterja, prispe v približno 35 minutah. Obvestila bova tudi lastnika stanovanja 11. Mi lahko pošljete fotografijo po SMS?'], ['r', 'Seveda, hvala vam.']],
+    log: [['23:40', 'Klic sprejel Unbusyness', 'Nujno: voda. Stavba, stanovanje in fotografija po SMS.'], ['23:42', 'Poslano: Vodoinštalacije Kranjc', 'Dežurni izvajalec potrdil prihod v 35 min.'], ['23:43', 'Obveščen lastnik stan. 11', 'SMS z imenom izvajalca in uro prihoda.'], ['00:31', 'Puščanje ustavljeno', 'Počila cev pod umivalnikom v stan. 11. Zapis in 3 fotografije.'], ['07:30', 'V vašem jutranjem povzetku', 'Račun izvajalca čaka na potrditev.']],
+    photos: 3, cost: 186.30, paidBy: 'Lastnik stan. 11 (škoda iz stanovanja)' },
+  { id: 2484, b: 'cel', where: 'dvigalo · obstalo v 5. nad.', who: 'Marko Petek', ph: '031 555 204', ch: 'Klic', t: '07:52', day: 'Danes', cat: 'Dvigalo', urg: 'nujno', st: 2, con: 'dvi', title: 'Dvigalo stoji med 5. in 6. nadstropjem',
+    sum: 'Dvigalo se je ustavilo, v njem ni nikogar. Stanovalec je opazil, da vrata ne odprejo. Pogodbeni servis je obveščen in je na poti.',
+    talk: [['ai', 'Unbusyness, upravnik stavb. Kako vam lahko pomagam?'], ['r', 'Na Celovški 88 dvigalo ne dela, stoji nekje med petim in šestim.'], ['ai', 'Je kdo v dvigalu?'], ['r', 'Ne, prazno je, sem pozvonil.'], ['ai', 'Hvala. Obveščam pogodbeni servis za dvigala in na vhod obesim obvestilo, da dvigalo ne obratuje. Javim vam, ko bo spet delalo.']],
+    log: [['07:52', 'Klic sprejel Unbusyness', 'Nujno: dvigalo. Nihče ni ujet.'], ['07:53', 'Poslano: Lift-Servis d.o.o.', 'Pogodbeni servis, odziv v 45 min.'], ['07:55', 'Obvestilo vsem stanovalcem', 'SMS in obvestilo na oglasni deski: dvigalo ne obratuje.'], ['08:31', 'Serviser na lokaciji', 'Ocena: zamenjava zavornega releja.']],
+    photos: 1, cost: null },
+  { id: 2485, b: 'fuz', where: 'vhod C · stopnišče, 3. nad.', who: 'Jana Hribar', ph: '051 555 811', ch: 'SMS', t: '08:14', day: 'Danes', cat: 'Elektrika', urg: 'običajno', st: 0, con: null, title: 'Luč na stopnišču ne gori',
+    sum: 'Na stopnišču v 3. nadstropju vhoda C ne sveti luč, ponoči je temno. Stanovalka je poslala fotografijo.',
+    talk: [['r', 'Pozdravljeni, na Fužinah 21 C v 3. nadstropju ne gori luč na stopnišču, zvečer je čisto temno.'], ['ai', 'Hvala za sporočilo, gospa Hribar. Prijavo sem zabeležil in bo urejena v 2 delovnih dneh. Vam lahko pošljem novice po SMS?'], ['r', 'Ja, prosim.']],
+    log: [['08:14', 'SMS prejel Unbusyness', 'Običajno: razsvetljava. Fotografija priložena.'], ['08:15', 'Predlog: Elektro Medved', 'Čaka na vašo potrditev, ker je strošek ocenjen nad 150 €.']],
+    photos: 1, cost: null, suggest: 'ele', est: 190 },
+  { id: 2486, b: 'ker', where: 'stan. 4, 2. nad.', who: 'Anonimno (sosed)', ph: '—', ch: 'E-pošta', t: '06:05', day: 'Danes', cat: 'Hišni red', urg: 'lahko počaka', st: 0, con: null, title: 'Hrup iz stanovanja 4 po 22. uri',
+    sum: 'Tretja pritožba ta mesec zaradi glasne glasbe po 22. uri iz stan. 4. Unbusyness je pripravil vljuden opomin po hišnem redu.',
+    talk: [['r', 'Spoštovani, že tretjič ta mesec se iz stanovanja 4 po 22h sliši glasna glasba. Prosim ukrepajte.'], ['ai', 'Hvala za sporočilo. Upravnik bo lastniku stanovanja 4 poslal opomin po hišnem redu. Vaše ime ne bo razkrito.']],
+    log: [['06:05', 'E-pošta prejeta', 'Hišni red. Pošiljatelj želi ostati anonimen.'], ['06:06', 'Pripravljen opomin', 'Osnutek pisma lastniku stan. 4 čaka na vaš pregled.']],
+    photos: 0, cost: null, letter: true },
+  { id: 2482, b: 'zal', where: 'glavni vhod · domofon', who: 'Peter Golob', ph: '041 555 663', ch: 'Klic', t: 'včeraj 17:20', day: 'Včeraj', cat: 'Vrata', urg: 'običajno', st: 1, con: 'klj', title: 'Vhodna vrata se ne zaprejo, domofon ne odpira',
+    sum: 'Vhodna vrata ostanejo odprta, domofon ne odklene vrat. Ključavničar je naročen za jutri ob 9:00.',
+    talk: [['ai', 'Unbusyness, upravnik stavb. Kako vam lahko pomagam?'], ['r', 'Na Zaloški 140 se vhodna vrata ne zaprejo več in domofon ne odpira.'], ['ai', 'Hvala. Naročam ključavničarja in vam pošljem termin po SMS.']],
+    log: [['17:20', 'Klic sprejel Unbusyness', 'Običajno: vrata in domofon.'], ['17:24', 'Poslano: Ključavničar Hitri', 'Termin: jutri ob 9:00.'], ['17:25', 'Obveščeni stanovalci', 'SMS: vrata bodo popravljena jutri dopoldne.']],
+    photos: 0, cost: null },
+  { id: 2479, b: 'tru', where: 'klet · shramba 2', who: 'Nika Rozman', ph: '040 555 990', ch: 'Aplikacija', t: 'pon 10:12', day: 'Ta teden', cat: 'Vlaga', urg: 'lahko počaka', st: 1, con: 'gra', title: 'Plesen in vlaga na steni v kleti',
+    sum: 'Na zunanji steni v kleti se širi plesen. Za ogled je dogovorjen termin v četrtek. Morebitna sanacija se plača iz rezervnega sklada.',
+    talk: [['r', 'V kleti na Trubarjevi 3 je na steni plesen, vedno večja. Prilagam fotografije.'], ['ai', 'Hvala. Naročil sem ogled pri izvajalcu in vas obvestim o terminu.']],
+    log: [['pon 10:12', 'Prijava v aplikaciji', 'Lahko počaka: vlaga. 2 fotografiji.'], ['pon 11:00', 'Poslano: Gradnje Zupan', 'Ogled: četrtek ob 14:00.']],
+    photos: 2, cost: null },
+  { id: 2477, b: 'cel', where: 'stan. 22', who: 'Irena Bizjak', ph: '031 555 788', ch: 'Klic', t: 'pon 18:40', day: 'Ta teden', cat: 'Vprašanje', urg: 'lahko počaka', st: 4, con: null, title: 'Zakaj je položnica za oktober višja?',
+    sum: 'Vprašanje o obratovalnih stroških. Unbusyness je pojasnil, da je v oktobru zaračunan letni pregled dvigala, razdeljen po solastniških deležih. Zaprto brez vas.',
+    talk: [['r', 'Zakaj imam za oktober višjo položnico?'], ['ai', 'V oktobru je zaračunan redni pregled dvigala, 412 €, ki se razdeli po solastniških deležih. Za vaše stanovanje to pomeni 6,40 €. Vam pošljem razrez po e-pošti?'], ['r', 'Ja, hvala, zdaj razumem.']],
+    log: [['pon 18:40', 'Klic sprejel Unbusyness', 'Vprašanje o stroških.'], ['pon 18:43', 'Odgovoril Unbusyness', 'Poslan razrez stroškov po e-pošti. Zaprto.']],
+    photos: 0, cost: null },
+];
+// Maintenance duties: every (months), next date, status
+const DUT = [
+  { id: 'd1', b: 'voj', what: 'Redni pregled dvigala', every: '6 mesecev', next: '2026-11-18', con: 'dvi', st: 'booked' },
+  { id: 'd2', b: 'cel', what: 'Pregled gasilnih aparatov', every: '12 mesecev', next: '2026-11-09', con: null, st: 'late' },
+  { id: 'd3', b: 'tru', what: 'Dimnikarski pregled', every: '12 mesecev', next: '2027-02-02', con: 'dim', st: 'ok' },
+  { id: 'd4', b: 'voj', what: 'Čiščenje stopnišč', every: 'tedensko', next: '2026-11-10', con: 'cis', st: 'ok' },
+  { id: 'd5', b: 'fuz', what: 'Pregled hidrantnega omrežja', every: '12 mesecev', next: '2026-11-25', con: null, st: 'soon' },
+  { id: 'd6', b: 'ker', what: 'Pregled strelovoda', every: '24 mesecev', next: '2026-12-04', con: null, st: 'soon' },
+  { id: 'd7', b: 'zal', what: 'Redni pregled dvigala', every: '6 mesecev', next: '2026-11-12', con: 'dvi', st: 'booked' },
+  { id: 'd8', b: 'fuz', what: 'Servis toplotne postaje', every: '12 mesecev', next: '2027-04-15', con: 'vod', st: 'ok' },
+  { id: 'd9', b: 'cel', what: 'Čiščenje stopnišč', every: 'tedensko', next: '2026-11-10', con: 'cis', st: 'ok' },
+];
+const DST = { ok: ['Po planu', 'ok'], booked: ['Izvajalec naročen', 'green'], soon: ['Kmalu: naročiti', 'apricot'], late: ['Rok ta teden', 'red'] };
+// Supplier invoices waiting for approval
+const INV = [
+  { id: 'i1', con: 'vod', b: 'voj', rep: 2481, no: 'VK-2026-0412', amt: 186.30, what: 'Popravilo počene cevi, nočna intervencija', split: 'Lastnik stan. 11', st: 'wait' },
+  { id: 'i2', con: 'dvi', b: 'cel', rep: 2484, no: 'LS-26-1187', amt: 412.00, what: 'Redni pregled dvigala (oktober)', split: 'Vsi lastniki po deležih', st: 'ok' },
+  { id: 'i3', con: 'cis', b: 'fuz', rep: null, no: 'BL-10-2026', amt: 640.00, what: 'Čiščenje stopnišč, oktober', split: 'Obratovalni stroški', st: 'wait' },
+];
+// Owners' meeting
+const MEET = { b: 'voj', date: 'četrtek, 20. 11. 2026 ob 18:00', place: 'skupni prostor, vhod A',
+  agenda: ['Poročilo upravnika o delu v letu 2026', 'Zamenjava razsvetljave na stopniščih z LED (ponudba Elektro Medved, 4.860 €)', 'Načrt porabe rezervnega sklada za leto 2027', 'Razno'],
+  vote: { item: 'Zamenjava razsvetljave na stopniščih z LED', yes: 57.4, no: 8.1, need: 50, ofOwners: 31 } };
+
+/* ---------- helpers ---------- */
+const I={
+ home:'<path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/>',build:'<path d="M4 21V5l8-3 8 3v16"/><path d="M9 21v-4h6v4M8 8h2M14 8h2M8 12h2M14 12h2"/>',
+ phone:'<path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"/>',cal:'<rect x="3.5" y="5" width="17" height="15" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/>',
+ doc:'<path d="M7 3h7l5 5v13H7z"/><path d="M14 3v5h5M10 13h6M10 17h4"/>',euro:'<path d="M17 6.5A7 7 0 1 0 17 17.5M4 10h10M4 14h10"/>',
+ wrench:'<path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.8-3.8a6 6 0 0 1-7.9 7.9l-6.9 6.9a2.1 2.1 0 0 1-3-3l6.9-6.9a6 6 0 0 1 7.9-7.9z"/>',
+ mic:'<rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/>',spark:'<path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/>',
+ check:'<path d="M5 12l4 4 10-10"/>',x:'<path d="M6 6l12 12M18 6L6 18"/>',back:'<path d="M15 5l-7 7 7 7"/>',chev:'<path d="M9 5l7 7-7 7"/>',
+ send:'<path d="M4 12l16-8-6 16-3-7z"/>',msg:'<path d="M4 5h16v11H8l-4 4z"/>',vote:'<path d="M4 12l5 5L20 6"/><rect x="2" y="2" width="20" height="20" rx="4"/>',
+ alert:'<path d="M12 3l9 16H3z"/><path d="M12 10v4M12 17v.5"/>',moon:'<path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/>',receipt:'<path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9 8h6M9 12h6"/>',cam:'<path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/>',
+ drop:'<path d="M12 3s6 7 6 11a6 6 0 0 1-12 0c0-4 6-11 6-11z"/>',lift:'<rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 9l3-3 3 3M9 15l3 3 3-3"/>',bulb:'<path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-4 10.5c.8.8 1 1.5 1 2.5h6c0-1 .2-1.7 1-2.5A6 6 0 0 0 12 3z"/>',
+ door:'<path d="M5 21V4a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v17M3 21h18"/><circle cx="15" cy="12" r="1"/>',note:'<path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>',
+ mold:'<circle cx="8" cy="9" r="2.5"/><circle cx="15" cy="7" r="1.8"/><circle cx="14" cy="14" r="3"/><circle cx="7" cy="16" r="1.6"/>',q:'<circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.5V14M12 17v.5"/>',
+ gas:'<path d="M12 3c3 4 5 6.5 5 10a5 5 0 0 1-10 0c0-2 1-3.5 2-5 .5 1.5 1.5 2.5 3 3-1-3 0-5.5 0-8z"/>',list:'<path d="M9 6h11M9 12h11M9 18h11"/><path d="M4 6l1 1 2-2M4 12l1 1 2-2M4 18l1 1 2-2"/>'
+};
+const CATIC={Voda:'drop',Dvigalo:'lift',Elektrika:'bulb','Hišni red':'note',Vrata:'door',Vlaga:'mold',Vprašanje:'q',Plin:'gas'};
+const svg=(n,s=22,w=2)=>`<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${I[n]||I.doc}</svg>`;
+const esc=t=>String(t??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+const eur=n=>Number(n).toLocaleString('sl-SI',{maximumFractionDigits:0})+' €';
+const eur2=n=>Number(n).toLocaleString('sl-SI',{minimumFractionDigits:2,maximumFractionDigits:2})+' €';
+const fdate=s=>{const [y,m,d]=s.split('-');return `${+d}. ${+m}.`};
+const daysTo=s=>Math.round((new Date(s+'T12:00:00')-new Date('2026-11-06T12:00:00'))/864e5);
+const tag=(t,c)=>`<span class="tag ${c}">${esc(t)}</span>`;
+const stTag=r=>r.st>=4?tag('Zaprto','ok'):r.st===3?tag('Rešeno','ok'):r.st===2?tag('Na poti','apricot'):r.st===1?tag('Poslano','slate'):tag('Nova','red');
+const rep=id=>R.find(r=>r.id===id);
+const $=s=>document.querySelector(s);
+function toast(m){const h=$('#toastHost');h.innerHTML=`<div class="toast" role="status">${svg('check',18)}<span>${esc(m)}</span></div>`;clearTimeout(window._t);window._t=setTimeout(()=>h.innerHTML='',3200)}
+function overlay(html){$('#overlay').innerHTML=html}
+function closeOv(){$('#overlay').innerHTML=''}
+
+const S={tab:'today',view:null,filter:'open'};
+function go(tab,view){S.tab=tab;S.view=view||null;closeOv();render();$('#screen').scrollTop=0}
+function back(){S.view=null;render()}
+
+function drawTop(){const tb=$('#topbar');
+  if(S.view){tb.innerHTML=`<button class="back" onclick="back()">${svg('back',20)}Nazaj</button><span class="title">${esc(S.view.title||'')}</span><span style="width:44px"></span>`;return}
+  const T={today:null,reports:'Prijave',buildings:'Stavbe',duties:'Roki'};
+  tb.innerHTML=T[S.tab]?`<span class="title" style="font-size:24px">${T[S.tab]}</span><button class="avatar" onclick="more()" aria-label="Meni">${CO.mi}</button>`:`<div class="hello"><small>Petek, 6. november</small><strong>Dobro jutro, Maja</strong></div><button class="avatar" onclick="more()" aria-label="Meni: zbori, stroški">${CO.mi}</button>`}
+function render(){drawTop();document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('on',t.dataset.tab===S.tab&&!S.view));
+  const open=R.filter(r=>r.st<3).length;$('#repBadge').textContent=open||'';$('#repBadge').style.display=open?'grid':'none';
+  $('#screen').innerHTML=S.view?S.view.html():({today:sToday,reports:sReports,buildings:sBuildings,duties:sDuties})[S.tab]()}
+
+/* ---------- Danes ---------- */
+function needList(){const a=[];const r85=rep(2485),r86=rep(2486),i1=INV.find(x=>x.id==='i1'),d2=DUT.find(d=>d.id==='d2');
+  if(r85.st===0)a.push(['apricot','bulb','Potrdi električarja',`Fužine 21 C · ocena ${eur(r85.est)}`,'Potrdi',"sendTo(2485,'ele')"]);
+  if(r86.st===0)a.push(['slate','note','Opomin za hrup','Kersnikova 7, stan. 4','Preglej',"openRep(2486)"]);
+  if(i1.st==='wait')a.push(['green','receipt','Račun 186,30 €','Kranjc · plača lastnik stan. 11','Potrdi',"approveInv('i1')"]);
+  if(d2.st==='late')a.push(['red','alert','Gasilni aparati do 9. 11.','Celovška 88 · predlog: tor 9:00','Naroči',"bookDuty('d2')"]);
+  if(!S.sent)a.push(['apricot','vote','Vabila na zbor','Vojkova 12 · zbor 20. 11.','Preglej',"openMeeting()"]);
+  return a}
+function sToday(){const n=needList(),r=rep(2484),open=R.filter(x=>x.st<3);
+  const hero=r.st<3?`<div class="next"><div class="when"><span>NUJNO · ${esc(BLD[r.b].name.toUpperCase())}</span>${tag(r.st===2?'Serviser na poti':'Nova','apricot')}</div><h2>${esc(r.title)}</h2><p>${esc(r.sum)}</p>
+    <button class="btn primary" onclick="openRep(2484)">${svg('list',20)}Odpri prijavo</button><div class="btns three"><button class="btn" onclick="toast('Klic: Lift-Servis d.o.o., 01 555 9090')">${svg('phone',20)}Serviser</button><button class="btn" onclick="notify(2484)">${svg('msg',20)}Obvesti</button><button class="btn" onclick="resolve(2484)">${svg('check',20)}Rešeno</button></div></div>`
+    :`<div class="next"><div class="when"><span>STAVBE</span>${tag('Mirno','ok')}</div><h2>Trenutno ni nujnih prijav</h2><p>Unbusyness sprejema klice in vas pokliče, če gre za vodo, plin ali dvigalo.</p><button class="btn primary" onclick="simCall()">${svg('phone',20)}Simuliraj klic stanovalca</button></div>`;
+  return `<div class="ailine"><span class="dot">${svg('moon',18)}</span><div><b>Ponoči:</b> voda s stropa na Vojkovi 12. Unbusyness je poslal vodoinštalaterja, puščanje je ustavljeno ob 00:31.</div></div>
+  <div class="eyebrow">Najbolj nujno</div>${hero}
+  <div class="eyebrow">Potrebuje vas ${n.length?`<span class="count">${n.length}</span>`:''}</div>
+  ${n.length?n.map(([t,ic,b,s,l,on])=>`<div class="card need"><div class="row"><span class="ic ${t}">${svg(ic)}</span><div class="main"><strong>${b}</strong><span>${s}</span></div><button class="pbtn ${l==='Potrdi'?'hot':''}" onclick="${on}">${l}</button></div></div>`).join(''):`<div class="card"><div class="row"><span class="ic green">${svg('check')}</span><div class="main"><strong>Vse urejeno</strong><span>Ostalo uredi Unbusyness.</span></div></div></div>`}
+  <div class="eyebrow">Na kratko</div><div class="money"><button class="card" onclick="go('reports')" style="text-align:left"><small>Odprte prijave</small><b>${open.length}</b><small>${open.filter(x=>x.urg==='nujno').length} nujne</small></button><button class="card" onclick="go('duties')" style="text-align:left"><small>Roki v 14 dneh</small><b>${DUT.filter(d=>daysTo(d.next)<=14&&d.st!=='ok').length}</b><small>pregledi</small></button></div>
+  <button class="btn line" style="margin-top:14px" onclick="simCall()">${svg('phone',20)}Simuliraj klic stanovalca</button>`}
+
+/* ---------- Prijave ---------- */
+const FIL={open:['Odprte',r=>r.st<3],urg:['Nujne',r=>r.urg==='nujno'&&r.st<3],all:['Vse',()=>true]};
+function sReports(){const list=R.filter(FIL[S.filter][1]);
+  return `<div class="seg" role="tablist">${Object.entries(FIL).map(([k,[l,f]])=>`<button role="tab" aria-selected="${S.filter===k}" class="${S.filter===k?'on':''}" onclick="S.filter='${k}';render()">${l} ${R.filter(f).length}</button>`).join('')}</div>
+  <div class="card list" style="margin-top:12px;padding:4px 14px">${list.map(r=>`<button class="item" onclick="openRep(${r.id})"><span class="ic ${r.urg==='nujno'&&r.st<3?'red':'slate'}">${svg(CATIC[r.cat]||'alert')}</span><div class="main"><strong>${esc(r.title)}</strong><span>${esc(BLD[r.b].name)} · ${esc(r.t)}</span></div>${stTag(r)}</button>`).join('')||'<div style="padding:20px 0" class="muted">Ni prijav.</div>'}</div>`}
+function openRep(id){S.tab='reports';S.view={title:'#'+id,html:()=>repView(id)};closeOv();render();$('#screen').scrollTop=0}
+function repView(id){const r=rep(id),b=BLD[r.b],c=r.con?CON[r.con]:null;
+  return `<div class="stack"><div><div class="row" style="gap:8px;flex-wrap:wrap">${r.urg==='nujno'?tag('Nujno','red'):r.urg==='običajno'?tag('Običajno','slate'):tag('Lahko počaka','green')}${stTag(r)}</div><h2 style="margin:10px 0 2px;font-size:24px;letter-spacing:-.6px;line-height:1.2">${esc(r.title)}</h2><div class="muted">${esc(b.name)} · ${esc(r.where)}</div></div>
+  <div class="steps">${[0,1,2,3,4].map(i=>`<i class="${r.st>=i?'on':''}"></i>`).join('')}</div><div class="stepname">${ST[r.st]}</div>
+  <div class="summary"><b>${svg('spark',16)} Povzetek</b><br>${esc(r.sum)}</div>
+  ${r.st===0&&!r.letter?`<button class="btn primary" onclick="pickCon(${id})">${svg('wrench',20)}Pošlji izvajalcu</button>`:''}
+  ${r.letter&&r.st===0?`<button class="btn primary" onclick="letter()">${svg('doc',20)}Preglej opomin</button>`:''}
+  ${r.st>=1&&r.st<3?`<button class="btn primary" onclick="resolve(${id})">${svg('check',20)}Označi kot rešeno</button>`:''}
+  <div class="btns"><button class="btn line" onclick="notify(${id})">${svg('msg',20)}Obvesti</button><button class="btn line" onclick="toast('Klic: ${esc(r.who)}, ${esc(r.ph)}')">${svg('phone',20)}Pokliči</button></div>
+  <div class="card" style="gap:0;padding:4px 16px"><div class="field"><small>Prijavil</small><b>${esc(r.who)}</b></div><div class="field"><small>Kanal</small><b>${esc(r.ch)} · ${esc(r.t)}</b></div><div class="field"><small>Izvajalec</small><b>${c?esc(c.name):'Še ni izbran'}</b></div>${r.cost?`<div class="field"><small>Strošek</small><b>${eur2(r.cost)}</b></div>`:''}</div>
+  ${r.photos?`<div class="thumbs">${Array.from({length:r.photos},(_,i)=>`<div class="thumb job" role="img" aria-label="Fotografija ${i+1}">${svg('cam',24)}<span class="lbl">Foto ${i+1}</span></div>`).join('')}</div>`:''}
+  <div class="eyebrow" style="margin-top:8px">Pogovor</div><div class="convo" style="margin-top:0">${r.talk.map(([w,t])=>`<div class="bub ${w==='ai'?'w':'c'}"><span class="lbl">${w==='ai'?'Unbusyness':esc(r.who)}</span><span style="font-size:16px">${esc(t)}</span></div>`).join('')}</div>
+  <div class="eyebrow">Potek</div><div class="card" style="gap:0;padding:4px 16px">${r.log.map(l=>`<div class="field"><small>${esc(l[0])}</small><b style="font-size:16px">${esc(l[1])}</b><span class="muted" style="font-size:14px">${esc(l[2])}</span></div>`).join('')}</div></div>`}
+function pickCon(id){const r=rep(id);const map={Voda:['vod'],Dvigalo:['dvi'],Elektrika:['ele'],Vrata:['klj'],Vlaga:['gra']};const ids=[...(map[r.cat]||[]),...['vod','ele','klj','gra'].filter(k=>!(map[r.cat]||[]).includes(k))].slice(0,4);
+  overlay(`<div class="scrim" onclick="if(event.target===this)closeOv()"><div class="psheet" role="dialog" aria-label="Izberi izvajalca"><h2>Komu pošljem?</h2><div class="stack">${ids.map(k=>`<button class="slot ${r.suggest===k?'sel':''}" onclick="sendTo(${id},'${k}')"><div>${esc(CON[k].name)}${r.suggest===k?' · predlog':''}<br><span>${esc(CON[k].trade)} · odziv ${esc(CON[k].resp)}</span></div>${svg('chev',20)}</button>`).join('')}</div><button class="btn line" onclick="closeOv()">Prekliči</button></div></div>`)}
+function sendTo(id,k){const r=rep(id);r.st=1;r.con=k;r.log.push(['zdaj','Poslano: '+CON[k].name,'Izvajalec je dobil prijavo s fotografijo in kontaktom.']);closeOv();render();toast(`Poslano: ${CON[k].name}. ${r.who.split(' ')[0]} dobi SMS.`)}
+function resolve(id){const r=rep(id);r.st=3;r.log.push(['zdaj','Označeno kot rešeno','Stanovalci so obveščeni.']);render();toast('Rešeno. Stanovalci so dobili obvestilo.')}
+function notify(id){const r=rep(id),b=BLD[r.b];S.nt={id,aud:r.cat==='Dvigalo'?'bld':'one'};drawNt()}
+function drawNt(){const r=rep(S.nt.id),b=BLD[r.b],a=S.nt.aud,cnt=a==='one'?1:a==='ent'?Math.round(b.units/2):b.units;
+  const txt=r.cat==='Dvigalo'?`Dvigalo na ${b.name} trenutno ne obratuje. Serviser je na lokaciji, predvidoma bo delovalo do 10:00.`:`Vašo prijavo »${r.title}« urejamo.${r.con?' Izvajalec: '+CON[r.con].name+'.':''}`;
+  const o=(k,l,s)=>`<button class="${a===k?'on':''}" onclick="S.nt.aud='${k}';drawNt()"><b>${l}</b><span>${s}</span></button>`;
+  overlay(`<div class="scrim" onclick="if(event.target===this)closeOv()"><div class="psheet" role="dialog" aria-label="Obvesti stanovalce"><h2>Obvesti stanovalce</h2><div class="who">${o('one','Prijavitelja',esc(r.who.split(' ')[0]))}${o('bld','Celo stavbo',b.units+' stanovanj')}</div><textarea aria-label="Besedilo">${esc(txt)}</textarea><div class="muted" style="font-size:14px">SMS in e-pošta · ${cnt} prejemnik${cnt===1?'':'ov'}</div><button class="btn primary" onclick="closeOv();toast('Poslano ${cnt} prejemnik${cnt===1?'u':'om'}.')">${svg('send',20)}Pošlji</button></div></div>`)}
+function letter(){overlay(`<div class="scrim" onclick="if(event.target===this)closeOv()"><div class="psheet" role="dialog" aria-label="Opomin"><h2>Opomin po hišnem redu</h2><div class="card" style="font-size:15px;gap:8px"><b>Opozorilo glede nočnega miru</b><span>Spoštovani, v zadnjem mesecu smo prejeli več prijav glede glasne glasbe iz vašega stanovanja po 22. uri. Hišni red določa nočni mir med 22.00 in 6.00. Prosimo vas, da ga upoštevate.</span><span class="muted">Ime pritožnika ni razkrito.</span></div><button class="btn primary" onclick="sendLetter()">${svg('send',20)}Pošlji lastniku stan. 4</button><button class="btn line" onclick="closeOv()">Kasneje</button></div></div>`)}
+function sendLetter(){const r=rep(2486);r.st=4;closeOv();S.view=null;S.tab='today';render();toast('Opomin poslan lastniku stanovanja 4.')}
+
+/* ---------- Stavbe ---------- */
+function sBuildings(){return `<div class="card list" style="padding:4px 14px">${Object.values(BLD).map(b=>{const o=R.filter(r=>r.b===b.id&&r.st<3).length;return `<button class="item" onclick="openB('${b.id}')"><span class="ic" style="background:${b.color};color:#fff">${svg('build')}</span><div class="main"><strong>${esc(b.name)}</strong><span>${b.units} stan. · sklad ${eur(b.fund)}</span></div>${o?tag(o+' odprt'+(o===1?'a':'e'),'red'):''}<span class="chev">${svg('chev',18)}</span></button>`}).join('')}</div>`}
+function openB(id){const b=BLD[id];S.view={title:b.name,html:()=>{const open=R.filter(r=>r.b===id&&r.st<3),du=DUT.filter(d=>d.b===id);
+  return `<div class="next" style="background:${b.color}"><div class="when"><span>${b.units} STANOVANJ · ${b.owners} LASTNIKOV</span></div><h2>${esc(b.name)}</h2><p>${esc(b.entr)} · leto ${b.year}${b.lift?' · dvigalo':''}</p></div>
+  <div class="money" style="margin-top:12px"><div class="card"><small>Rezervni sklad</small><b>${eur(b.fund)}</b><small>${b.fundMonth.toFixed(2).replace('.',',')} €/m² mes.</small></div><div class="card"><small>Odprte prijave</small><b>${open.length}</b><small>${id==='voj'?'zbor 20. 11.':'zbor ni sklican'}</small></div></div>
+  <div class="eyebrow">Prijave</div><div class="card list" style="padding:4px 14px">${open.map(r=>`<button class="item" onclick="openRep(${r.id})"><span class="ic slate">${svg(CATIC[r.cat]||'alert')}</span><div class="main"><strong>${esc(r.title)}</strong><span>${esc(r.t)}</span></div>${stTag(r)}</button>`).join('')||'<div style="padding:16px 0" class="muted">Ni odprtih prijav.</div>'}</div>
+  <div class="eyebrow">Roki</div><div class="card list" style="padding:4px 14px">${du.map(d=>`<div class="item"><span class="ic green">${svg('cal')}</span><div class="main"><strong>${esc(d.what)}</strong><span>${esc(d.every)} · ${fdate(d.next)}</span></div>${tag(DST[d.st][0],DST[d.st][1])}</div>`).join('')||'<div style="padding:16px 0" class="muted">Ni rokov.</div>'}</div>
+  <button class="btn line" style="margin-top:14px" onclick="S.nt={id:${(open[0]||R.find(r=>r.b===id)||R[0]).id},aud:'bld'};drawNt()">${svg('msg',20)}Obvestilo celi stavbi</button>`}};render();$('#screen').scrollTop=0}
+
+/* ---------- Roki ---------- */
+function sDuties(){const l=[...DUT].sort((a,b)=>a.next.localeCompare(b.next));
+  return `<div class="ailine"><span class="dot">${svg('spark',18)}</span><div>Izvajalca naročim pravočasno in stanovalce obvestim 3 dni pred terminom.</div></div>
+  <div class="stack" style="margin-top:14px">${l.map(d=>{const dd=daysTo(d.next);return `<div class="card need"><div class="row"><span class="ic ${d.st==='late'?'red':d.st==='soon'?'apricot':'green'}">${svg('cal')}</span><div class="main"><strong>${esc(d.what)}</strong><span>${esc(BLD[d.b].name)} · ${fdate(d.next)} · ${dd<=0?'danes':'čez '+dd+' dni'}</span></div>${d.st==='late'||d.st==='soon'?`<button class="pbtn hot" onclick="bookDuty('${d.id}')">Naroči</button>`:tag(DST[d.st][0],DST[d.st][1])}</div></div>`}).join('')}</div>`}
+function bookDuty(id){const d=DUT.find(x=>x.id===id);d.st='booked';d.con=d.con||(/gasil|hidrant/.test(d.what)?'gsl':'ele');render();toast(`${d.what} (${BLD[d.b].name}) naročen.`)}
+function approveInv(id){const i=INV.find(x=>x.id===id);i.st='ok';render();toast(`Račun ${i.no} potrjen.`)}
+
+/* ---------- Meni: zbori, stroški ---------- */
+function more(){overlay(`<div class="scrim" onclick="if(event.target===this)closeOv()"><div class="psheet" role="dialog" aria-label="Meni"><h2>${CO.manager}</h2><div class="muted" style="margin-top:-6px">${CO.name}</div><div class="stack">
+  <button class="slot" onclick="closeOv();openMeeting()"><div>Zbori lastnikov<br><span>Vojkova 12 · 20. 11. · glasovanje 57 % za</span></div>${svg('chev',20)}</button>
+  <button class="slot" onclick="closeOv();openCosts()"><div>Stroški in računi<br><span>${INV.filter(i=>i.st==='wait').length} računa čakata na potrditev</span></div>${svg('chev',20)}</button>
+  <button class="slot" onclick="closeOv();openCons()"><div>Izvajalci<br><span>${Object.keys(CON).length} izvajalcev · dežurni ponoči</span></div>${svg('chev',20)}</button></div><button class="btn line" onclick="closeOv()">Zapri</button></div></div>`)}
+function openMeeting(){S.view={title:'Zbor lastnikov',html:()=>{const v=MEET.vote;return `<div class="next"><div class="when"><span>VOJKOVA 12</span>${tag(S.sent?'Vabila poslana':'Vabila niso poslana',S.sent?'ok':'apricot')}</div><h2>Zbor etažnih lastnikov</h2><p>${esc(MEET.date)} · ${esc(MEET.place)}</p>${S.sent?'':`<button class="btn primary" onclick="S.sent=true;render();toast('Vabila poslana 46 lastnikom: 39 po e-pošti, 7 po pošti.')">${svg('send',20)}Pošlji vabila 46 lastnikom</button>`}</div>
+  <div class="eyebrow">Dnevni red</div><div class="card" style="gap:0;padding:4px 16px">${MEET.agenda.map((a,i)=>`<div class="field"><small>Točka ${i+1}</small><b style="font-size:16px">${esc(a)}</b></div>`).join('')}</div>
+  <div class="eyebrow">Pisno glasovanje</div><div class="card"><strong>${esc(v.item)}</strong><div class="vbar" role="img" aria-label="${String(v.yes).replace('.',',')} % za"><i style="width:${v.yes}%"></i><i class="n" style="width:${v.no}%"></i><span style="left:${v.need}%"></span></div><span style="font-size:15px"><b style="color:var(--ok)">${String(v.yes).replace('.',',')} % ZA</b> · <b style="color:var(--red)">${String(v.no).replace('.',',')} % PROTI</b></span><span class="muted" style="font-size:14px">Potrebno več kot 1/2 solastniških deležev. Večina dosežena.</span></div>`}};S.tab='today';render();$('#screen').scrollTop=0}
+function openCosts(){S.view={title:'Stroški',html:()=>`<div class="eyebrow" style="margin-top:6px">Računi za potrditev</div>${INV.map(i=>`<div class="card need"><div class="row"><span class="ic ${i.st==='ok'?'green':'slate'}">${svg('receipt')}</span><div class="main"><strong>${eur2(i.amt)} · ${esc(CON[i.con].name)}</strong><span>${esc(BLD[i.b].name)} · ${esc(i.what)}</span></div>${i.st==='ok'?tag('Potrjeno','ok'):`<button class="pbtn hot" onclick="approveInv('${i.id}')">Potrdi</button>`}</div></div>`).join('')}
+  <div class="eyebrow">Rezervni skladi</div><div class="card list" style="padding:4px 14px">${Object.values(BLD).map(b=>`<div class="item" style="min-height:56px"><div class="main"><strong>${esc(b.name)}</strong><span>${b.fundMonth.toFixed(2).replace('.',',')} €/m² mesečno</span></div><b>${eur(b.fund)}</b></div>`).join('')}</div>`};S.tab='today';render();$('#screen').scrollTop=0}
+function openCons(){S.view={title:'Izvajalci',html:()=>`<div class="card list" style="padding:4px 14px">${Object.values(CON).map(c=>`<div class="item"><span class="ic green">${svg('wrench')}</span><div class="main"><strong>${esc(c.name)}</strong><span>${esc(c.trade)} · odziv ${esc(c.resp)}</span></div>${c.on?tag('Dežurni','ok'):''}</div>`).join('')}</div>`};S.tab='today';render();$('#screen').scrollTop=0}
+
+/* ---------- simulated resident call ---------- */
+function simCall(){const steps=[['ai','Unbusyness, upravnik stavb. Kako vam lahko pomagam?'],['r','Na Fužinah 21, v kleti vhoda A, močno smrdi po plinu!'],['ai','To je nujno. Ne prižigajte luči, odprite okna in zapustite klet. Takoj obveščam službo za plin in upraviteljico.'],['r','V redu, grem ven.'],['ai','Služba za plin bo tam v 20 minutah. Vsem v vhodu A pošiljam SMS.']];
+  S.call={i:0,steps};drawCall();const tick=()=>{if(!S.call)return;if(S.call.i<steps.length){S.call.i++;drawCall();setTimeout(tick,1500)}};setTimeout(tick,600)}
+function drawCall(){const c=S.call;if(!c)return;const done=c.i>=c.steps.length;
+  overlay(`<div class="voice" role="dialog" aria-label="Klic stanovalca"><button class="close" onclick="endCall()" aria-label="Zapri">${svg('x')}</button><div class="hint" style="margin-top:4px">Dohodni klic · 041 555 302</div><div class="said" style="min-height:0;margin:8px 0">${done?'Prijava #2487 ustvarjena':'Unbusyness se oglaša …'}</div>
+  <div class="convo" style="margin-top:0;overflow-y:auto;flex:1 1 auto;min-height:0;padding-bottom:10px">${c.steps.slice(0,c.i).map(([w,t])=>`<div class="bub ${w==='ai'?'w':'c'}"><span class="lbl">${w==='ai'?'Unbusyness':'Stanovalec'}</span><span style="font-size:16px;color:var(--ink)">${esc(t)}</span></div>`).join('')}</div>
+  ${done?`<div class="plan"><div class="field"><small>Nujno: plin</small><b>Pot na Fužine 21, vhod A, klet</b></div><div class="field"><small>Obveščeni</small><b>Služba za plin, vi, 32 stanovanj</b></div><button class="btn primary" onclick="addGas()">Odpri prijavo</button></div>`:''}</div>`)}
+function endCall(){if(S.call&&S.call.i>=S.call.steps.length)addGas(true);S.call=null;closeOv()}
+function addGas(stay){if(!rep(2487))R.unshift({id:2487,b:'fuz',where:'vhod A · klet',who:'Tomaž Kos',ph:'041 555 302',ch:'Klic',t:'zdaj',day:'Danes',cat:'Plin',urg:'nujno',st:2,con:'pln',title:'Vonj po plinu v kleti',
+  sum:'Stanovalec zazna močan vonj po plinu v kleti vhoda A. Dobil je varnostna navodila, služba za plin je na poti, vhod A je obveščen.',talk:S.call?S.call.steps:[],log:[['zdaj','Klic sprejel Unbusyness','Nujno: plin.'],['zdaj','Obveščena služba za plin','Prihod v 20 minutah.'],['zdaj','SMS vhodu A','32 stanovanj.']],photos:0,cost:null});
+  S.call=null;if(stay===true){render();return}openRep(2487)}
+
+/* ---------- voice ---------- */
+const VOICE=[
+ {say:'Pošlji električarja na Fužine 21 zaradi luči.',plan:[['Prijava','#2485 · luč na stopnišču'],['Izvajalec','Elektro Medved']],done:()=>{if(rep(2485).st===0)sendTo(2485,'ele');else toast('Že poslano.')}},
+ {say:'Obvesti Celovško 88, da dvigalo spet dela.',plan:[['Stavba','Celovška 88 · 64 stanovanj'],['Prijava','#2484 označim kot rešeno']],done:()=>{const r=rep(2484);if(r.st<3)r.st=3;render();toast('Poslano 64 stanovanjem: dvigalo spet obratuje.')}},
+ {say:'Kdaj je pregled dvigala na Vojkovi?',plan:[['Odgovor','18. 11. 2026'],['Izvajalec','Lift-Servis d.o.o., naročen']],done:()=>toast('Pregled dvigala na Vojkovi 12: 18. 11. 2026.')},
+];
+function openVoice(){S.v={i:-1};drawVoice()}
+function drawVoice(){const v=S.v,c=v.i>=0?VOICE[v.i]:null;
+  overlay(`<div class="voice" role="dialog" aria-label="Glasovni ukaz"><button class="close" onclick="closeOv()" aria-label="Zapri">${svg('x')}</button><div class="orb ${v.live?'live':''}">${svg('mic',48)}</div>
+  <div class="said">${c?'»'+esc(c.say)+'«':'Povejte, kaj naj naredim.'}</div>
+  ${c&&!v.live?`<div class="plan">${c.plan.map(([a,b])=>`<div class="field"><small>${a}</small><b>${esc(b)}</b></div>`).join('')}<div class="btns" style="margin-top:6px"><button class="btn primary" onclick="const f=VOICE[${v.i}].done;closeOv();f()">${svg('check',20)}Potrdi</button><button class="btn line" onclick="S.v={i:-1};drawVoice()">Drugo</button></div></div>`:''}
+  ${!c?`<div class="hint">Na primer:</div><div class="examples">${VOICE.map((x,i)=>`<button onclick="sayV(${i})">»${esc(x.say)}«</button>`).join('')}</div>`:''}</div>`)}
+function sayV(i){S.v={i,live:true};drawVoice();setTimeout(()=>{if(S.v&&S.v.i===i){S.v.live=false;drawVoice()}},1300)}
+
+document.querySelectorAll('[data-i]').forEach(e=>e.innerHTML=svg(e.dataset.i,+(e.dataset.s||22)));
+document.querySelectorAll('.tab').forEach(t=>t.addEventListener('click',()=>go(t.dataset.tab)));
+$('#micBtn').addEventListener('click',openVoice);
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeOv()});
+render();
+
+</script>
+
+</body>
+</html>

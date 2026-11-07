@@ -1,0 +1,538 @@
+<!doctype html>
+<html lang="sl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+</head>
+<body>
+<title>Unbusyness za hotele</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<style>
+/* Layout: desktop workspace — sidebar nav, sticky top bar, content area with cards; documents open as A4 sheets; same tokens as the phone demo. */
+:root{
+  --green:#1F4D45; --green-dark:#173D37; --green-soft:#E6EEEB; --on-green:#CFE0DA;
+  --apricot:#E8915F; --apricot-light:#F2A57A; --apricot-ink:#A84E22; --apricot-soft:#FBE8DC;
+  --slate:#4F5F80; --slate-soft:#E9ECF3;
+  --sand:#F4EFE6; --linen:#FBFAF7; --white:#FFFFFF; --side:#FDFCFA;
+  --ink:#14201E; --muted:#56615F; --line:#E7E3DA; --line2:#EFEBE3;
+  --red:#B23A32; --red-soft:#FBEAE8; --ok:#2F7A55; --ok-soft:#E4F1E8;
+  --font:'Plus Jakarta Sans','Segoe UI',system-ui,-apple-system,sans-serif;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--linen);color:var(--ink);font-family:var(--font);font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none;padding:0}
+input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--apricot);outline-offset:2px}
+@media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
+
+.app{display:grid;grid-template-columns:248px minmax(0,1fr);min-height:100%}
+.side{background:var(--side);border-right:1px solid var(--line);padding:22px 14px;display:flex;flex-direction:column;gap:20px;position:sticky;top:0;height:100vh;overflow-y:auto}
+.brand{display:flex;align-items:center;gap:10px;padding:0 8px;font-size:20px;font-weight:700;letter-spacing:-.6px}
+.ws{margin:0 4px;background:var(--sand);border-radius:14px;padding:11px 12px;display:flex;gap:10px;align-items:center}
+.ws .av{width:32px;height:32px;border-radius:50%;background:var(--green-soft);color:var(--green);display:grid;place-items:center;font-weight:700;font-size:12px}
+.ws small{display:block;color:var(--muted);font-size:11px}
+.navlabel{font-size:10px;font-weight:700;letter-spacing:1.6px;color:#8A938F;padding:0 12px;margin-bottom:6px}
+.nav{display:flex;flex-direction:column;gap:2px}
+.nav button{display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:12px;color:var(--muted);font-weight:600;text-align:left;width:100%}
+.nav button:hover{background:var(--sand)}
+.nav button.on{background:var(--green-soft);color:var(--green);font-weight:700}
+.nav .cnt{margin-left:auto;background:var(--white);border:1px solid var(--line);border-radius:99px;padding:0 7px;font-size:11px;color:var(--muted)}
+.nav .cnt.hot{background:var(--red);border-color:var(--red);color:#fff}
+.sidecard{margin-top:auto;background:var(--sand);border-radius:16px;padding:14px;font-size:12px;color:var(--muted)}
+.sidecard b{display:block;color:var(--ink);font-size:13px;margin-bottom:4px}
+
+.main{min-width:0}
+.top{height:66px;position:sticky;top:0;z-index:10;background:rgba(251,250,247,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 32px;gap:16px}
+.crumb{color:var(--muted);font-size:13px}
+.crumb b{color:var(--ink)}
+.topr{display:flex;align-items:center;gap:10px}
+.iconbtn{width:38px;height:38px;border-radius:50%;background:var(--white);border:1px solid var(--line);display:grid;place-items:center;color:var(--muted)}
+.user{display:flex;align-items:center;gap:9px;padding-left:10px;border-left:1px solid var(--line);font-size:12px}
+.user .av{width:36px;height:36px;border-radius:50%;background:var(--apricot-soft);color:var(--apricot-ink);display:grid;place-items:center;font-weight:700}
+.offpill{display:flex;align-items:center;gap:8px;background:var(--slate);color:#fff;border-radius:99px;padding:6px 12px;font-size:12px;font-weight:700}
+.content{max-width:1360px;margin:0 auto;padding:28px 32px 120px}
+
+.head{display:flex;justify-content:space-between;align-items:flex-end;gap:18px;margin-bottom:22px;flex-wrap:wrap}
+.eyebrow{font-size:11px;font-weight:700;letter-spacing:1.8px;text-transform:uppercase;color:var(--green);margin-bottom:6px}
+.head h1{margin:0;font-size:30px;font-weight:600;letter-spacing:-1.1px}
+.head p{margin:6px 0 0;color:var(--muted);font-size:14px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:40px;padding:0 16px;border-radius:12px;font-weight:700;font-size:13px;white-space:nowrap}
+.btn.primary{background:var(--green);color:var(--linen)}
+.btn.primary:hover{background:var(--green-dark)}
+.btn.apricot{background:var(--apricot);color:var(--ink)}
+.btn.soft{background:var(--green-soft);color:var(--green)}
+.btn.line{background:var(--white);border:1px solid var(--line)}
+.btn.line:hover{background:var(--sand)}
+.btn.sm{min-height:32px;padding:0 12px;font-size:12px;border-radius:10px}
+.btns{display:flex;gap:8px;flex-wrap:wrap}
+
+.grid{display:grid;gap:16px}
+.g4{grid-template-columns:repeat(4,minmax(0,1fr))}
+.g3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.g2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.gmain{grid-template-columns:minmax(0,1.65fr) minmax(300px,1fr);align-items:start}
+.card{background:var(--white);border:1px solid var(--line);border-radius:20px;min-width:0}
+.ch{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:16px 20px;border-bottom:1px solid var(--line2)}
+.ch h2{margin:0;font-size:15px;font-weight:700;letter-spacing:-.2px}
+.ch p{margin:2px 0 0;color:var(--muted);font-size:12px}
+.cb{padding:16px 20px}
+.stat{padding:16px 18px;display:flex;flex-direction:column;gap:4px}
+.stat .lbl{display:flex;justify-content:space-between;align-items:center;color:var(--muted);font-size:12px;font-weight:600}
+.stat .ic{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:var(--green-soft);color:var(--green)}
+.stat b{font-size:27px;font-weight:700;letter-spacing:-.8px;font-variant-numeric:tabular-nums}
+.stat small{color:var(--muted);font-size:12px}
+.pill{display:inline-flex;align-items:center;gap:5px;border-radius:99px;padding:3px 10px;font-size:11px;font-weight:700;white-space:nowrap}
+.pill.green{background:var(--green-soft);color:var(--green)} .pill.red{background:var(--red-soft);color:var(--red)} .pill.apricot{background:var(--apricot-soft);color:var(--apricot-ink)} .pill.ok{background:var(--ok-soft);color:var(--ok)} .pill.slate{background:var(--slate-soft);color:var(--slate)} .pill.ink{background:var(--ink);color:var(--linen)}
+.muted{color:var(--muted)}
+.row{display:flex;align-items:center;gap:12px}
+.ic{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;flex-shrink:0}
+.ic.green{background:var(--green-soft);color:var(--green)} .ic.red{background:var(--red-soft);color:var(--red)} .ic.apricot{background:var(--apricot-soft);color:var(--apricot-ink)} .ic.slate{background:var(--slate-soft);color:var(--slate)} .ic.sand{background:var(--sand);color:var(--green)}
+.explain{display:flex;gap:10px;align-items:flex-start;background:var(--apricot-soft);border-radius:14px;padding:12px 14px;font-size:13px;color:#5A3A26;line-height:1.5}
+.explain b{color:var(--apricot-ink)}
+.explain .ei{width:22px;height:22px;border-radius:50%;background:var(--white);color:var(--apricot-ink);display:grid;place-items:center;flex-shrink:0;font-weight:800;font-size:12px}
+
+/* tables */
+.tbl{width:100%;border-collapse:collapse;font-size:13px}
+.tbl th{text-align:left;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted);padding:10px 14px;border-bottom:1px solid var(--line)}
+.tbl td{padding:12px 14px;border-bottom:1px solid var(--line2);vertical-align:middle}
+.tbl tr:last-child td{border-bottom:0}
+.tbl tr.click{cursor:pointer}
+.tbl tr.click:hover td{background:var(--linen)}
+.tbl .num{text-align:right;font-variant-numeric:tabular-nums}
+.tscroll{overflow-x:auto}
+
+/* task node tree */
+.root{background:var(--green);color:var(--linen);border-radius:16px;padding:14px 16px;display:flex;align-items:center;gap:12px}
+.root .ri{width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.14);color:var(--apricot-light);display:grid;place-items:center}
+.root small{display:block;font-size:10px;letter-spacing:1.4px;color:var(--on-green);font-weight:700}
+.stem{width:1px;height:18px;background:#CFC8BA;margin:0 auto}
+.branches{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.branch{border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.bh{display:flex;align-items:center;gap:10px;padding:12px;background:var(--side)}
+.bh strong{display:block;font-size:13px}.bh small{display:block;color:var(--muted);font-size:11px}
+.task{display:flex;gap:9px;align-items:flex-start;padding:10px 12px;border-top:1px solid var(--line2);width:100%;text-align:left}
+.task:hover{background:var(--linen)}
+.dot{width:8px;height:8px;border-radius:50%;margin-top:6px;flex-shrink:0;background:var(--green)}
+.dot.red{background:var(--red)}.dot.apricot{background:var(--apricot)}
+.task b{display:block;font-size:12.5px;font-weight:700}.task span{display:block;font-size:11.5px;color:var(--muted)}
+
+/* briefing */
+.brief{background:var(--green);color:var(--linen);border-radius:20px;padding:18px}
+.brief .play{width:48px;height:48px;border-radius:50%;background:var(--apricot);color:var(--ink);display:grid;place-items:center;flex-shrink:0}
+.brief p{margin:6px 0 0;color:rgba(251,250,247,.45);font-size:13.5px;transition:color .3s}
+.brief p.on{color:var(--linen)} .brief p.done{color:var(--on-green)}
+.act{display:flex;gap:10px;padding:12px 0;border-bottom:1px solid var(--line2)}
+.act:last-child{border-bottom:0}
+.act b{display:block;font-size:12.5px}.act span{display:block;font-size:12px;color:var(--muted)}.act time{font-size:11px;color:#8A938F}
+
+/* calls */
+.split{display:grid;grid-template-columns:minmax(300px,.9fr) minmax(0,1.4fr);gap:16px;align-items:start}
+.citem{display:flex;gap:12px;align-items:center;padding:14px 18px;border-bottom:1px solid var(--line2);width:100%;text-align:left}
+.citem:hover{background:var(--linen)}
+.citem.sel{background:var(--green-soft)}
+.citem b{display:block;font-size:13.5px}.citem span{display:block;font-size:12px;color:var(--muted)}
+.summary{background:var(--sand);border-radius:16px;padding:14px 16px;font-size:14px}
+.fields{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.fld{border:1px solid var(--line);border-radius:14px;padding:10px 12px}
+.fld small{display:block;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted)}
+.fld b{font-size:13.5px}
+.modes{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.mode{border:1.5px solid var(--line);border-radius:16px;padding:14px;text-align:left;background:var(--white)}
+.mode.on{border-color:var(--green);background:var(--green-soft)}
+.mode b{display:block;font-size:14px}.mode span{font-size:12px;color:var(--muted)}
+
+/* week board */
+.weekhead{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px;flex-wrap:wrap}
+.board{display:grid;grid-template-columns:repeat(7,minmax(150px,1fr));gap:10px;min-width:1080px}
+.col{background:var(--side);border:1px solid var(--line);border-radius:16px;padding:10px;display:flex;flex-direction:column;gap:8px;min-height:380px}
+.col.today{border-color:var(--green);box-shadow:inset 0 0 0 1px var(--green)}
+.col .dh{display:flex;justify-content:space-between;align-items:baseline;padding:2px 4px 6px}
+.col .dh b{font-size:13px}.col .dh span{font-size:11px;color:var(--muted)}
+.jc{background:var(--white);border:1px solid var(--line);border-left:4px solid var(--green);border-radius:12px;padding:8px 10px;text-align:left;width:100%;display:flex;flex-direction:column;gap:2px}
+.jc:hover{box-shadow:0 4px 14px rgba(20,32,30,.08)}
+.jc b{font-size:12.5px;line-height:1.3}.jc span{font-size:11px;color:var(--muted)}
+.jc .t{font-size:11px;font-weight:800;color:var(--ink)}
+.jc.done{opacity:.62}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--muted)}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+.steps{display:flex;gap:5px}
+.steps i{flex:1;height:6px;border-radius:6px;background:var(--line)}
+.steps i.on{background:var(--green)}
+
+/* drawer + modal */
+.scrim{position:fixed;inset:0;background:rgba(20,32,30,.38);z-index:40;display:flex;justify-content:flex-end;animation:fade .15s ease}
+.scrim.center{justify-content:center;align-items:flex-start;padding:32px 16px;overflow-y:auto}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+.drawer{width:min(480px,100%);height:100%;background:var(--linen);overflow-y:auto;padding:22px 24px 40px;display:flex;flex-direction:column;gap:14px;animation:slide .2s ease}
+@keyframes slide{from{transform:translateX(30px)}to{transform:none}}
+.modal{width:min(880px,100%);background:var(--linen);border-radius:24px;padding:22px 24px 26px;display:flex;flex-direction:column;gap:14px;animation:slide .2s ease}
+.mh{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.mh h2{margin:0;font-size:20px;letter-spacing:-.5px}
+.x{width:38px;height:38px;border-radius:50%;background:var(--white);border:1px solid var(--line);display:grid;place-items:center}
+
+/* translator */
+.langbar{display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--green);color:var(--linen);border-radius:16px;padding:12px 16px}
+.langbar small{display:block;color:var(--on-green);font-size:11px;font-weight:700}
+.langbar b{font-size:15px}
+.convo{display:flex;flex-direction:column;gap:8px}
+.bub{border-radius:16px;padding:10px 14px;max-width:80%;display:flex;flex-direction:column;gap:2px}
+.bub.w{align-self:flex-end;background:var(--green-soft)} .bub.c{align-self:flex-start;background:var(--white);border:1px solid var(--line)}
+.bub .l{font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted)}
+.bub .o{font-size:13px;color:var(--muted)} .bub .big{font-size:17px;font-weight:700} .bub .gl{font-size:12px;color:#7A8481;font-style:italic}
+.phr{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.phr button{border:1px solid var(--line);background:var(--white);border-radius:12px;padding:10px 12px;text-align:left;font-weight:600;font-size:12.5px;display:flex;gap:8px;align-items:flex-start}
+.phr button:hover{background:var(--sand)}
+
+/* documents: A4 sheet */
+.tabs{display:flex;gap:4px;background:var(--sand);border-radius:12px;padding:4px;width:max-content;max-width:100%;overflow-x:auto}
+.tabs button{padding:8px 14px;border-radius:9px;font-weight:700;font-size:13px;color:var(--muted);white-space:nowrap}
+.tabs button.on{background:var(--white);color:var(--green)}
+.docwrap{display:grid;grid-template-columns:minmax(0,1fr) 280px;gap:18px;align-items:start}
+.sheet{background:#fff;border:1px solid var(--line);border-radius:6px;box-shadow:0 10px 40px rgba(20,32,30,.10);padding:44px 48px;color:#1b2422;font-size:12.5px;aspect-ratio:210/297;max-width:100%;display:flex;flex-direction:column}
+.sheet .sh{display:flex;justify-content:space-between;gap:24px;align-items:flex-start}
+.sheet .co b{font-size:15px}
+.sheet .co div,.sheet .meta div{color:#4b5653;font-size:11.5px;line-height:1.55}
+.sheet h3{margin:28px 0 4px;font-size:24px;letter-spacing:-.6px;font-weight:700}
+.sheet .meta{display:grid;grid-template-columns:auto auto;gap:2px 16px;font-size:11.5px;text-align:right}
+.sheet .meta span{color:#7b8582}
+.sheet .bill{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin:18px 0 22px}
+.sheet .bill small{display:block;font-size:9.5px;font-weight:700;letter-spacing:1.2px;color:#7b8582;text-transform:uppercase;margin-bottom:4px}
+.sheet table{width:100%;border-collapse:collapse;font-size:11.5px}
+.sheet th{background:var(--sand);text-align:left;font-size:9.5px;letter-spacing:1px;text-transform:uppercase;padding:8px 10px;color:#4b5653}
+.sheet td{padding:9px 10px;border-bottom:1px solid #eee9df}
+.sheet .r{text-align:right;font-variant-numeric:tabular-nums}
+.sheet .tot{margin-left:auto;width:270px;margin-top:14px;font-size:12px}
+.sheet .tot div{display:flex;justify-content:space-between;padding:5px 10px}
+.sheet .tot .grand{background:var(--green);color:#fff;border-radius:6px;font-weight:800;font-size:14px;padding:9px 10px;margin-top:4px}
+.sheet .pay{margin-top:auto;display:grid;grid-template-columns:1fr 92px;gap:16px;border-top:1px solid #eee9df;padding-top:14px;font-size:11px;color:#4b5653}
+.qr{width:92px;height:92px;border-radius:6px;background:conic-gradient(#1b2422 25%,#fff 0 50%,#1b2422 0 75%,#fff 0) 0 0/16px 16px;border:6px solid #fff;outline:1px solid #ddd}
+.stamp{display:inline-block;border:2px solid var(--ok);color:var(--ok);border-radius:6px;padding:2px 10px;font-weight:800;letter-spacing:2px;transform:rotate(-6deg);font-size:14px}
+.timeline{display:flex;flex-direction:column;gap:0}
+.tl{display:flex;gap:10px;align-items:flex-start;padding:8px 0;position:relative}
+.tl i{width:12px;height:12px;border-radius:50%;background:var(--line);margin-top:4px;flex-shrink:0}
+.tl.on i{background:var(--green)}
+.tl b{display:block;font-size:12.5px}.tl span{font-size:11.5px;color:var(--muted)}
+.integ{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.integ .card{padding:14px;display:flex;flex-direction:column;gap:8px}
+.logo{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;font-weight:800;color:#fff;font-size:14px}
+.bars .br{display:grid;grid-template-columns:150px 1fr 70px;gap:10px;align-items:center;padding:6px 0;font-size:13px}
+.bars .bar{height:12px;border-radius:6px;background:var(--sand);overflow:hidden}
+.bars .bar i{display:block;height:100%;border-radius:6px}
+.bars b{text-align:right;font-variant-numeric:tabular-nums}
+.switch{width:50px;height:30px;border-radius:15px;background:#CFC8BA;position:relative;flex-shrink:0;transition:background .2s}
+.switch:after{content:"";position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:#fff;transition:transform .2s}
+.switch[aria-checked="true"]{background:var(--green)}
+.switch[aria-checked="true"]:after{transform:translateX(20px)}
+
+/* voice */
+.fab{position:fixed;right:28px;bottom:28px;z-index:30;width:64px;height:64px;border-radius:50%;background:var(--green);color:var(--linen);display:grid;place-items:center;box-shadow:0 12px 30px rgba(31,77,69,.38)}
+.fab:after{content:"";position:absolute;inset:-7px;border-radius:50%;border:2px solid var(--apricot-light);animation:ring 2.6s ease-out infinite;opacity:0}
+@keyframes ring{0%{transform:scale(.9);opacity:.7}100%{transform:scale(1.15);opacity:0}}
+.voice{width:min(560px,100%);background:var(--green);color:var(--linen);border-radius:24px;padding:22px;display:flex;flex-direction:column;gap:12px;margin-top:60px}
+.orb{width:110px;height:110px;border-radius:50%;margin:8px auto;background:radial-gradient(circle at 50% 45%,var(--apricot-light),var(--apricot) 60%);display:grid;place-items:center;color:var(--ink);box-shadow:0 0 0 14px rgba(242,165,122,.16)}
+.orb.live{animation:pulse 1.4s ease-in-out infinite}
+@keyframes pulse{50%{box-shadow:0 0 0 24px rgba(242,165,122,.2)}}
+.said{font-size:19px;font-weight:600;text-align:center;min-height:56px}
+.ex button{display:block;width:100%;text-align:left;background:rgba(255,255,255,.1);border-radius:12px;padding:10px 14px;margin-top:6px;font-weight:600}
+.plan{background:var(--linen);color:var(--ink);border-radius:16px;padding:12px 16px}
+.plan .pr{display:flex;justify-content:space-between;gap:12px;padding:6px 0;border-bottom:1px solid var(--line2);font-size:13.5px}
+.plan .pr:last-of-type{border-bottom:0}
+
+.who{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.who button{border:1.5px solid var(--line);background:var(--white);border-radius:12px;padding:8px 12px;text-align:left;display:flex;flex-direction:column;color:var(--ink)}
+.who button b{font-size:13.5px}.who button span{font-size:11.5px;color:var(--muted)}
+.who button.on{border-color:var(--green);background:var(--green-soft);box-shadow:inset 0 0 0 1px var(--green)}
+.plan .who{grid-template-columns:repeat(4,1fr);margin-top:6px}
+.thumbs{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.thumb{position:relative;aspect-ratio:1;border-radius:12px;overflow:hidden;display:grid;place-items:center;border:0;width:100%}
+.thumb.job{background:linear-gradient(135deg,#C9D9D3,#8FB0A6);color:#fff}.thumb.inv{background:#fff;border:1px solid var(--line);color:var(--apricot-ink)}
+.thumb img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.thumb .lbl{position:absolute;left:5px;right:5px;bottom:5px;border-radius:6px;font-size:10px;font-weight:800;text-align:center;padding:1px 4px;background:var(--green);color:#fff}
+.thumb.inv .lbl{background:var(--apricot);color:var(--ink)}
+.thumb.flag{outline:3px solid var(--red);outline-offset:-3px}
+.thumb .warn{position:absolute;top:5px;right:5px;width:20px;height:20px;border-radius:50%;background:var(--red);color:#fff;display:grid;place-items:center;font-weight:800;font-size:12px}
+.lblpick{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.lblpick button{border:2px solid var(--line);background:var(--white);border-radius:16px;padding:14px;text-align:left;display:flex;flex-direction:column;gap:4px;color:var(--ink)}
+.lblpick button b{font-size:15px;display:flex;gap:8px;align-items:center}.lblpick button span{font-size:12.5px;color:var(--muted)}
+.lblpick button.on{border-color:var(--green);background:var(--green-soft)}
+.btn.off{opacity:.4;pointer-events:none}
+.flagbox{display:flex;gap:10px;align-items:flex-start;background:var(--red-soft);color:#6d2420;border-radius:14px;padding:12px 14px;font-size:13px;line-height:1.5}
+.flagbox .ei{width:22px;height:22px;border-radius:50%;background:var(--red);color:#fff;display:grid;place-items:center;flex-shrink:0;font-weight:800;font-size:12px}
+.flagbox b{color:var(--red)}
+.okbox{display:flex;gap:10px;align-items:flex-start;background:var(--ok-soft);color:#1f4a35;border-radius:14px;padding:12px 14px;font-size:13px}
+.receipt{background:#fff;border:1px solid var(--line);border-radius:8px;padding:18px 20px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:11.5px;line-height:1.6;box-shadow:0 8px 24px rgba(20,32,30,.10);transform:rotate(-1.2deg);color:#28302e}
+.receipt .rr{display:flex;justify-content:space-between;gap:10px}
+.receipt hr{border:0;border-top:1px dashed #bbb;margin:8px 0}
+.receipt.blur{filter:blur(1.1px)}
+.wrongpic{aspect-ratio:4/3;border-radius:12px;background:radial-gradient(circle at 40% 45%,#7a8f88 0 18%,#5c716a 19% 24%,transparent 25%),linear-gradient(135deg,#9DB8AF,#4E6E64);display:grid;place-items:end start;color:#fff;padding:12px;font-size:12px;font-weight:700}
+.toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%);background:var(--ink);color:var(--linen);border-radius:14px;padding:12px 16px;font-weight:600;font-size:13px;z-index:60;display:flex;gap:8px;align-items:center;max-width:min(560px,calc(100% - 32px))}
+
+@media (max-width:1100px){.g4{grid-template-columns:repeat(2,minmax(0,1fr))}.gmain,.split,.docwrap{grid-template-columns:1fr}.integ{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+/* building-manager additions */
+.need{display:flex;align-items:center;gap:12px;padding:14px 20px;border-bottom:1px solid var(--line2)}
+.need:last-child{border-bottom:0}
+.need .grow{min-width:0;flex:1}
+.need b{display:block;font-size:13.5px}.need span:not(.ic){display:block;font-size:12px;color:var(--muted)}
+.grow{flex:1;min-width:0}
+.citem .ic,.need .ic{display:grid}
+.statb{text-align:left;width:100%}
+.statb:hover{border-color:var(--green)}
+.bcard{text-align:left;padding:0;overflow:hidden;display:flex;flex-direction:column}
+.bcard:hover{box-shadow:0 8px 24px rgba(20,32,30,.08)}
+.bimg{height:86px;display:flex;align-items:flex-end;justify-content:space-between;padding:12px 16px;color:#fff;background-image:linear-gradient(135deg,rgba(255,255,255,.12),rgba(0,0,0,.1))}
+.bimg span{font-size:12px;font-weight:800;background:rgba(0,0,0,.18);border-radius:99px;padding:2px 10px}
+.kv{display:flex;justify-content:space-between;gap:12px;font-size:13px}.kv span{color:var(--muted)}.kv b{text-align:right}
+.sel{min-height:40px;border:1px solid var(--line);border-radius:12px;background:var(--white);padding:0 12px;font-weight:600}
+.ta{width:100%;border:1px solid var(--line);border-radius:14px;padding:12px 14px;background:var(--white);resize:vertical;line-height:1.5}
+.votebar{position:relative;height:22px;border-radius:11px;background:var(--sand);display:flex;overflow:visible}
+.votebar i{display:block;height:100%}.votebar .y{background:var(--ok);border-radius:11px 0 0 11px}.votebar .n{background:var(--red)}
+.votebar .thr{position:absolute;top:-5px;bottom:-5px;width:2px;background:var(--ink);padding:0;border:0}
+.livedot{width:12px;height:12px;border-radius:50%;background:var(--apricot-light);animation:pulse 1.2s infinite}
+.sheet p{margin:8px 0 0;line-height:1.6}
+.who button.on b{color:var(--green)}
+@media (max-width:760px){.need{flex-wrap:wrap}.need .btn{margin-left:50px}}
+
+@media (max-width:760px){.app{grid-template-columns:1fr}.side{position:static;height:auto;flex-direction:row;flex-wrap:wrap;gap:8px;padding:12px 16px}.side .ws,.side .navlabel,.sidecard{display:none}.nav{flex-direction:row;flex-wrap:wrap}.nav button{width:auto;padding:8px 10px}.top{padding:0 16px}.content{padding:20px 16px 110px}.g3,.g2,.branches,.fields,.modes,.phr,.integ{grid-template-columns:1fr}.sheet{padding:24px;aspect-ratio:auto}.user span{display:none}}
+
+/* hotel additions */
+.clockpill{display:inline-flex;align-items:center;gap:6px;font-weight:700;font-size:12.5px;color:var(--muted);background:var(--white);border:1px solid var(--line);border-radius:99px;padding:6px 12px;font-variant-numeric:tabular-nums}
+.wa{background:#EFE7DC;border-radius:16px;padding:12px;display:flex;flex-direction:column;gap:8px;background-image:radial-gradient(rgba(20,32,30,.05) 1px,transparent 1px);background-size:14px 14px}
+.wam{align-self:flex-start;max-width:88%;background:#fff;border-radius:12px 12px 12px 4px;padding:8px 11px;font-size:13px;line-height:1.45;box-shadow:0 1px 1px rgba(0,0,0,.06)}
+.wam.me{align-self:flex-end;background:#DCF2D4;border-radius:12px 12px 4px 12px}
+.wam small{display:block;text-align:right;font-size:10.5px;color:#6b7572;margin-top:2px}
+.vn{display:flex;align-items:center;gap:8px;font-weight:700;font-size:12px;color:var(--green)}
+.vn i{display:block;width:120px;height:16px;background:repeating-linear-gradient(90deg,var(--green) 0 2px,transparent 2px 5px);opacity:.5}
+.trbox{margin-top:8px;background:var(--slate-soft);color:var(--slate);border-radius:12px;padding:10px 12px;font-size:13px}
+.trbox small{display:block;font-size:10.5px;font-weight:800;letter-spacing:1px;text-transform:uppercase;margin-bottom:2px}
+.ladder{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin-top:8px}
+.rung{border:1px solid var(--line);border-radius:12px;padding:8px 10px;display:flex;gap:8px;align-items:center;font-size:12px;color:var(--muted);background:var(--white)}
+.rung i{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;font-style:normal;font-weight:800;background:var(--sand);flex-shrink:0}
+.rung.on{color:var(--ink);border-color:var(--green)}.rung.on i{background:var(--green);color:#fff}
+.rung.now{border-color:var(--red);box-shadow:inset 0 0 0 1px var(--red)}.rung.now i{background:var(--red)}
+.rgrid{display:grid;grid-template-columns:repeat(15,minmax(0,1fr));gap:6px;margin-top:10px}
+.room{position:relative;aspect-ratio:1.25;border-radius:9px;background:color-mix(in srgb,var(--c) 16%,#fff);border:1.5px solid color-mix(in srgb,var(--c) 45%,#fff);font-weight:800;font-size:12px;color:var(--ink)}
+.room:hover{border-color:var(--c)}
+.rb{position:absolute;top:-6px;right:-6px;min-width:18px;height:18px;border-radius:9px;background:var(--red);color:#fff;font-size:10.5px;display:grid;place-items:center;padding:0 4px}
+.sw{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:8px}
+.av2{width:36px;height:36px;border-radius:50%;background:var(--sand);color:var(--green);display:grid;place-items:center;font-weight:800;font-size:12px;flex-shrink:0}
+.numin{width:76px;min-height:34px;border:1px solid var(--line);border-radius:10px;padding:0 8px;text-align:right;font-weight:700;background:var(--white)}
+.step2{width:26px;height:26px;border-radius:50%;background:var(--green-soft);color:var(--green);display:grid;place-items:center;font-weight:800;font-size:12px;flex-shrink:0}
+.wrow{display:grid;grid-template-columns:130px 1fr 60px;gap:10px;align-items:end;padding:8px 0;border-bottom:1px solid var(--line2);font-size:13px}
+.wrow:last-of-type{border-bottom:0}.wrow b{text-align:right;font-variant-numeric:tabular-nums}
+.wbars{display:flex;gap:6px;align-items:flex-end;height:58px}.wbars i{display:block;width:22px;border-radius:5px 5px 2px 2px}
+.brief .play{background:var(--apricot)}
+@media (max-width:1100px){.rgrid{grid-template-columns:repeat(10,minmax(0,1fr))}.ladder{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:760px){.rgrid{grid-template-columns:repeat(6,minmax(0,1fr))}.clockpill,.user{display:none}.top{height:auto;padding-block:10px}.crumb{font-size:12px}}
+</style>
+
+<div class="app">
+  <aside class="side">
+    <div class="brand"><svg width="34" height="34" viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="24" fill="#1F4D45"/><path d="M14.5 19 V25.5 a9.5 9.5 0 0 0 19 0 V19" fill="none" stroke="#FBFAF7" stroke-width="4" stroke-linecap="round"/><circle cx="24" cy="15.5" r="3.4" fill="#F2A57A"/></svg>unbusyness</div>
+    <div class="ws"><span class="av">HJ</span><div><b style="font-size:12.5px">Hotel Jezero (demo)</b><small>Unbusyness za hotele · 120 sob</small></div></div>
+    <div><div class="navlabel">HOTEL</div><nav class="nav" id="nav1"></nav></div>
+    <div class="sidecard"><b>Interaktivni demo</b>Izmišljeni podatki. Kliknite "Simuliraj sporočilo osebja" in poglejte, kako WhatsApp postane naloga.</div>
+  </aside>
+  <div class="main">
+    <header class="top"><div class="crumb" id="crumb"></div><div class="topr" id="topr"></div></header>
+    <main class="content" id="content"></main>
+  </div>
+</div>
+<div id="layer"></div>
+<div id="toastHost"></div>
+<script>
+/* ---------- Example data (izmišljeno) ---------- */
+const HOTEL = { name: 'Hotel Jezero (demo)', short: 'HJ', rooms: 120, floors: 4, gm: 'Sara Novak', gmi: 'SN', now: '09:12' };
+const DEP = {
+  hk: { id: 'hk', name: 'Gospodinjstvo', color: '#2F7A55', lead: 'petra' },
+  mnt: { id: 'mnt', name: 'Vzdrževanje', color: '#4F5F80', lead: 'rok' },
+  fo: { id: 'fo', name: 'Recepcija', color: '#A84E22', lead: 'ana' },
+  rs: { id: 'rs', name: 'Strežba v sobi', color: '#8A5A9E', lead: 'tina' },
+  it: { id: 'it', name: 'IT', color: '#1F4D45', lead: 'tina' },
+};
+const STAFF = {
+  nina: { id: 'nina', name: 'Nina Kos', role: 'Sobarica, 2. nadstropje', dep: 'hk', lang: 'SL', on: true },
+  ivana: { id: 'ivana', name: 'Ivana Melnyk', role: 'Sobarica, 3. nadstropje', dep: 'hk', lang: 'UA', on: true },
+  amir: { id: 'amir', name: 'Amir Hodžić', role: 'Sobar, 1. nadstropje', dep: 'hk', lang: 'BS', on: true },
+  petra: { id: 'petra', name: 'Petra Zupan', role: 'Vodja gospodinjstva', dep: 'hk', lang: 'SL', on: true, lead: true },
+  marko: { id: 'marko', name: 'Marko Vidmar', role: 'Vzdrževalec, jutranja izmena', dep: 'mnt', lang: 'SL', on: true },
+  luka: { id: 'luka', name: 'Luka Breznik', role: 'Vzdrževalec, popoldanska izmena', dep: 'mnt', lang: 'SL', on: false },
+  rok: { id: 'rok', name: 'Rok Kranjc', role: 'Vodja vzdrževanja', dep: 'mnt', lang: 'SL', on: true, lead: true },
+  ana: { id: 'ana', name: 'Ana Golob', role: 'Receptorka', dep: 'fo', lang: 'SL/EN/DE', on: true, lead: true },
+  jure: { id: 'jure', name: 'Jure Petek', role: 'IT podpora', dep: 'it', lang: 'SL/EN', on: true },
+  tina: { id: 'tina', name: 'Tina Rozman', role: 'Dežurna vodja', dep: 'fo', lang: 'SL/EN/IT', on: true, lead: true, duty: true },
+};
+// Request types with target times (minutes): accept, finish
+const TYPES = [
+  { id: 'leak', name: 'Puščanje vode', dep: 'mnt', acc: 5, fin: 30, night: true },
+  { id: 'ac', name: 'Klima / ogrevanje', dep: 'mnt', acc: 10, fin: 45, night: false },
+  { id: 'tv', name: 'TV, Wi-Fi, telefon', dep: 'it', acc: 10, fin: 30, night: false },
+  { id: 'lock', name: 'Ključavnica, kartica', dep: 'fo', acc: 5, fin: 15, night: true },
+  { id: 'towel', name: 'Brisače, kopalniški pribor', dep: 'hk', acc: 5, fin: 15, night: false },
+  { id: 'bed', name: 'Dodatna postelja', dep: 'hk', acc: 10, fin: 30, night: false },
+  { id: 'clean', name: 'Ponovno čiščenje sobe', dep: 'hk', acc: 10, fin: 40, night: false },
+  { id: 'elec', name: 'Elektrika v sobi', dep: 'mnt', acc: 10, fin: 40, night: false },
+  { id: 'food', name: 'Naročilo v sobo', dep: 'rs', acc: 3, fin: 25, night: true },
+];
+const typ = (id) => TYPES.find((t) => t.id === id);
+// Jobs. st: 0 čaka sprejem · 1 sprejeto · 2 opravljeno. esc: 0 none, 1 vodja izmene, 2 vodja oddelka, 3 dežurni
+const JOBS = [
+  { id: 3127, room: '214', type: 'leak', title: 'Tuš pušča po tleh', by: 'nina', ch: 'voice', t: '07:58', who: 'marko', st: 2, acceptedAt: '08:09', doneAt: '08:27', esc: 1, photo: 1,
+    orig: '»Soba 214, tuš pušča po tleh.«', thread: [['s', 'voice', 'Glasovno sporočilo · 0:06', '07:58'], ['b', 'Razumem. Naloga #3127: soba 214, puščanje tuša. Poslano Marku (vzdrževanje, v izmeni).', '07:58'], ['b', 'Marko je sprejel in je na poti.', '08:09'], ['b', 'Popravljeno: novo tesnilo. Hvala za prijavo, Nina!', '08:27']],
+    log: [['07:58', 'Glasovno sporočilo razumljeno', 'Soba 214, puščanje tuša → vzdrževanje.'], ['08:03', 'Ni sprejeto v 5 min', 'Marko dobi opomnik, Rok (vodja vzdrževanja) je obveščen.'], ['08:09', 'Marko sprejel', 'Z enim dotikom na WhatsApp.'], ['08:27', 'Opravljeno', 'Zamenjano tesnilo. Nina je obveščena. 29 min skupaj.']] },
+  { id: 3131, room: '118', type: 'ac', title: 'Klima ne hladi', by: 'ana', ch: 'text', t: '08:21', who: 'marko', st: 1, acceptedAt: '08:26', esc: 2, late: 12, guest: true,
+    orig: '»Gost v 118 pravi, da klima piha toplo. Prosim čim prej, imajo otroka.«', thread: [['s', 'text', 'Gost v 118 pravi, da klima piha toplo. Prosim čim prej, imajo otroka.', '08:21'], ['b', 'Naloga #3131: soba 118, klima. Poslano Marku. Gostu sporočite, da je vzdrževalec obveščen.', '08:21'], ['b', 'Marko je sprejel.', '08:26']],
+    log: [['08:21', 'Prijava z recepcije', 'Klima → vzdrževanje, prednost: gost z otrokom.'], ['08:26', 'Marko sprejel', ''], ['09:06', 'Ni opravljeno v 45 min', 'Obveščen Rok Kranjc, vodja vzdrževanja.']] },
+  { id: 3133, room: '307', type: 'bed', title: 'Dodatna postelja za otroka', by: 'ana', ch: 'text', t: '08:40', who: 'ivana', st: 1, acceptedAt: '08:47', esc: 1, late: 4, guest: true,
+    orig: '»307 rabi dodatno posteljo do 9h, prihajajo z otrokom.«', thread: [['s', 'text', '307 rabi dodatno posteljo do 9h, prihajajo z otrokom.', '08:40'], ['b', 'Naloga #3133: soba 307, dodatna postelja. Poslano Ivani (prevod v ukrajinščino).', '08:40'], ['b', 'Ivana je sprejela.', '08:47']],
+    log: [['08:40', 'Prijava z recepcije', 'Dodatna postelja → gospodinjstvo.'], ['08:47', 'Ivana sprejela', 'Prejela v ukrajinščini.'], ['09:08', 'Ni opravljeno v 30 min', 'Obveščena Petra Zupan, vodja gospodinjstva.']] },
+  { id: 3134, room: '305', type: 'tv', title: 'TV ne dela', by: 'amir', ch: 'text', t: '08:52', who: 'jure', st: 1, acceptedAt: '08:55', esc: 0, split: 3135,
+    orig: '»305 TV ne radi, i treba im peškiri.«', tr: 'Soba 305: TV ne dela, potrebujejo tudi brisače.', thread: [['s', 'text', '305 TV ne radi, i treba im peškiri.', '08:52'], ['b', 'Dve nalogi: #3134 TV (IT, Jure) in #3135 brisače (gospodinjstvo, Amir).', '08:52']],
+    log: [['08:52', 'Sporočilo v bosanščini', 'Razdeljeno na dve nalogi za dva oddelka.'], ['08:55', 'Jure sprejel', '']] },
+  { id: 3135, room: '305', type: 'towel', title: 'Brisače za 2 osebi', by: 'amir', ch: 'text', t: '08:52', who: 'amir', st: 2, acceptedAt: '08:53', doneAt: '09:01', esc: 0, split: 3134,
+    orig: '»305 TV ne radi, i treba im peškiri.«', tr: 'Soba 305: TV ne dela, potrebujejo tudi brisače.', thread: [['s', 'text', '305 TV ne radi, i treba im peškiri.', '08:52'], ['b', 'Dve nalogi: #3134 TV (IT, Jure) in #3135 brisače (gospodinjstvo, Amir).', '08:52'], ['b', 'Brisače dostavljene. Hvala, Amir!', '09:01']],
+    log: [['08:52', 'Iz istega sporočila kot #3134', ''], ['09:01', 'Opravljeno', '9 min.']] },
+  { id: 3136, room: '402', type: 'clean', title: 'Gost želi ponovno čiščenje kopalnice', by: 'ana', ch: 'text', t: '09:04', who: null, st: 0, esc: 0, guest: true,
+    orig: '»402 kopalnica ni bila očiščena, gost je nejevoljen.«', thread: [['s', 'text', '402 kopalnica ni bila očiščena, gost je nejevoljen.', '09:04'], ['b', 'Naloga #3136: soba 402, ponovno čiščenje. Ponujeno sobaricam v 4. nadstropju.', '09:04']],
+    log: [['09:04', 'Prijava z recepcije', 'Ponovno čiščenje → gospodinjstvo, 4. nadstropje.'], ['09:04', 'Čaka sprejem', 'Ciljni čas sprejema: 10 min.']] },
+  { id: 3122, room: '221', type: 'lock', title: 'Kartica ne odpre vrat', by: 'tina', ch: 'text', t: '02:14', who: 'tina', st: 2, acceptedAt: '02:14', doneAt: '02:20', esc: 3, night: true,
+    orig: '»Gost 221 ne more v sobo, kartica ne dela.«', thread: [['s', 'text', 'Gost 221 ne more v sobo, kartica ne dela.', '02:14'], ['b', 'Nočno pravilo: naloga #3122 gre dežurni vodji (Tina).', '02:14'], ['b', 'Opravljeno: nova kartica izdana.', '02:20']],
+    log: [['02:14', 'Nočno pravilo', 'Nujna naloga ponoči → dežurna vodja.'], ['02:20', 'Opravljeno', 'Nova kartica, 6 min.']] },
+];
+const ROOMS = (() => { const out = []; const st = ['clean', 'occ', 'occ', 'dirty', 'occ', 'clean', 'occ', 'occ']; for (let f = 1; f <= 4; f++) for (let n = 1; n <= 30; n++) { const id = `${f}${String(n).padStart(2, '0')}`; out.push({ id, f, st: st[(f * 7 + n * 3) % st.length] }); } return out; })();
+['214', '118', '307', '305', '402', '221'].forEach((r) => { const x = ROOMS.find((y) => y.id === r); if (x) x.st = 'occ'; });
+ROOMS.find((r) => r.id === '118').st = 'block';
+const RST = { clean: ['Prosta, očiščena', '#2F7A55'], occ: ['Zasedena', '#4F5F80'], dirty: ['Čaka čiščenje', '#E8915F'], block: ['Težava v sobi', '#B23A32'] };
+const WEEK = { hk: [14, 13, 12, 12], mnt: [44, 41, 38, 35], fo: [9, 8, 8, 8], rs: [22, 21, 20, 19], it: [26, 25, 22, 21] };
+
+/* ---------- helpers ---------- */
+const I={
+ bulb:'<path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-4 10.5c.8.8 1 1.5 1 2.5h6c0-1 .2-1.7 1-2.5A6 6 0 0 0 12 3z"/>',
+ home:'<path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/>',list:'<path d="M9 6h11M9 12h11M9 18h11"/><path d="M4 6l1 1 2-2M4 12l1 1 2-2M4 18l1 1 2-2"/>',
+ bed:'<path d="M3 18V8M3 14h18v4M21 14v-2a3 3 0 0 0-3-3h-7v5"/><circle cx="7" cy="11" r="2"/>',team:'<circle cx="9" cy="8" r="3.2"/><path d="M3 19a6 6 0 0 1 12 0"/><circle cx="17" cy="9" r="2.5"/><path d="M15.5 14.2A5 5 0 0 1 21 19"/>',
+ gear:'<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/>',chart:'<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>',
+ msg:'<path d="M4 5h16v11H8l-4 4z"/>',mic:'<rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/>',cam:'<path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/>',
+ check:'<path d="M5 12l4 4 10-10"/>',x:'<path d="M6 6l12 12M18 6L6 18"/>',bell:'<path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15z"/><path d="M10 20a2 2 0 0 0 4 0"/>',
+ clock:'<circle cx="12" cy="12" r="8.5"/><path d="M12 7v5l3 2"/>',alert:'<path d="M12 3l9 16H3z"/><path d="M12 10v4M12 17v.5"/>',moon:'<path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/>',
+ up:'<path d="M12 19V5M5 12l7-7 7 7"/>',swap:'<path d="M7 4L3 8l4 4M3 8h14M17 20l4-4-4-4M21 16H7"/>',spark:'<path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/>',
+ drop:'<path d="M12 3s6 7 6 11a6 6 0 0 1-12 0c0-4 6-11 6-11z"/>',snow:'<path d="M12 2v20M4 6l16 12M20 6L4 18"/>',tv:'<rect x="3" y="5" width="18" height="12" rx="2"/><path d="M8 21h8"/>',key:'<circle cx="8" cy="15" r="4"/><path d="M11 12l9-9M17 6l3 3"/>',
+ towel:'<path d="M6 3h12v18H6z"/><path d="M6 8h12"/>',plate:'<circle cx="12" cy="13" r="7"/><path d="M3 5v5M21 5v5"/>',broom:'<path d="M14 3l-3 9M6 21l2-9h6l2 9z"/>',play:'<path d="M7 4l13 8-13 8z"/>',send:'<path d="M4 12l16-8-6 16-3-7z"/>',wrench:'<path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.8-3.8a6 6 0 0 1-7.9 7.9l-6.9 6.9a2.1 2.1 0 0 1-3-3l6.9-6.9a6 6 0 0 1 7.9-7.9z"/>'
+};
+const TIC={elec:'bulb',leak:'drop',ac:'snow',tv:'tv',lock:'key',towel:'towel',bed:'bed',clean:'broom',food:'plate'};
+const svg=(n,s=18,w=2)=>`<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${I[n]||I.list}</svg>`;
+const esc=t=>String(t??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+const pill=(t,c)=>`<span class="pill ${c}">${esc(t)}</span>`;
+function toast(m){const h=document.getElementById('toastHost');h.innerHTML=`<div class="toast" role="status">${svg('check',16)}<span>${esc(m)}</span></div>`;clearTimeout(window._t);window._t=setTimeout(()=>h.innerHTML='',3200)}
+function layer(html){document.getElementById('layer').innerHTML=html}
+function closeLayer(){document.getElementById('layer').innerHTML='';S.sim=null}
+const job=id=>JOBS.find(j=>j.id===id);
+const first=id=>id?STAFF[id].name.split(' ')[0]:'—';
+const stPill=j=>j.st===2?pill('Opravljeno','ok'):j.late?pill(`Zamuja +${j.late} min`,'red'):j.st===1?pill('Sprejeto','slate'):pill('Čaka sprejem','apricot');
+const ESC=['Zaposleni v izmeni','Vodja izmene','Vodja oddelka','Dežurni vodja'];
+const head=(eb,t,sub,btn='')=>`<div class="head"><div><div class="eyebrow">${eb}</div><h1>${t}</h1>${sub?`<p>${sub}</p>`:''}</div>${btn}</div>`;
+const stat=(l,n,s,ic,tone,go)=>`<button class="card stat statb" ${go?`onclick="${go}"`:''}><div class="lbl">${l}<span class="ic ${tone}" style="width:34px;height:34px">${svg(ic)}</span></div><b>${n}</b><small>${s}</small></button>`;
+const S={page:'overview',sel:3131,dep:'all',sim:null};
+
+const NAV=[['overview','Pregled','home'],['jobs','Naloge','list'],['rooms','Sobe','bed'],['team','Ekipa in izmene','team'],['rules','Pravila in ciljni časi','gear'],['reports','Poročila','chart']];
+function drawNav(){const open=JOBS.filter(j=>j.st<2).length,late=JOBS.filter(j=>j.st<2&&j.late).length;
+  document.getElementById('nav1').innerHTML=NAV.map(([k,l,ic])=>`<button class="${S.page===k?'on':''}" onclick="nav('${k}')" aria-current="${S.page===k?'page':'false'}">${svg(ic)}${l}${k==='jobs'?`<span class="cnt ${late?'hot':''}">${open}</span>`:''}</button>`).join('');
+  const P=NAV.find(n=>n[0]===S.page);document.getElementById('crumb').innerHTML=`${esc(HOTEL.name)} / <b>${P?P[1]:''}</b>`;
+  document.getElementById('topr').innerHTML=`<button class="btn line sm" onclick="openSim()">${svg('msg',14)}Simuliraj sporočilo osebja</button><span class="clockpill">${svg('clock',14)} ${HOTEL.now}</span><div class="user"><span class="av">${HOTEL.gmi}</span><span><b>${HOTEL.gm}</b><br><small class="muted">Direktorica</small></span></div>`}
+function nav(p){S.page=p;closeLayer();render();window.scrollTo({top:0})}
+function render(){drawNav();document.getElementById('content').innerHTML=({overview:pOverview,jobs:pJobs,rooms:pRooms,team:pTeam,rules:pRules,reports:pReports})[S.page]()}
+
+/* ---------- Pregled ---------- */
+function pOverview(){const open=JOBS.filter(j=>j.st<2),late=open.filter(j=>j.late),done=JOBS.filter(j=>j.st===2);
+  const feed=[...JOBS].sort((a,b)=>b.t.localeCompare(a.t)).slice(0,6);
+  return head('Petek, 6. november · '+HOTEL.now,'Dobro jutro, Sara.','Do vas pridejo samo zamujene naloge. Vse ostalo teče samo.')+
+  `<div class="grid g4" style="margin-bottom:16px">${stat('Prošnje danes',58,'v 5 oddelkih','list','green',"nav('jobs')")}${stat('Odprte zdaj',open.length,`${late.length} zamujata`,'clock','apricot',"nav('jobs')")}${stat('Povpr. čas popravila','24 min','ta teden, −3 min','wrench','slate',"nav('reports')")}${stat('Pravočasno','92 %','današnjih prošenj','check','green',"nav('reports')")}</div>
+  <div class="grid gmain"><div class="grid" style="gap:16px">
+   <div class="card"><div class="ch"><div><h2>Zamuja</h2><p>Ciljni čas je potekel, zato so obveščeni naslednji višje</p></div>${pill(late.length+' nalogi','red')}</div>
+    ${late.map(j=>`<div class="need"><span class="ic red">${svg(TIC[j.type])}</span><div class="grow"><b>Soba ${j.room} · ${esc(j.title)}</b><span>${DEP[typ(j.type).dep].name} · ${first(j.who)} · zamuja ${j.late} min · obveščen: ${ESC[j.esc].toLowerCase()}</span></div><div class="btns"><button class="btn line sm" onclick="openJob(${j.id})">Odpri</button><button class="btn primary sm" onclick="reassign(${j.id})">Dodeli drugemu</button></div></div>`).join('')||'<div class="cb muted">Nič ne zamuja.</div>'}</div>
+   <div class="card"><div class="ch"><div><h2>Kaj se dogaja</h2><p>Sporočila osebja na WhatsApp in naloge iz njih</p></div><button class="btn line sm" onclick="nav('jobs')">Vse naloge</button></div><div class="tscroll"><table class="tbl"><tbody>${feed.map(j=>`<tr class="click" onclick="openJob(${j.id})"><td style="width:58px" class="muted">${j.t}</td><td style="width:40px"><span class="ic sand" style="width:32px;height:32px">${svg(TIC[j.type],16)}</span></td><td><b>Soba ${j.room} · ${esc(j.title)}</b><div class="muted" style="font-size:12px">${j.ch==='voice'?'🎙 glasovno':'💬 besedilo'} od ${first(j.by)}${j.tr?' · prevedeno':''}</div></td><td>${DEP[typ(j.type).dep].name}</td><td>${first(j.who)}</td><td>${stPill(j)}</td></tr>`).join('')}</tbody></table></div></div>
+  </div><aside class="grid" style="gap:16px">
+   <div class="card"><div class="ch"><h2>Čas popravila po oddelkih</h2></div><div class="cb bars">${Object.values(DEP).map(d=>{const v=WEEK[d.id][3];return `<div class="br"><span>${d.name}</span><span class="bar"><i style="width:${v/45*100}%;background:${d.color}"></i></span><b>${v} min</b></div>`}).join('')}</div></div>
+   <div class="brief"><div class="row"><span class="play" aria-hidden="true">${svg('moon',20)}</span><div><b>Ponoči</b><div style="color:var(--on-green);font-size:12px">Nočna pravila 22:00–6:00</div></div></div><p class="done">02:14 · Gost v 221 ne more v sobo. Nočno pravilo je nalogo poslalo dežurni vodji Tini.</p><p class="done">02:20 · Nova kartica izdana. 6 minut.</p><p class="done">Ostalih 5 manj nujnih prošenj je počakalo na jutranjo izmeno.</p></div>
+  </aside></div>`}
+
+/* ---------- Naloge ---------- */
+function openJob(id){S.page='jobs';S.sel=id;closeLayer();render();window.scrollTo({top:0})}
+function pJobs(){const list=JOBS.filter(j=>S.dep==='all'||typ(j.type).dep===S.dep).sort((a,b)=>(a.st===2)-(b.st===2)||(b.late||0)-(a.late||0)||b.t.localeCompare(a.t));const j=job(S.sel)||list[0];
+  return head('Naloge','Vse naloge danes','Vsaka ima enega odgovornega in dva ciljna časa: za sprejem in za izvedbo.',`<button class="btn primary" onclick="openSim()">${svg('msg',16)}Simuliraj sporočilo</button>`)+
+  `<div class="tabs" role="tablist" style="margin-bottom:14px"><button role="tab" aria-selected="${S.dep==='all'}" class="${S.dep==='all'?'on':''}" onclick="S.dep='all';render()">Vsi oddelki</button>${Object.values(DEP).map(d=>`<button role="tab" aria-selected="${S.dep===d.id}" class="${S.dep===d.id?'on':''}" onclick="S.dep='${d.id}';render()">${d.name}</button>`).join('')}</div>
+  <div class="split"><div class="card">${list.map(x=>`<button class="citem ${j&&x.id===j.id?'sel':''}" onclick="S.sel=${x.id};render()"><span class="ic ${x.late?'red':x.st===2?'green':'sand'}">${svg(TIC[x.type])}</span><div class="grow"><b>Soba ${x.room} · ${esc(x.title)}</b><span>#${x.id} · ${x.t} · ${first(x.who)}</span></div>${stPill(x)}</button>`).join('')||'<div class="cb muted">Ni nalog.</div>'}</div>${j?jobDetail(j):''}</div>`}
+function jobDetail(j){const T=typ(j.type),d=DEP[T.dep];
+  return `<div class="card"><div class="ch"><div><h2>#${j.id} · Soba ${j.room} · ${esc(j.title)}</h2><p>${d.name} · ${esc(T.name)}${j.guest?' · gost čaka':''}</p></div><div class="btns">${stPill(j)}</div></div><div class="cb grid" style="gap:14px">
+   <div class="fields"><div class="fld"><small>Odgovoren</small><b>${j.who?esc(STAFF[j.who].name):'Še nihče'}</b><div class="muted" style="font-size:12px">${j.who?esc(STAFF[j.who].role):'Ponujeno v izmeni'}</div></div><div class="fld"><small>Sprejem</small><b>v ${T.acc} min</b><div class="muted" style="font-size:12px">${j.acceptedAt?'sprejeto '+j.acceptedAt:'čaka od '+j.t}</div></div><div class="fld"><small>Izvedba</small><b>v ${T.fin} min</b><div class="muted" style="font-size:12px">${j.doneAt?'opravljeno '+j.doneAt:j.late?'zamuja '+j.late+' min':'teče'}</div></div></div>
+   <div><b style="font-size:13px">Stopnjevanje</b><div class="ladder">${ESC.map((e,i)=>`<div class="rung ${i<=j.esc?'on':''} ${i===j.esc&&j.st<2&&i>0?'now':''}"><i>${i+1}</i><span>${e}</span></div>`).join('')}</div></div>
+   <div class="btns">${j.st===0?`<button class="btn primary" onclick="assign(${j.id})">${svg('team',16)}Dodeli</button>`:''}${j.st===1?`<button class="btn primary" onclick="finish(${j.id})">${svg('check',16)}Označi kot opravljeno</button><button class="btn line" onclick="reassign(${j.id})">${svg('swap',16)}Dodeli drugemu</button>`:''}${j.st<2?`<button class="btn line" onclick="nudge(${j.id})">${svg('bell',16)}Opomni</button>`:''}${T.dep==='mnt'&&j.st<2?`<button class="btn line" onclick="toast('Naročeno pri zunanjem servisu. Soba ${j.room} je označena kot težava, dokler ni rešeno.')">${svg('wrench',16)}Zunanji serviser</button>`:''}</div>
+   <div class="grid g2" style="gap:14px;align-items:start"><div><b style="font-size:13px">WhatsApp</b><div class="wa" style="margin-top:8px">${j.thread.map(m=>m[0]==='s'?`<div class="wam me">${m[1]==='voice'?`<span class="vn">${svg('play',12)}<i></i>0:06</span>`:esc(m[2])}<small>${first(j.by)} · ${m[3]}</small></div>`:`<div class="wam">${esc(m[1])}<small>Unbusyness · ${m[2]}</small></div>`).join('')}</div>${j.tr?`<div class="trbox"><small>Prevod</small>${esc(j.tr)}</div>`:''}</div>
+   <div><b style="font-size:13px">Potek</b><div class="timeline" style="margin-top:4px">${j.log.map(l=>`<div class="tl on"><i></i><div><b>${esc(l[0])} · ${esc(l[1])}</b><span>${esc(l[2])}</span></div></div>`).join('')}</div></div></div>
+  </div></div>`}
+function pick(id,title,cb){const j=job(id),dep=typ(j.type).dep,ppl=Object.values(STAFF).filter(s=>s.dep===dep&&s.id!==j.who);S.pickCb=cb;
+  layer(`<div class="scrim center" onclick="if(event.target===this)closeLayer()"><div class="modal" role="dialog" aria-label="${title}" style="width:min(560px,100%)"><div class="mh"><h2>${title}</h2><button class="x" onclick="closeLayer()" aria-label="Zapri">${svg('x')}</button></div><div class="who">${ppl.map(s=>`<button onclick="S.pickCb('${s.id}')" ${s.on?'':'disabled style="opacity:.5"'}><b>${esc(s.name)}</b><span>${esc(s.role)} · ${s.on?'v izmeni':'ni v izmeni'} · ${s.lang}</span></button>`).join('')}</div><p class="muted" style="margin:0;font-size:13px">Izbrani dobi nalogo na WhatsApp v svojem jeziku in jo sprejme z enim dotikom.</p></div></div>`)}
+function assign(id){pick(id,'Komu dodelim?',k=>{const j=job(id);j.who=k;j.st=1;j.acceptedAt=HOTEL.now;j.log.push([HOTEL.now,'Dodeljeno: '+STAFF[k].name,'Sprejeto na WhatsApp.']);closeLayer();render();toast(`${STAFF[k].name} je dobil(a) nalogo in jo sprejel(a).`)})}
+function reassign(id){pick(id,'Dodeli drugemu',k=>{const j=job(id),old=first(j.who);j.who=k;j.late=0;j.log.push([HOTEL.now,'Predodeljeno: '+STAFF[k].name,old+' je obveščen(a), da naloge nima več.']);closeLayer();render();toast(`Predodeljeno: ${STAFF[k].name}. Ciljni čas teče znova.`)})}
+function finish(id){const j=job(id);j.st=2;j.late=0;j.doneAt=HOTEL.now;j.log.push([HOTEL.now,'Opravljeno','Prijavitelj obveščen.']);render();toast(`Opravljeno. ${first(j.by)} je dobil(a) potrditev na WhatsApp.`)}
+function nudge(id){const j=job(id);toast(j.who?`${first(j.who)} je dobil(a) opomnik na WhatsApp.`:'Ponovno ponujeno vsem v izmeni.')}
+
+/* ---------- simulate a staff message ---------- */
+const SIMS=[
+ {label:'Glasovno sporočilo v ukrajinščini',who:'ivana',voice:true,orig:'«Номер 309, у ванній не працює світло.»',tr:'Soba 309: v kopalnici ne dela luč.',jobs:[{room:'309',type:'elec',title:'Luč v kopalnici ne dela',dep:'mnt',to:'marko'}]},
+ {label:'Eno sporočilo, dve nalogi',who:'nina',orig:'»Soba 226 rabi otroško posteljico, pa daljinec za TV ne dela.«',jobs:[{room:'226',type:'bed',title:'Otroška posteljica',dep:'hk',to:'nina'},{room:'226',type:'tv',title:'Daljinec za TV ne dela',dep:'it',to:'jure'}]},
+ {label:'Fotografija z recepcije',who:'ana',photo:true,orig:'»Fotografija: madež na preprogi na hodniku 1. nadstropja.«',jobs:[{room:'Hodnik 1',type:'clean',title:'Madež na preprogi na hodniku',dep:'hk',to:'amir'}]},
+];
+function openSim(){S.sim={i:null,step:0};drawSim()}
+function drawSim(){const s=S.sim;if(!s)return;const c=s.i!=null?SIMS[s.i]:null;
+  layer(`<div class="scrim center" onclick="if(event.target===this)closeLayer()"><div class="modal" role="dialog" aria-label="Simuliraj sporočilo" style="width:min(640px,100%)"><div class="mh"><h2>${svg('msg',18)} Sporočilo osebja na WhatsApp</h2><button class="x" onclick="closeLayer()" aria-label="Zapri">${svg('x')}</button></div>
+  ${!c?`<p class="muted" style="margin:0">Izberite primer. Osebje piše kot vedno, Unbusyness razume, razdeli in dodeli.</p><div class="who" style="grid-template-columns:1fr">${SIMS.map((x,i)=>`<button onclick="runSim(${i})"><b>${x.label}</b><span>${esc(STAFF[x.who].name)}: ${esc(x.orig)}</span></button>`).join('')}</div>`:
+  `<div class="wa">${s.step>=1?`<div class="wam me">${c.voice?`<span class="vn">${svg('play',12)}<i></i>0:05</span>`:c.photo?`<span class="vn">${svg('cam',14)} Fotografija</span>${esc(c.orig.replace('»Fotografija: ','»'))}`:esc(c.orig)}<small>${first(c.who)} · zdaj</small></div>`:''}
+   ${s.step>=2&&c.tr?`<div class="trbox"><small>Razumljeno in prevedeno</small>${esc(c.orig)} → ${esc(c.tr)}</div>`:''}
+   ${s.step>=3?`<div class="wam">${c.jobs.length>1?`Dve nalogi: ${c.jobs.map(x=>`${esc(x.title)} (${DEP[x.dep].name}, ${first(x.to)})`).join(' in ')}.`:`Naloga: soba ${esc(c.jobs[0].room)}, ${esc(c.jobs[0].title.toLowerCase())}. Poslano: ${first(c.jobs[0].to)} (${DEP[c.jobs[0].dep].name}).`}<small>Unbusyness · zdaj</small></div>`:''}
+   ${s.step>=4?c.jobs.map(x=>`<div class="wam">${first(x.to)} je sprejel(a).<small>Unbusyness · zdaj</small></div>`).join(''):''}</div>
+   ${s.step>=4?`<div class="okbox">${svg('check',18)}<div><b>${c.jobs.length>1?'Ustvarjeni nalogi':'Ustvarjena naloga'}</b> z odgovornim in ciljnim časom. ${c.voice?'Marko jo je dobil v slovenščini.':''}</div></div><div class="btns"><button class="btn primary" onclick="addSim()">Odpri v nalogah</button><button class="btn line" onclick="S.sim={i:null,step:0};drawSim()">Še en primer</button></div>`:''}`}
+  </div></div>`)}
+function runSim(i){S.sim={i,step:0};const c=SIMS[i];const go=()=>{if(!S.sim||S.sim.i!==i)return;S.sim.step++;if(S.sim.step===2&&!c.tr)S.sim.step++;drawSim();if(S.sim.step<4)setTimeout(go,1100)};go()}
+function addSim(){const c=SIMS[S.sim.i];let last;c.jobs.forEach((x,k)=>{const id=Math.max(...JOBS.map(j=>j.id))+1;last=id;JOBS.unshift({id,room:x.room,type:x.type,title:x.title,by:c.who,ch:c.voice?'voice':'text',t:HOTEL.now,who:x.to,st:1,acceptedAt:HOTEL.now,esc:0,tr:c.tr,orig:c.orig,
+  thread:[['s',c.voice?'voice':'text',c.orig,HOTEL.now],['b',`Naloga #${id}: ${x.title}. Poslano: ${first(x.to)}.`,HOTEL.now],['b',`${first(x.to)} je sprejel(a).`,HOTEL.now]],log:[[HOTEL.now,c.voice?'Glasovno sporočilo razumljeno':'Sporočilo razumljeno',c.tr?'Prevedeno: '+c.tr:''],[HOTEL.now,first(x.to)+' sprejel(a)','']]})});S.sel=last;S.sim=null;S.dep='all';openJob(last)}
+
+/* ---------- Sobe ---------- */
+function pRooms(){const cnt=k=>ROOMS.filter(r=>r.st===k).length;
+  return head('Sobe',`${HOTEL.rooms} sob v ${HOTEL.floors} nadstropjih`,'Stanje sob in odprte naloge na enem mestu. Kliknite sobo.')+
+  `<div class="legend" style="margin-bottom:14px">${Object.entries(RST).map(([k,[l,c]])=>`<span><i style="background:${c}"></i>${l} · ${cnt(k)}</span>`).join('')}</div>
+  ${[4,3,2,1].map(f=>`<div class="card cb" style="margin-bottom:12px"><b>${f}. nadstropje</b><div class="rgrid">${ROOMS.filter(r=>r.f===f).map(r=>{const js=JOBS.filter(j=>j.room===r.id&&j.st<2);return `<button class="room" style="--c:${RST[r.st][1]}" onclick="roomInfo('${r.id}')" aria-label="Soba ${r.id}, ${RST[r.st][0]}${js.length?', odprte naloge: '+js.length:''}">${r.id}${js.length?`<span class="rb">${js.length}</span>`:''}</button>`}).join('')}</div></div>`).join('')}`}
+function roomInfo(id){const r=ROOMS.find(x=>x.id===id),js=JOBS.filter(j=>j.room===id);
+  layer(`<div class="scrim" onclick="if(event.target===this)closeLayer()"><div class="drawer" role="dialog" aria-label="Soba ${id}"><div class="mh"><div><div class="eyebrow">Soba</div><h2>${id}</h2></div><button class="x" onclick="closeLayer()" aria-label="Zapri">${svg('x')}</button></div>
+  <div class="fields"><div class="fld"><small>Stanje</small><b>${RST[r.st][0]}</b></div><div class="fld"><small>Nadstropje</small><b>${r.f}.</b></div><div class="fld"><small>Sobarica</small><b>${r.f===1?'Amir':r.f===2?'Nina':'Ivana'}</b></div></div>
+  <b>Naloge</b><div class="card">${js.length?js.map(j=>`<button class="citem" onclick="openJob(${j.id})"><span class="ic sand">${svg(TIC[j.type])}</span><div class="grow"><b>${esc(j.title)}</b><span>#${j.id} · ${j.t}</span></div>${stPill(j)}</button>`).join(''):'<div class="cb muted">Danes ni nalog za to sobo.</div>'}</div>
+  <b>Zgodovina (30 dni)</b><div class="card cb muted" style="font-size:13px">${id==='118'?'Klima: 3 prijave v 30 dneh. Predlog: servis klimatske naprave pri zunanjem izvajalcu.':'Brez ponavljajočih se težav.'}</div></div></div>`)}
+
+/* ---------- Ekipa ---------- */
+function pTeam(){return head('Ekipa in izmene','Kdo je danes v izmeni','Naloge dobi prava oseba glede na oddelek, nadstropje in izmeno, v svojem jeziku.')+
+  `<div class="grid g3">${Object.values(DEP).map(d=>`<div class="card"><div class="ch"><h2><span class="sw" style="background:${d.color}"></span>${d.name}</h2></div>${Object.values(STAFF).filter(s=>s.dep===d.id).map(s=>`<div class="need"><span class="av2">${s.name.split(' ').map(x=>x[0]).join('')}</span><div class="grow"><b>${esc(s.name)}${s.lead?' · vodja':''}${s.duty?' · dežurna':''}</b><span>${esc(s.role)} · ${s.lang} · ${JOBS.filter(j=>j.who===s.id&&j.st<2).length} odprtih</span></div><button class="switch" role="switch" aria-checked="${s.on}" aria-label="V izmeni: ${esc(s.name)}" onclick="STAFF['${s.id}'].on=!STAFF['${s.id}'].on;render();toast(STAFF['${s.id}'].on?'${esc(s.name)} je v izmeni in prejema naloge.':'${esc(s.name)} ne prejema več nalog.')"></button></div>`).join('')}</div>`).join('')}</div>`}
+
+/* ---------- Pravila ---------- */
+function pRules(){return head('Pravila in ciljni časi','Vaša pravila','Ista situacija, vedno isti rezultat. Spremenite čas in velja takoj.')+
+  `<div class="card tscroll"><table class="tbl"><thead><tr><th>Vrsta prošnje</th><th>Oddelek</th><th class="num">Sprejem (min)</th><th class="num">Izvedba (min)</th><th>Ponoči</th></tr></thead><tbody>${TYPES.map((t,i)=>`<tr><td><span class="row" style="gap:8px">${svg(TIC[t.id],16)}<b>${esc(t.name)}</b></span></td><td>${DEP[t.dep].name}</td><td class="num"><input class="numin" type="number" min="1" max="240" value="${t.acc}" aria-label="Sprejem ${esc(t.name)}" onchange="TYPES[${i}].acc=+this.value;toast('Shranjeno: ${esc(t.name)}, sprejem v '+this.value+' min')"></td><td class="num"><input class="numin" type="number" min="5" max="600" value="${t.fin}" aria-label="Izvedba ${esc(t.name)}" onchange="TYPES[${i}].fin=+this.value;toast('Shranjeno: ${esc(t.name)}, izvedba v '+this.value+' min')"></td><td>${t.night?pill('Takoj dežurnemu','red'):pill('Počaka na jutro','slate')}</td></tr>`).join('')}</tbody></table></div>
+  <div class="grid g2" style="margin-top:16px;align-items:start"><div class="card cb" style="display:grid;gap:10px"><b>Stopnjevanje</b>${ESC.map((e,i)=>`<div class="row" style="gap:10px"><span class="step2">${i+1}</span><div><b style="font-size:13.5px">${e}</b><div class="muted" style="font-size:12.5px">${['dobi nalogo takoj','če ni sprejeto v ciljnem času','če ni opravljeno v ciljnem času','še odprto ali ponoči (22:00–6:00)'][i]}</div></div></div>`).join('')}</div>
+  <div class="card cb" style="display:grid;gap:12px"><b>Odobritve</b><label class="row" style="gap:10px"><button class="switch" role="switch" aria-checked="true" onclick="this.setAttribute('aria-checked',this.getAttribute('aria-checked')!=='true')" aria-label="Odobritev zunanjega serviserja"></button>Zunanji serviser nad 200 € čaka na odobritev vodje</label><label class="row" style="gap:10px"><button class="switch" role="switch" aria-checked="true" onclick="this.setAttribute('aria-checked',this.getAttribute('aria-checked')!=='true')" aria-label="Preverjanje odgovorov"></button>Vsak odgovor preverjen za osebne podatke pred pošiljanjem</label><label class="row" style="gap:10px"><button class="switch" role="switch" aria-checked="false" onclick="this.setAttribute('aria-checked',this.getAttribute('aria-checked')!=='true')" aria-label="Povzetek ob 18:00"></button>Povzetek dneva na WhatsApp ob 18:00</label></div></div>`}
+
+/* ---------- Poročila ---------- */
+function pReports(){const wk=['T42','T43','T44','T45'];const max=45;
+  return head('Poročila','Kako hitro se odzivamo','Povprečen čas od prijave do opravljenega, po tednih.')+
+  `<div class="grid g4" style="margin-bottom:16px">${stat('Prošenj ta teden','341','+8 % glede na prejšnji','list','green')}${stat('Pravočasno','91 %','cilj 90 %','check','green')}${stat('Zamujenih','29','največ: vzdrževanje','alert','red')}${stat('Uporabnikov na teden','24','od 26 zaposlenih','team','slate')}</div>
+  <div class="grid g2" style="align-items:start"><div class="card"><div class="ch"><div><h2>Čas popravila po oddelkih</h2><p>minute, zadnji 4 tedni</p></div></div><div class="cb">${Object.values(DEP).map(d=>`<div class="wrow"><span>${d.name}</span><div class="wbars">${WEEK[d.id].map((v,i)=>`<i style="height:${v/max*56}px;background:${d.color};opacity:${.45+i*.18}" title="${wk[i]}: ${v} min"></i>`).join('')}</div><b>${WEEK[d.id][3]} min</b></div>`).join('')}<div class="muted" style="font-size:12px;margin-top:6px">Stolpci: tedni ${wk.join(', ')}</div></div></div>
+  <div class="card"><div class="ch"><div><h2>Sobe, ki se ponavljajo</h2><p>3 ali več prijav v 30 dneh</p></div></div>${[['118','Klima','3 prijave','Predlog: servis klime'],['214','Tuš','3 prijave','Predlog: zamenjava armature'],['402','Ponovno čiščenje','2 pritožbi gostov','Predlog: preverjanje po čiščenju']].map(r=>`<div class="need"><span class="ic apricot">${svg('alert')}</span><div class="grow"><b>Soba ${r[0]} · ${r[1]}</b><span>${r[2]} · ${r[3]}</span></div></div>`).join('')}</div></div>`}
+
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeLayer()});
+render();
+
+</script>
+
+</body>
+</html>

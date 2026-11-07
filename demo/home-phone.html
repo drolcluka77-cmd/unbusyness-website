@@ -1,0 +1,648 @@
+<!doctype html>
+<html lang="sl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+</head>
+<body>
+<title>Unbusyness Home demo</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Interaktivni demo aplikacije Unbusyness Home: digitalni potni list doma, opomniki, prijava okvare in zanesljivi mojstri.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+/* Consumer phone demo. Left: short pitch + "try this". Right: the app in a phone frame (full screen on phones).
+   Tabs: Domov · Potni list · (+) · Mojstri · Stavba. Bottom sheets for item detail, report flow, add flow. */
+:root{
+  --bg:#F8E8DE; --page:#FBF5F1; --surface:#FFFFFF; --sand:#FCF3EE; --line:#EFD8CA;
+  --ink:#1B2220; --muted:#5F6461; --soft:#8A8582;
+  --acc:#B0582F; --acc-deep:#7A3A21; --acc-ink:#A9532B; --acc-soft:#F7DCCB; --acc-mid:#E0915F;
+  --ok:#3E7D62; --ok-soft:#E2EFE8; --red:#B23A32; --red-soft:#F6DEDB;
+  --t1:#F7E1D4; --t2:#E8E9F1; --t3:#E4ECE8; --c2:#4D5578; --c3:#3E6355;
+  --onacc:#FFFFFF; --frame:#1B2220;
+  --font:'Plus Jakarta Sans','Segoe UI',system-ui,-apple-system,sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#1C1512; --page:#211915; --surface:#2A201B; --sand:#30251F; --line:#3D302A; --ink:#F4ECE7; --muted:#BFAEA5; --soft:#9C8D85;
+  --acc:#F0A57C; --acc-deep:#4A2416; --acc-ink:#F4B48F; --acc-soft:#43291D; --acc-mid:#F0A57C;
+  --ok:#86C9A8; --ok-soft:#1F3229; --red:#F08A80; --red-soft:#3F2220; --t1:#43291D; --t2:#2D2D3A; --t3:#26332D; --c2:#B9C0E0; --c3:#9CCBB6; --onacc:#1C1512; --frame:#000; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#1C1512; --page:#211915; --surface:#2A201B; --sand:#30251F; --line:#3D302A; --ink:#F4ECE7; --muted:#BFAEA5; --soft:#9C8D85;
+  --acc:#F0A57C; --acc-deep:#4A2416; --acc-ink:#F4B48F; --acc-soft:#43291D; --acc-mid:#F0A57C;
+  --ok:#86C9A8; --ok-soft:#1F3229; --red:#F08A80; --red-soft:#3F2220; --t1:#43291D; --t2:#2D2D3A; --t3:#26332D; --c2:#B9C0E0; --c3:#9CCBB6; --onacc:#1C1512; --frame:#000; color-scheme:dark}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);font-size:15px;line-height:1.45;-webkit-font-smoothing:antialiased}
+button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer;text-align:inherit}
+:focus-visible{outline:3px solid var(--acc-mid);outline-offset:2px;border-radius:10px}
+@media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
+
+.stage{min-height:100%;display:flex;align-items:center;justify-content:center;gap:64px;padding-block:32px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.side{max-width:340px;display:flex;flex-direction:column;gap:16px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:19px;letter-spacing:-.02em}
+.brand small{font-weight:600;color:var(--muted);font-size:19px}
+.side h1{margin:0;font-size:42px;line-height:1.04;letter-spacing:-.045em;font-weight:800;text-wrap:balance}
+.side h1 span{color:var(--acc)}
+.side p{margin:0;color:var(--muted);font-size:16px}
+.side ul{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:10px;font-size:15px}
+.side li{display:flex;gap:10px;align-items:flex-start}
+.side li:before{content:"";width:8px;height:8px;border-radius:50%;background:var(--acc);margin-top:7px;flex-shrink:0}
+.side .fine{font-size:13px;color:var(--soft)}
+
+.phone{position:relative;width:390px;height:844px;max-height:calc(100vh - 64px);border-radius:48px;background:var(--page);box-shadow:0 0 0 10px var(--frame),0 30px 80px rgba(90,40,20,.25);overflow:clip;display:flex;flex-direction:column}
+@media (max-width:820px){.side{display:none}.stage{padding:0;gap:0;align-items:stretch}.phone{width:100%;height:100vh;height:100dvh;max-height:none;border-radius:0;box-shadow:none}}
+.sbar{display:flex;justify-content:space-between;align-items:center;padding:14px 28px 4px;font-size:13px;font-weight:700;flex-shrink:0}
+@media (max-width:820px){.sbar{display:none}}
+.scr{flex:1;overflow-y:auto;overflow-x:hidden;padding:8px 18px 120px;scrollbar-width:none}
+.scr::-webkit-scrollbar{display:none}
+@media (max-width:820px){.scr{padding-top:calc(14px + env(safe-area-inset-top,0px))}}
+
+/* headings + cards */
+.hd{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin:6px 0 16px}
+.hd small{display:block;font-size:12px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--acc-ink)}
+.hd h2{margin:2px 0 0;font-size:27px;line-height:1.1;letter-spacing:-.035em;font-weight:800}
+.av{width:42px;height:42px;border-radius:50%;background:var(--acc-soft);color:var(--acc-ink);display:grid;place-items:center;font-weight:800;font-size:14px;flex-shrink:0}
+.lbl{font-size:12px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:22px 2px 10px;display:flex;justify-content:space-between;align-items:center}
+.lbl b{font-size:11px;background:var(--red);color:#fff;border-radius:999px;padding:2px 8px;letter-spacing:.06em}
+.card{background:var(--surface);border-radius:22px;padding:16px;display:grid;gap:10px}
+.row{display:grid;grid-template-columns:44px minmax(0,1fr) auto;gap:12px;align-items:center;background:var(--surface);border-radius:20px;padding:12px 14px;width:100%;margin-bottom:8px;min-height:68px}
+.row .tx b{display:block;font-size:15px;line-height:1.3}
+.row .tx span{display:block;font-size:13px;color:var(--muted);line-height:1.35}
+.ic{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;background:var(--t1);color:var(--acc)}
+.ic.c2{background:var(--t2);color:var(--c2)}.ic.c3{background:var(--t3);color:var(--c3)}
+.pill{font-size:11.5px;font-weight:800;padding:4px 9px;border-radius:999px;white-space:nowrap}
+.pill.soon{background:var(--acc-soft);color:var(--acc-ink)}.pill.ok{background:var(--ok-soft);color:var(--ok)}.pill.late{background:var(--red-soft);color:var(--red)}.pill.none{background:var(--sand);color:var(--muted)}
+.pill.new{background:var(--acc);color:var(--onacc)}
+.chev{color:var(--soft)}
+
+.hero{background:var(--acc-deep);color:#FBEDE4;border-radius:26px;padding:18px;display:grid;gap:12px}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .hero{background:#5A2C19}}
+.hero small{font-size:11.5px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#F6C3A3;display:flex;justify-content:space-between;gap:8px}
+.hero h3{margin:0;font-size:21px;line-height:1.2;letter-spacing:-.02em;color:#fff}
+.hero p{margin:0;color:#F3D6C6;font-size:14px}
+.track{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.track i{height:5px;border-radius:3px;background:rgba(255,255,255,.2)}.track i.on{background:#F6A97E}
+.track-l{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;font-size:11px;color:#F3D6C6;font-weight:600}
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;min-height:50px;border-radius:16px;padding:0 18px;font-weight:800;font-size:15px;background:var(--acc);color:var(--onacc);width:100%}
+.btn.line{background:transparent;border:1.5px solid var(--acc);color:var(--acc)}
+.btn.soft{background:var(--sand);color:var(--ink)}
+.hero .btn{background:#F6A97E;color:#2A140B}
+.hero .btn.line{background:transparent;border-color:rgba(255,255,255,.35);color:#fff}
+.btns{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.stat{background:var(--surface);border-radius:20px;padding:14px}
+.stat small{display:block;font-size:12.5px;color:var(--muted);font-weight:600}
+.stat b{display:block;font-size:26px;letter-spacing:-.03em;margin-top:2px}
+.stat span{font-size:12.5px;color:var(--muted)}
+.cats{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;margin:0 -18px 6px;padding-inline:18px;scrollbar-width:none}
+.cats::-webkit-scrollbar{display:none}
+.cat{flex-shrink:0;padding:9px 15px;border-radius:999px;background:var(--surface);font-weight:700;font-size:14px}
+.cat[aria-pressed="true"]{background:var(--acc);color:var(--onacc)}
+.search{display:flex;align-items:center;gap:8px;background:var(--surface);border-radius:16px;padding:0 14px;min-height:48px;color:var(--soft);margin-bottom:12px}
+.search input{border:0;background:transparent;font:inherit;color:var(--ink);flex:1;min-width:0;outline:none}
+
+/* tabs */
+.tabs{position:absolute;left:0;right:0;bottom:0;background:var(--surface);border-top:1px solid var(--line);display:grid;grid-template-columns:1fr 1fr 88px 1fr 1fr;align-items:end;padding:8px 6px calc(10px + env(safe-area-inset-bottom,0px));z-index:5}
+.tab{display:flex;flex-direction:column;align-items:center;gap:3px;min-height:54px;justify-content:center;font-size:11.5px;font-weight:700;color:var(--soft);border-radius:14px;position:relative;text-align:center}
+.tab[aria-current="page"]{color:var(--acc)}
+.tab[aria-current="page"]:before{content:"";position:absolute;top:-9px;width:26px;height:3px;border-radius:2px;background:var(--acc)}
+.tab .dotn{position:absolute;top:4px;right:calc(50% - 18px);width:9px;height:9px;border-radius:50%;background:var(--red);border:2px solid var(--surface)}
+.plus{justify-self:center;width:68px;height:68px;margin-top:-30px;border-radius:50%;background:var(--acc);color:var(--onacc);display:grid;place-items:center;box-shadow:0 0 0 6px var(--surface),0 10px 26px rgba(176,88,47,.4)}
+.plus:active{transform:scale(.96)}
+
+/* sheets */
+.scrim{position:absolute;inset:0;background:rgba(27,20,16,.42);z-index:8;animation:fade .2s ease}
+.sheet{position:absolute;left:0;right:0;bottom:0;max-height:92%;background:var(--page);border-radius:28px 28px 0 0;z-index:9;display:flex;flex-direction:column;animation:up .26s cubic-bezier(.2,.8,.2,1)}
+.sheet .grab{width:42px;height:5px;border-radius:3px;background:var(--line);margin:10px auto 2px;flex-shrink:0}
+.sheet .sh{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:8px 18px 6px;flex-shrink:0}
+.sheet .sh h3{margin:0;font-size:20px;letter-spacing:-.025em}
+.x{width:38px;height:38px;border-radius:50%;background:var(--surface);display:grid;place-items:center;flex-shrink:0}
+.sb{overflow-y:auto;padding:8px 18px calc(22px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:12px;scrollbar-width:none}
+.sb::-webkit-scrollbar{display:none}
+@keyframes up{from{transform:translateY(40px);opacity:0}to{transform:none;opacity:1}}
+@keyframes fade{from{opacity:0}}
+.kv{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.3fr);gap:8px 12px;font-size:14px}
+.kv span{color:var(--muted)}.kv b{font-weight:700;text-align:right}
+.wbar{height:8px;border-radius:4px;background:var(--sand);overflow:hidden}.wbar i{display:block;height:100%;background:var(--ok);border-radius:4px}
+.docs{display:flex;flex-wrap:wrap;gap:8px}
+.doc{display:flex;align-items:center;gap:7px;background:var(--surface);border-radius:12px;padding:9px 12px;font-size:13.5px;font-weight:600}
+.tl{display:grid;gap:0;margin:0;padding:0;list-style:none}
+.tl li{display:grid;grid-template-columns:16px minmax(0,1fr);gap:12px;padding-bottom:14px;position:relative}
+.tl li:before{content:"";width:12px;height:12px;border-radius:50%;background:var(--acc);margin-top:4px;box-shadow:0 0 0 4px var(--acc-soft)}
+.tl li:not(:last-child):after{content:"";position:absolute;left:5px;top:20px;bottom:0;width:2px;background:var(--line)}
+.tl b{display:block;font-size:14.5px}.tl span{display:block;font-size:13px;color:var(--muted)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{padding:10px 14px;border-radius:999px;background:var(--surface);font-weight:700;font-size:14px;border:1.5px solid transparent}
+.chip:hover{border-color:var(--acc)}
+.modes{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.mode{background:var(--surface);border-radius:18px;padding:14px 8px;display:grid;justify-items:center;gap:6px;font-weight:700;font-size:13.5px;text-align:center}
+.mode .ic{width:46px;height:46px}
+.ai{background:var(--surface);border-radius:20px;padding:14px;display:grid;gap:8px;border-left:4px solid var(--acc)}
+.ai small{font-size:11.5px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--acc-ink)}
+.pro{background:var(--surface);border-radius:22px;padding:14px;display:grid;gap:10px;border:2px solid transparent;width:100%}
+.pro[aria-pressed="true"]{border-color:var(--acc)}
+.pro .top{display:grid;grid-template-columns:48px minmax(0,1fr) auto;gap:12px;align-items:center}
+.pro .face{width:48px;height:48px;border-radius:50%;display:grid;place-items:center;font-weight:800;background:var(--t2);color:var(--c2)}
+.pro b{display:block;font-size:15.5px}.pro .tx span{display:block;font-size:13px;color:var(--muted)}
+.meta{display:flex;flex-wrap:wrap;gap:6px}
+.meta span{font-size:12.5px;font-weight:700;background:var(--sand);border-radius:999px;padding:5px 10px}
+.meta span.g{background:var(--ok-soft);color:var(--ok)}
+.star{color:#D9822B}
+.note{font-size:12.5px;color:var(--soft);margin:0}
+.scan{height:260px;border-radius:22px;background:#2A201B;position:relative;overflow:hidden;display:grid;place-items:center}
+.scan .paper{width:62%;height:78%;background:#FBF5F1;border-radius:6px;transform:rotate(-3deg);padding:16px 14px;display:grid;gap:7px;align-content:start;box-shadow:0 10px 30px rgba(0,0,0,.4)}
+.scan .paper i{display:block;height:7px;border-radius:3px;background:#E3D6CC}
+.scan .paper i.s{width:55%}.scan .paper i.m{width:80%}.scan .paper i.b{height:12px;width:40%;background:#C9B6A8}
+.scan .corner{position:absolute;inset:22px;border:3px solid #F6A97E;border-radius:18px;clip-path:polygon(0 0,22% 0,22% 4%,4% 4%,4% 22%,0 22%,0 78%,4% 78%,4% 96%,22% 96%,22% 100%,78% 100%,78% 96%,96% 96%,96% 78%,100% 78%,100% 22%,96% 22%,96% 4%,78% 4%,78% 0,100% 0,100% 100%,0 100%)}
+.scan .beam{position:absolute;left:10%;right:10%;height:3px;background:#F6A97E;box-shadow:0 0 18px #F6A97E;top:20%;animation:beam 1.2s ease-in-out infinite alternate}
+@keyframes beam{to{top:80%}}
+.field{display:grid;gap:5px}
+.field label{font-size:12.5px;font-weight:700;color:var(--muted)}
+.field input,.field textarea{font:inherit;font-size:15px;color:var(--ink);background:var(--surface);border:1.5px solid var(--line);border-radius:14px;padding:11px 13px;min-width:0;width:100%}
+.field textarea{min-height:120px;resize:vertical;line-height:1.45}
+.field input:focus,.field textarea:focus{outline:none;border-color:var(--acc)}
+.rate{display:flex;gap:6px}
+.rate button{font-size:28px;line-height:1;color:var(--line)}
+.rate button.on{color:#D9822B}
+.sw{display:flex;justify-content:space-between;align-items:center;gap:12px;background:var(--surface);border-radius:18px;padding:12px 14px;font-size:13.5px;font-weight:600}
+.sw button{width:50px;height:30px;border-radius:999px;background:var(--line);position:relative;flex-shrink:0}
+.sw button:after{content:"";position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:#fff;transition:left .2s}
+.sw button[aria-checked="true"]{background:var(--acc)}.sw button[aria-checked="true"]:after{left:23px}
+.toast{position:absolute;left:12px;right:12px;top:14px;z-index:12;background:var(--surface);border-radius:22px;padding:14px;box-shadow:0 18px 40px rgba(60,25,10,.25);display:grid;gap:10px;animation:drop .35s cubic-bezier(.2,.8,.2,1)}
+@media (max-width:820px){.toast{top:calc(10px + env(safe-area-inset-top,0px))}}
+@keyframes drop{from{transform:translateY(-30px);opacity:0}}
+.toast .th{display:flex;gap:10px;align-items:center;font-size:12px;font-weight:700;color:var(--muted)}
+.toast .th i{width:22px;height:22px;border-radius:6px;background:var(--acc);display:grid;place-items:center}
+.toast p{margin:0;font-size:14.5px}
+.toast .btns .btn{min-height:42px;font-size:14px}
+.mini{position:absolute;left:50%;bottom:104px;transform:translateX(-50%);background:var(--ink);color:var(--page);padding:10px 16px;border-radius:999px;font-size:13.5px;font-weight:700;z-index:13;white-space:nowrap;animation:fade .2s}
+.ok-big{display:grid;justify-items:center;text-align:center;gap:8px;padding:10px 0}
+.ok-big .ic{width:64px;height:64px;background:var(--ok-soft);color:var(--ok)}
+.ok-big h4{margin:0;font-size:20px;letter-spacing:-.02em}
+.ok-big p{margin:0;color:var(--muted);font-size:14px}
+.empty{color:var(--muted);font-size:14px;text-align:center;padding:16px}
+.vn{display:flex;align-items:center;gap:10px;background:var(--surface);border-radius:999px;padding:8px 14px 8px 8px}
+.vn .pb{width:34px;height:34px;border-radius:50%;background:var(--acc);color:var(--onacc);display:grid;place-items:center}
+.vn i{flex:1;height:20px;background:repeating-linear-gradient(90deg,var(--acc) 0 2px,transparent 2px 5px);opacity:.55;border-radius:2px}
+.vn small{font-family:var(--mono);font-size:12px;color:var(--muted)}
+.rec-dot{width:10px;height:10px;border-radius:50%;background:var(--red);animation:pulse 1s infinite}
+@keyframes pulse{50%{opacity:.3}}
+
+/* property passport (certificate) */
+.props{display:grid;gap:8px;margin-bottom:14px}
+.prop{display:grid;grid-template-columns:52px minmax(0,1fr) auto;gap:12px;align-items:center;background:var(--acc-deep);color:#FBEDE4;border-radius:22px;padding:14px;width:100%}
+.prop .ic{width:52px;height:52px;background:rgba(255,255,255,.12);color:#F6C3A3}
+.prop b{display:block;font-size:15.5px;color:#fff}.prop span.s{display:block;font-size:12.5px;color:#F3D6C6}
+.prop .go{font-size:12.5px;font-weight:800;color:#2A140B;background:#F6A97E;border-radius:999px;padding:7px 11px;white-space:nowrap}
+.prop.alt{background:var(--surface);color:var(--ink)}.prop.alt .ic{background:var(--t3);color:var(--c3)}.prop.alt b{color:var(--ink)}.prop.alt span.s{color:var(--muted)}
+.full{position:absolute;inset:0;z-index:7;background:var(--page);display:flex;flex-direction:column;animation:up .26s cubic-bezier(.2,.8,.2,1)}
+.fbar{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:14px 16px 8px;flex-shrink:0}
+@media (max-width:820px){.fbar{padding-top:calc(12px + env(safe-area-inset-top,0px))}}
+.fbar b{font-size:15px}
+.fbody{flex:1;overflow-y:auto;padding:4px 18px calc(28px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:12px;scrollbar-width:none}
+.fbody>*{flex-shrink:0}
+.fbody .lbl{margin-bottom:-2px}
+.sb>*{flex-shrink:0}
+.fbody::-webkit-scrollbar{display:none}
+.cert{position:relative;border-radius:26px;padding:20px 18px 18px;background:linear-gradient(160deg,#7A3A21,#A4512B);color:#FBEDE4;overflow:hidden;display:grid;gap:12px}
+.cert:after{content:"";position:absolute;right:-50px;top:-50px;width:170px;height:170px;border-radius:50%;border:18px solid rgba(255,255,255,.07)}
+.cert small{font-size:11.5px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:#F6C3A3}
+.cert h3{margin:0;font-size:25px;line-height:1.1;letter-spacing:-.035em;color:#fff}
+.cert p{margin:0;font-size:13.5px;color:#F3D6C6}
+.seal{display:flex;align-items:center;gap:12px;background:rgba(255,255,255,.1);border-radius:18px;padding:12px}
+.seal .ring{width:58px;height:58px;border-radius:50%;flex-shrink:0;display:grid;place-items:center;font-weight:800;font-size:16px;color:#fff;background:conic-gradient(#F6A97E calc(var(--v)*1%),rgba(255,255,255,.15) 0)}
+.seal .ring span{width:46px;height:46px;border-radius:50%;background:#8E4626;display:grid;place-items:center}
+.seal b{display:block;color:#fff;font-size:15px}.seal span.s{font-size:12.5px;color:#F3D6C6}
+.cgrid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.cgrid div{background:rgba(255,255,255,.1);border-radius:14px;padding:9px 10px}
+.cgrid b{display:block;font-size:17px;color:#fff;letter-spacing:-.02em}.cgrid span{font-size:11.5px;color:#F3D6C6}
+.ver{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:800;color:var(--ok);background:var(--ok-soft);border-radius:999px;padding:3px 8px 3px 6px;white-space:nowrap;vertical-align:middle}
+.ver.own{color:var(--muted);background:var(--sand)}
+.wk{display:grid;grid-template-columns:44px minmax(0,1fr);gap:12px;background:var(--surface);border-radius:20px;padding:12px 14px}
+.wk b{display:block;font-size:14.5px;line-height:1.3}.wk span.s{display:block;font-size:12.5px;color:var(--muted);margin:2px 0 6px}
+.dl{display:grid;gap:6px}
+.dlr{display:grid;grid-template-columns:22px minmax(0,1fr) auto;gap:10px;align-items:center;background:var(--surface);border-radius:14px;padding:10px 12px;font-size:13.5px;font-weight:600}
+.dlr .m{font-size:11.5px;color:var(--muted);font-weight:600}
+.legend{font-size:12px;color:var(--muted);display:grid;gap:6px;background:var(--surface);border-radius:16px;padding:12px}
+.linkbox{display:flex;align-items:center;gap:8px;background:var(--surface);border:1.5px dashed var(--acc);border-radius:14px;padding:12px;font-family:var(--mono);font-size:13px;word-break:break-all}
+.pill.soonx{background:var(--sand);color:var(--muted)}
+</style>
+
+<div class="stage">
+  <div class="side">
+    <div class="brand"><svg width="34" height="34" viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="24" fill="#B0582F"/><path d="M14.5 19 V25.5 a9.5 9.5 0 0 0 19 0 V19" fill="none" stroke="#FBFAF7" stroke-width="4" stroke-linecap="round"/><circle cx="24" cy="15.5" r="3.4" fill="#F7DCCB"/></svg><span>unbusyness <small>home</small></span></div>
+    <h1>Stvari, ki jih imate, <span>naj ne upravljajo vas.</span></h1>
+    <p>Digitalni potni list vsega, kar imate, opomniki ob pravem času in mojstri, ki pridejo, ko so rekli.</p>
+    <ul>
+      <li>Domov: kaj prihaja in kaj je v teku</li>
+      <li>Potni list: dom, avto, aparati, garancije, računi</li>
+      <li><b>Novo:</b> potni list nepremičnine z oznako Verified, za deljenje z agentom ob prodaji</li>
+      <li>Gumb +: prijavite okvaro ali dodajte račun s fotografijo</li>
+      <li>Mojstri: ocenjeni po točnosti in kakovosti</li>
+      <li>Stavba: prijave upravniku ali priporočilo, če ga še ne uporablja</li>
+    </ul>
+    <p class="fine">Interaktivni demo z izmišljenimi podatki. Poskusite <b>+ → Prijavi okvaro</b> in nato <b>Naslednji korak</b> na zaslonu Domov, ali <b>Potni list → Poglej</b>.</p>
+  </div>
+  <div class="phone" id="phone">
+    <div class="sbar" aria-hidden="true"><span>9:41</span><span>●●● ▮</span></div>
+    <div class="scr" id="scr"></div>
+    <nav class="tabs" id="tabs" aria-label="Glavni meni"></nav>
+    <div id="layer"></div>
+  </div>
+</div>
+
+<script>
+/* ---------- icons ---------- */
+const P = {
+  home:'<path d="M4 11l8-7 8 7v9a1 1 0 0 1-1 1h-4v-6h-6v6H5a1 1 0 0 1-1-1z"/>',
+  book:'<rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h4"/>',
+  tool:'<path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.8-3.8a6 6 0 0 1-7.9 7.9l-6.9 6.9a2.1 2.1 0 0 1-3-3l6.9-6.9a6 6 0 0 1 7.9-7.9z"/>',
+  bld:'<path d="M5 21V4h10v17M15 9h4v12"/><path d="M8 8h1M11 8h1M8 12h1M11 12h1M8 16h1M11 16h1M3 21h18"/>',
+  plus:'<path d="M12 5v14M5 12h14"/>',
+  car:'<path d="M5 16l1.5-5A2 2 0 0 1 8.4 9.5h7.2a2 2 0 0 1 1.9 1.5L19 16"/><rect x="3" y="15" width="18" height="4" rx="1.5"/><circle cx="7.5" cy="19.5" r="1.3"/><circle cx="16.5" cy="19.5" r="1.3"/>',
+  flame:'<path d="M12 3c1 3 5 5 5 10a5 5 0 0 1-10 0c0-2 1-3.5 2-4.5 0 2 1 3 2 3 0-3-1-5.5 1-8.5z"/>',
+  wash:'<rect x="4" y="3" width="16" height="18" rx="2"/><circle cx="12" cy="13" r="4.5"/><path d="M8 6.5h.01M11 6.5h3"/>',
+  dish:'<rect x="4" y="3" width="16" height="18" rx="2"/><path d="M4 8h16M8 12v5M12 12v5M16 12v5"/>',
+  smoke:'<circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/><path d="M12 4v2M12 18v2"/>',
+  tap:'<path d="M4 10h9a3 3 0 0 1 3 3v1M10 10V6h3M7 6h9"/><path d="M16 18c0 1.1-.9 2-2 2"/><path d="M16 17.5l.5 1.5"/>',
+  snow:'<path d="M12 3v18M4.2 7.5l15.6 9M4.2 16.5l15.6-9"/>',
+  doc:'<path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h4"/>',
+  bell:'<path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>',
+  cam:'<path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/>',
+  mic:'<rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/>',
+  text:'<path d="M4 5h16v11H8l-4 4z"/>',
+  check:'<path d="M5 12.5l4.5 4.5L19 7.5"/>',
+  x:'<path d="M6 6l12 12M18 6L6 18"/>',
+  chev:'<path d="M9 6l6 6-6 6"/>',
+  phone:'<path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"/>',
+  bolt:'<path d="M13 2L4 14h7l-1 8 9-12h-7z"/>',
+  search:'<circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/>',
+  share:'<path d="M4 12v7a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-7M12 3v13M7 8l5-5 5 5"/>',
+  users:'<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><circle cx="17" cy="9" r="2.5"/><path d="M16 14.2a5 5 0 0 1 5.5 4.8"/>',
+  light:'<path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-4 10.5c.8.8 1 1.5 1 2.5h6c0-1 .2-1.7 1-2.5A6 6 0 0 0 12 3z"/>',
+  lift:'<rect x="5" y="3" width="14" height="18" rx="2"/><path d="M12 3v18M8.5 9l1.5-2 1.5 2M12.5 15l1.5 2 1.5-2"/>',
+  door:'<path d="M6 21V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v17M3 21h18M14 12h.01"/>',
+  ac:'<rect x="3" y="5" width="18" height="8" rx="2"/><path d="M7 17c0 1.5 1 2 1 3M12 17v3M17 17c0 1.5-1 2-1 3"/>',
+  key:'<circle cx="8" cy="15" r="4"/><path d="M11 12l9-9M17 6l3 3"/>',
+};
+const ic = (n, s = 20, w = 2) => `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${P[n] || ""}</svg>`;
+
+/* ---------- example data (izmišljeno) ---------- */
+const ME = { name: 'Maja', full: 'Maja Kranjc', ini: 'MK', addr: 'Celovška 100, Ljubljana', floor: '3. nadstropje, stanovanje 12' };
+const ITEMS = [
+  { id: 'smoke', cat: 'dom', name: 'Javljalnik dima', sub: 'Hodnik', icon: 'smoke', c: '', next: 'Menjava baterije', due: 'zamuja 2 tedna', st: 'late', kv: [['Model', 'optični, 9 V baterija'], ['Nameščen', 'maj 2022'], ['Zadnja menjava', 'oktober 2025']], docs: ['Navodila.pdf'], hist: [['okt. 2025', 'Nova baterija', 'Sami'], ['maj 2022', 'Namestitev', '']], act: 'battery' },
+  { id: 'car', cat: 'avto', name: 'Volkswagen Golf', sub: 'LJ AB-123 · 2018', icon: 'car', c: 'c2', next: 'Menjava na zimske gume', due: 'do 15. 11.', st: 'soon', kv: [['Registracija velja do', '3. 3. 2027'], ['Zavarovanje', 'obnova 1. 2. 2027'], ['Prevoženih', 'okoli 96.000 km'], ['Zimske gume', 'shranjene pri vulkanizerju']], docs: ['Prometno dovoljenje', 'Polica 2026', 'Servisna knjižica'], hist: [['12. 5. 2026', 'Letne gume', 'Vulkanizer Bežigrad (demo), 40 €'], ['3. 3. 2026', 'Registracija in tehnični', '178 €'], ['nov. 2025', 'Mali servis', 'Avtoservis Šiška (demo), 210 €']], act: 'tyres' },
+  { id: 'boiler', cat: 'dom', name: 'Plinska peč', sub: 'Kopalnica · 2019', icon: 'flame', c: '', next: 'Letni servis', due: 'čez 12 dni', st: 'soon', kv: [['Vrsta', 'kondenzacijska, 24 kW'], ['Vgradnja', 'oktober 2019'], ['Servis', 'vsako leto, novembra']], docs: ['Navodila.pdf', 'Servis 2025.pdf', 'Zapisnik dimnikarja'], hist: [['14. 11. 2025', 'Letni servis', 'Toplota servis (demo), 89 €'], ['10. 11. 2024', 'Letni servis', 'Toplota servis (demo), 85 €'], ['okt. 2019', 'Vgradnja', '']], act: 'service' },
+  { id: 'dish', cat: 'aparati', name: 'Pomivalni stroj', sub: 'Kuhinja · 2024', icon: 'dish', c: 'c3', next: 'Garancija poteče', due: 'marec 2027', st: 'soon', kv: [['Kupljen', '18. 3. 2024'], ['Garancija do', '18. 3. 2027']], warr: 72, docs: ['Račun.pdf', 'Garancijski list'], hist: [['18. 3. 2024', 'Nakup in priklop', '']] },
+  { id: 'wash', cat: 'aparati', name: 'Pralni stroj', sub: 'Kopalnica · 2025', icon: 'wash', c: 'c3', next: 'Garancija poteče', due: '3. 3. 2028', st: 'ok', kv: [['Kupljen', '3. 3. 2025'], ['Garancija do', '3. 3. 2028'], ['Čiščenje filtra', 'vsake 3 mesece']], warr: 28, docs: ['Račun.pdf', 'Garancijski list', 'Navodila.pdf'], hist: [['3. 3. 2025', 'Nakup', '']] },
+  { id: 'ac', cat: 'dom', name: 'Klimatska naprava', sub: 'Spalnica · 2022', icon: 'ac', c: 'c2', next: 'Čiščenje filtrov', due: 'april 2027', st: 'ok', kv: [['Vgradnja', 'junij 2022'], ['Servis', 'vsako pomlad']], docs: ['Račun.pdf'], hist: [['apr. 2026', 'Servis in čiščenje', 'Klima Center (demo), 65 €'], ['jun. 2022', 'Vgradnja', '']] },
+  { id: 'tap', cat: 'dom', name: 'Kuhinjska pipa', sub: 'Kuhinja · 2021', icon: 'tap', c: '', next: 'Garancija potekla', due: '2024', st: 'none', kv: [['Vgrajena', 'maj 2021'], ['Garancija', 'potekla maja 2024']], docs: ['Račun.pdf'], hist: [['maj 2021', 'Vgradnja', 'ob prenovi kuhinje']] },
+  { id: 'flat', cat: 'dokumenti', name: 'Stanovanje', sub: 'Celovška 100 · 3. nadstropje', icon: 'key', c: 'c3', next: 'Zavarovanje doma', due: 'obnova 1. 1. 2027', st: 'ok', kv: [['Velikost', '68 m²'], ['Energetski razred', 'C'], ['Upravnik', 'Upravnik Center (demo)']], docs: ['Kupoprodajna pogodba', 'Energetska izkaznica', 'Tloris', 'Polica 2026'], hist: [['maj 2021', 'Prenova kuhinje', ''], ['2019', 'Nakup', '']] },
+];
+const PROS = {
+  matej: { id: 'matej', name: 'Matej Novak', trade: 'Vodoinštalater', ini: 'MN', stars: 4.9, jobs: 212, punct: 98, slot: 'čet 8:00–9:00', price: '40–80 €', mine: 'Pri vas: 1× (2023)' },
+  kos: { id: 'kos', name: 'Instalacije Kos', trade: 'Vodoinštalater', ini: 'IK', stars: 4.7, jobs: 154, punct: 93, slot: 'pet 12:00–14:00', price: '45–90 €' },
+  nejc: { id: 'nejc', name: 'Nejc Zupan', trade: 'Električar', ini: 'NZ', stars: 4.8, jobs: 178, punct: 97, slot: 'jutri 16:00–17:00', price: '50–90 €', mine: 'Pri vas: 2× (2024, 2025)' },
+  volt: { id: 'volt', name: 'Elektro Volt', trade: 'Električar', ini: 'EV', stars: 4.6, jobs: 96, punct: 91, slot: 'pon 9:00–11:00', price: '45–85 €' },
+  toplota: { id: 'toplota', name: 'Toplota servis', trade: 'Servis peči', ini: 'TS', stars: 4.8, jobs: 640, punct: 96, slot: 'sre 10:00–12:00', price: '85–95 €', mine: 'Pri vas: 2× (2024, 2025)' },
+  vulk: { id: 'vulk', name: 'Vulkanizer Bežigrad', trade: 'Vulkanizer', ini: 'VB', stars: 4.7, jobs: 1200, punct: 95, slot: 'sob 9:00', price: '40 €', mine: 'Pri vas: 4×' },
+};
+const FAULTS = {
+  tap: { label: 'Pipa v kuhinji kaplja', say: '»Pipa v kuhinji spet kaplja, tudi ko je zaprta.«', item: 'tap', what: 'Puščanje kuhinjske pipe', urg: 'Ni nujno, a voda teče stalno', need: 'Vodoinštalater', why: 'Garancija je potekla maja 2024, zato iščem mojstra.', pros: ['matej', 'kos'], price: 64, fix: 'Nova kartuša' },
+  elec: { label: 'Vtičnica v kopalnici ne dela', say: '»V kopalnici ne dela vtičnica pri ogledalu.«', item: null, what: 'Okvara vtičnice v kopalnici', urg: 'Srednje nujno, ne uporabljajte je', need: 'Električar', why: 'Iz potnega lista: Nejc je pri vas že dvakrat delal.', pros: ['nejc', 'volt'], price: 55, fix: 'Nova vtičnica z zaščito' },
+  heat: { label: 'Peč ne greje vode', say: '»Peč ne greje vode, na zaslonu je napaka F28.«', item: 'boiler', what: 'Peč: napaka pri vžigu (F28)', urg: 'Nujno, ni tople vode', need: 'Serviser peči', why: 'Iz potnega lista: Toplota servis vzdržuje vašo peč od 2024.', pros: ['toplota'], price: 92, fix: 'Očiščena vžigalna elektroda' },
+};
+
+/* property passports (izmišljeno) */
+const PROPS = {
+  cel: { id: 'cel', icon: 'key', name: 'Stanovanje, Celovška 100', place: 'Ljubljana · 3. nadstropje, št. 12', score: 94,
+    facts: [['Vrsta', 'Stanovanje v večstanovanjski stavbi'], ['Velikost', '68 m², 3-sobno'], ['Leto gradnje', '1974, prenova stavbe 2016'], ['Energetski razred', 'C (izkaznica velja do 2031)'], ['Ogrevanje', 'plinska kondenzacijska peč'], ['ID dela stavbe', '1737-512-12 (demo)'], ['Upravnik', 'Upravnik Center (demo)'], ['Rezervni sklad', 'redno plačan']],
+    nums: [['14', 'zapisanih del'], ['9', 'Verified'], ['6', 'garancij']],
+    works: [
+      ['danes', 'Popravilo kuhinjske pipe', 'Matej Novak, vodoinštalater · nova kartuša', 'v', 'tap', 'jobOnly'],
+      ['feb. 2025', 'Menjava bojlerja (80 l)', 'Matej Novak · garancija do feb. 2030', 'v', 'tap'],
+      ['14. 11. 2025', 'Letni servis plinske peči', 'Toplota servis · zapisnik meritev', 'v', 'flame'],
+      ['10. 11. 2024', 'Letni servis plinske peči', 'Toplota servis', 'v', 'flame'],
+      ['2025', 'Nova električna vtičnica z zaščito', 'Nejc Zupan, električar', 'v', 'bolt'],
+      ['apr. 2026', 'Servis klimatske naprave', 'Klima Center', 'v', 'ac'],
+      ['2023', 'Nova streha stavbe', 'Prek upravnika · Krovstvo Hribar', 'b', 'bld'],
+      ['2016', 'Energetska prenova fasade in oken', 'Prek upravnika, sofinancirano', 'b', 'bld'],
+      ['maj 2021', 'Prenova kuhinje', 'Dodano ročno, računi priloženi', 'o', 'doc'],
+    ],
+    docs: [['Energetska izkaznica', 'do 2031'], ['Uporabno dovoljenje stavbe', '1975'], ['Kupoprodajna pogodba', '2019'], ['Izpisek iz zemljiške knjige', 'okt. 2026'], ['Tloris stanovanja', 'PDF'], ['Zapisniki zbora lastnikov', '2023–2026'], ['Zavarovalna polica doma', 'do 1. 1. 2027'], ['Garancije aparatov', '6 dokumentov']] },
+  boh: { id: 'boh', icon: 'home', name: 'Hiša, Bohinjska Bistrica', place: 'Vikend · 142 m², parcela 610 m²', score: 88,
+    facts: [['Vrsta', 'Samostojna hiša'], ['Velikost', '142 m², parcela 610 m²'], ['Leto gradnje', '1988, nadzidava 2012'], ['Energetski razred', 'B1 (po menjavi ogrevanja)'], ['Ogrevanje', 'toplotna črpalka zrak-voda, 2024'], ['Parcela', 'k.o. Bohinjska Bistrica, 512/3 (demo)']],
+    nums: [['11', 'zapisanih del'], ['6', 'Verified'], ['4', 'garancije']],
+    works: [
+      ['jun. 2023', 'Menjava strešne kritine in izolacija', 'Krovstvo Hribar · garancija 10 let', 'v', 'home'],
+      ['sep. 2024', 'Toplotna črpalka zrak-voda', 'Toplota servis · subvencija Eko sklada', 'v', 'flame'],
+      ['okt. 2025', 'Pregled in čiščenje dimnika', 'Dimnikarstvo Gorenjska · zapisnik', 'v', 'flame'],
+      ['avg. 2025', 'Pregled električne napeljave', 'Nejc Zupan · merilni protokol', 'v', 'bolt'],
+      ['2018', 'Nova fasada', 'Dodano ročno, račun priložen', 'o', 'doc'],
+    ],
+    docs: [['Gradbeno dovoljenje', '1987, nadzidava 2011'], ['Uporabno dovoljenje', '2012'], ['Energetska izkaznica', 'do 2034'], ['Izpisek iz zemljiške knjige', 'sep. 2026'], ['Geodetski načrt', 'PDF'], ['Odločba Eko sklada', '2024'], ['Garancija strehe', 'do 2033']] },
+};
+const STAGES = ['Rezervirano', 'Na poti', 'Prispel', 'Opravljeno'];
+
+/* ---------- state ---------- */
+const S = { tab: 'home', cat: 'vse', q: '', job: null, booked: {}, done: {}, mgr: true, recSent: false, bReports: [
+  { t: 'Luč v 3. nadstropju ne sveti', s: 'Električar naročen za sredo', st: 'soon', by: 'Prijavila: vi' },
+  { t: 'Čiščenje stopnišča', s: 'Vsak torek ob 8:00', st: 'ok', by: 'Obvestilo upravnika' },
+], added: [], toasted: false };
+let sheetState = null;
+const scr = document.getElementById('scr'), layer = document.getElementById('layer');
+const itm = (id) => ITEMS.find((x) => x.id === id) || S.added.find((x) => x.id === id);
+const all = () => [...S.added, ...ITEMS];
+const stOf = (it) => (S.done[it.id] ? 'ok' : S.booked[it.id] ? 'soon' : it.st);
+const dueOf = (it) => (S.done[it.id] ? S.done[it.id] : S.booked[it.id] ? S.booked[it.id] : it.due);
+const pillTxt = { late: 'Zamuja', soon: 'Kmalu', ok: 'V redu', none: 'Zapis' };
+
+function mini(t) { const m = document.createElement('div'); m.className = 'mini'; m.textContent = t; document.getElementById('phone').appendChild(m); setTimeout(() => m.remove(), 2200); }
+
+/* ---------- tabs ---------- */
+function tabs() {
+  const tb = (id, n, l) => `<button class="tab" data-tab="${id}" ${S.tab === id ? 'aria-current="page"' : ''}>${ic(n, 23)}${l}${id === 'pass' && all().some((x) => stOf(x) === 'late') ? '<i class="dotn"></i>' : ''}</button>`;
+  document.getElementById('tabs').innerHTML = tb('home', 'home', 'Domov') + tb('pass', 'book', 'Potni list') + `<button class="plus" id="plus" aria-label="Dodaj ali prijavi">${ic('plus', 30, 2.4)}</button>` + tb('pros', 'tool', 'Mojstri') + tb('bld', 'bld', 'Stavba');
+  document.querySelectorAll('[data-tab]').forEach((b) => (b.onclick = () => { S.tab = b.dataset.tab; render(); scr.scrollTop = 0; }));
+  document.getElementById('plus').onclick = () => openSheet({ k: 'plus' });
+}
+
+/* ---------- screens ---------- */
+function rowItem(it) {
+  const st = stOf(it);
+  return `<button class="row" data-item="${it.id}"><span class="ic ${it.c}">${ic(it.icon)}</span><span class="tx"><b>${it.name}</b><span>${S.done[it.id] ? 'Opravljeno' : S.booked[it.id] ? 'Rezervirano' : it.next} · ${dueOf(it)}</span></span>${S.added.includes(it) ? '<span class="pill new">Novo</span>' : `<span class="pill ${st}">${pillTxt[st]}</span>`}</button>`;
+}
+function home() {
+  const up = all().filter((x) => ['late', 'soon'].includes(stOf(x)) || S.booked[x.id]).sort((a, b) => ['late', 'soon', 'ok', 'none'].indexOf(stOf(a)) - ['late', 'soon', 'ok', 'none'].indexOf(stOf(b)));
+  const j = S.job;
+  let jobCard = '';
+  if (j) {
+    const f = FAULTS[j.f], p = PROS[j.pro];
+    const sub = ['Potrditev poslana. Opomnik dobite večer prej.', `Na poti, prihod čez približno 15 min.`, 'Prispel ob 7:56, v dogovorjenem terminu.', `${f.fix}. Račun ${f.price} € je shranjen v potni list.`][j.stage];
+    jobCard = `<div class="hero"><small><span>V teku · ${f.need}</span><span>${STAGES[j.stage]}</span></small><h3>${f.what}</h3><p>${p.name} · ${p.slot}. ${sub}</p>
+      <div class="track">${STAGES.map((_, i) => `<i class="${i <= j.stage ? 'on' : ''}"></i>`).join('')}</div><div class="track-l">${STAGES.map((s) => `<span>${s}</span>`).join('')}</div>
+      <div class="btns"><button class="btn line" id="jCall">${ic('phone', 18)}Pokliči</button>${j.stage < 3 ? `<button class="btn" id="jNext">Naslednji korak</button>` : `<button class="btn" id="jRate">Oceni obisk</button>`}</div>
+      <p style="font-size:12px;opacity:.75">Demo: »Naslednji korak« pokaže, kaj vidite med obiskom.</p></div>`;
+  }
+  scr.innerHTML = `<div class="hd"><div><small>Petek, 6. november</small><h2>Dobro jutro, ${ME.name}</h2></div><button class="av" id="me" aria-label="Profil">${ME.ini}</button></div>
+    ${jobCard || `<div class="hero"><small><span>Vse pod nadzorom</span><span>${ic('check', 14)}</span></small><h3>Nič ni pokvarjeno. Dve stvari kmalu potečeta.</h3><p>Ko se kaj pokvari, pritisnite + in povejte, kaj je narobe.</p><button class="btn" id="goReport">${ic('tool', 18)}Prijavi okvaro</button></div>`}
+    <div class="lbl"><span>Kaj prihaja</span>${up.filter((x) => stOf(x) === 'late').length ? `<b>${up.filter((x) => stOf(x) === 'late').length} zamuja</b>` : ''}</div>
+    ${up.slice(0, 5).map(rowItem).join('') || '<p class="empty">Ta mesec ni ničesar.</p>'}
+    <div class="lbl"><span>Vaš dom</span></div>
+    <div class="stats"><div class="stat"><small>V potnem listu</small><b>${all().length + 15}</b><span>stvari in dokumentov</span></div><div class="stat"><small>Garancije</small><b>${6 + S.added.length}</b><span>veljavnih</span></div></div>
+    <div class="lbl"><span>Zadnje</span></div>
+    <div class="card"><ul class="tl">${(S.done.tap ? [['Danes', 'Popravljena kuhinjska pipa', 'Matej Novak · račun shranjen']] : []).concat([['14. 11. 2025', 'Letni servis peči', 'Toplota servis · 89 €'], ['12. 5. 2026', 'Letne gume', 'Vulkanizer Bežigrad · 40 €']]).map((x) => `<li><div><b>${x[1]}</b><span>${x[0]} · ${x[2]}</span></div></li>`).join('')}</ul></div>`;
+  bindItems();
+  const g = (id, fn) => { const e = document.getElementById(id); if (e) e.onclick = fn; };
+  g('goReport', () => openSheet({ k: 'report', step: 0 }));
+  g('me', () => openSheet({ k: 'me' }));
+  g('jNext', () => { S.job.stage++; if (S.job.stage === 3) { const f = FAULTS[S.job.f]; if (f.item) S.done[f.item] = 'popravljeno danes'; } render(); });
+  g('jRate', () => openSheet({ k: 'rate' }));
+  g('jCall', () => mini('Demo: tu bi poklicali mojstra'));
+  if (!S.toasted) { S.toasted = true; setTimeout(toast, 1600); }
+}
+function pass() {
+  const cats = [['vse', 'Vse'], ['dom', 'Dom'], ['avto', 'Avto'], ['aparati', 'Aparati'], ['dokumenti', 'Dokumenti']];
+  const q = S.q.toLowerCase();
+  const list = all().filter((x) => (S.cat === 'vse' || x.cat === S.cat) && (!q || (x.name + ' ' + x.sub).toLowerCase().includes(q)));
+  scr.innerHTML = `<div class="hd"><div><small>${ME.addr}</small><h2>Potni list</h2></div><button class="av" id="addBtn" aria-label="Dodaj">${ic('plus', 20, 2.4)}</button></div>
+    <div class="props">${Object.values(PROPS).map((pp, i) => `<button class="prop ${i ? 'alt' : ''}" data-prop="${pp.id}"><span class="ic">${ic(pp.icon, 24)}</span><span><b>${pp.name}</b><span class="s">Potni list nepremičnine · ${pp.score} % popoln</span></span><span class="go">Poglej</span></button>`).join('')}</div>
+    <label class="search">${ic('search', 18)}<input id="q" placeholder="Iščite: garancija, peč, polica …" value="${S.q.replace(/"/g, '&quot;')}" aria-label="Iskanje"></label>
+    <div class="cats">${cats.map(([k, l]) => `<button class="cat" data-cat="${k}" aria-pressed="${S.cat === k}">${l}</button>`).join('')}</div>
+    ${list.map(rowItem).join('') || '<p class="empty">Ni zadetkov.</p>'}
+    <button class="btn line" id="addBtn2" style="margin-top:8px">${ic('cam', 18)}Dodaj s fotografijo računa</button>`;
+  bindItems();
+  document.querySelectorAll('[data-cat]').forEach((b) => (b.onclick = () => { S.cat = b.dataset.cat; render(); }));
+  document.querySelectorAll('[data-prop]').forEach((b) => (b.onclick = () => openProp(b.dataset.prop)));
+  const qi = document.getElementById('q'); qi.oninput = () => { S.q = qi.value; const pos = qi.selectionStart; render(); const n = document.getElementById('q'); n.focus(); n.setSelectionRange(pos, pos); };
+  document.getElementById('addBtn').onclick = document.getElementById('addBtn2').onclick = () => openSheet({ k: 'add', step: 0 });
+}
+function pros() {
+  const mine = ['matej', 'nejc', 'toplota', 'vulk'];
+  scr.innerHTML = `<div class="hd"><div><small>Preverjeni in ocenjeni</small><h2>Moji mojstri</h2></div></div>
+    <div class="card" style="grid-template-columns:44px minmax(0,1fr);align-items:center"><span class="ic c3">${ic('check')}</span><p style="margin:0;font-size:13.5px;color:var(--muted)">Mojstre ocenjujete vi in drugi stanovalci, po <b style="color:var(--ink)">točnosti</b> in <b style="color:var(--ink)">kakovosti</b>. Kdor ponavljajoče zamuja, ne dobi novih del.</p></div>
+    <div class="lbl"><span>Delali so pri vas</span></div>
+    ${mine.map((id) => proCard(PROS[id], true)).join('')}
+    <div class="lbl"><span>Potrebujete koga drugega?</span></div>
+    <div class="chips">${['Električar', 'Vodoinštalater', 'Pleskar', 'Ključavničar', 'Čiščenje', 'Krovec', 'Mizar', 'Serviser aparatov'].map((x) => `<button class="chip" data-need>${x}</button>`).join('')}</div>`;
+  document.querySelectorAll('[data-pro]').forEach((b) => (b.onclick = () => openSheet({ k: 'pro', id: b.dataset.pro })));
+  document.querySelectorAll('[data-need]').forEach((b) => (b.onclick = () => openSheet({ k: 'report', step: 0 })));
+}
+function proCard(p, btn) {
+  return `<${btn ? 'button' : 'div'} class="pro" ${btn ? `data-pro="${p.id}"` : ''} style="margin-bottom:8px"><div class="top"><span class="face">${p.ini}</span><span class="tx"><b>${p.name}</b><span>${p.trade}${p.mine ? ' · ' + p.mine : ''}</span></span>${btn ? `<span class="chev">${ic('chev', 18)}</span>` : ''}</div>
+    <div class="meta"><span><span class="star">★</span> ${p.stars.toFixed(1).replace('.', ',')} (${p.jobs})</span><span class="g">Točnost ${p.punct} %</span><span>Prvi termin: ${p.slot}</span></div></${btn ? 'button' : 'div'}>`;
+}
+function bld() {
+  scr.innerHTML = `<div class="hd"><div><small>${ME.floor}</small><h2>${ME.addr.split(',')[0]}</h2></div><span class="ic c2">${ic('bld')}</span></div>
+    <div class="sw"><span>Demo: upravnik uporablja Unbusyness</span><button role="switch" aria-checked="${S.mgr}" id="mgrSw" aria-label="Upravnik uporablja Unbusyness"></button></div>
+    ${S.mgr ? `
+      <div class="lbl"><span>Upravnik</span></div>
+      <div class="row" style="cursor:default"><span class="ic c3">${ic('bld')}</span><span class="tx"><b>Upravnik Center (demo)</b><span>Prijave gredo naravnost upravniku</span></span><span class="pill ok">Povezano</span></div>
+      <button class="btn" id="bRep">${ic('tool', 18)}Prijavi okvaro v skupnih prostorih</button>
+      <div class="lbl"><span>Prijave in obvestila</span></div>
+      ${S.bReports.map((r) => `<div class="row" style="cursor:default"><span class="ic ${r.st === 'ok' ? 'c3' : ''}">${ic(r.st === 'ok' ? 'bell' : 'light')}</span><span class="tx"><b>${r.t}</b><span>${r.s}<br>${r.by}</span></span><span class="pill ${r.st}">${r.st === 'ok' ? 'Info' : 'V teku'}</span></div>`).join('')}
+      <div class="row" style="cursor:default"><span class="ic c2">${ic('users')}</span><span class="tx"><b>Zbor lastnikov</b><span>Četrtek, 20. 11., ob 18:00 · glasovanje o fasadi tudi v aplikaciji</span></span><span class="pill none">Info</span></div>`
+    : `
+      <div class="card" style="margin-top:14px"><span class="ic">${ic('share')}</span><b style="font-size:18px;letter-spacing:-.02em">Vaš upravnik še ne uporablja Unbusyness</b><p style="margin:0;color:var(--muted);font-size:14px">Priporočite mu ga. Ko se poveže, boste okvare v skupnih prostorih prijavili z enim sporočilom in spremljali popravilo.</p>
+        <div class="field"><label for="recMsg">Sporočilo upravniku</label><textarea id="recMsg">Pozdravljeni,
+
+sem stanovalka stavbe ${ME.addr}. Priporočam vam Unbusyness (unbusyness.com), pomočnika za upravnike. Okvare bi prijavljali z enim sporočilom, vi pa bi dobili pripravljene naloge s fotografijo in predlaganim mojstrom.
+
+Lep pozdrav, ${ME.full}</textarea></div>
+        <div class="btns"><a class="btn line" id="recMail" style="text-decoration:none" href="#">E-pošta</a><a class="btn line" id="recWa" style="text-decoration:none" target="_blank" rel="noopener" href="#">WhatsApp</a></div>
+        <button class="btn" id="recUs">${S.recSent ? ic('check', 18) + 'Kontaktirali ga bomo' : 'Naj ga kontaktira Unbusyness'}</button>
+        <p class="note">Iz vaše stavbe so upravnika priporočili že 3 sosedje.${S.recSent ? ' Z vami 4.' : ''}</p></div>
+      <div class="lbl"><span>Medtem</span></div>
+      <div class="row" style="cursor:default"><span class="ic c3">${ic('doc')}</span><span class="tx"><b>Okvare lahko vseeno zapišete</b><span>Unbusyness pripravi sporočilo za upravnika in hrani zapis, kdaj ste prijavili.</span></span></div>`}`;
+  document.getElementById('mgrSw').onclick = () => { S.mgr = !S.mgr; render(); };
+  const g = (id) => document.getElementById(id);
+  if (g('bRep')) g('bRep').onclick = () => openSheet({ k: 'brep' });
+  if (g('recMsg')) {
+    const upd = () => { const t = g('recMsg').value; g('recMail').href = 'mailto:?subject=' + encodeURIComponent('Predlog: Unbusyness za našo stavbo') + '&body=' + encodeURIComponent(t); g('recWa').href = 'https://wa.me/?text=' + encodeURIComponent(t); };
+    g('recMsg').oninput = upd; upd();
+    g('recUs').onclick = () => { if (!S.recSent) { S.recSent = true; render(); mini('Zabeleženo. Upravnika pokličemo mi.'); } };
+  }
+}
+function bindItems() { document.querySelectorAll('[data-item]').forEach((b) => (b.onclick = () => openSheet({ k: 'item', id: b.dataset.item }))); }
+
+/* ---------- sheets ---------- */
+function openSheet(s) { sheetState = s; drawSheet(); }
+function closeSheet() { sheetState = null; layer.innerHTML = ''; render(); }
+function drawSheet() {
+  const s = sheetState; if (!s) { layer.innerHTML = ''; return; }
+  let title = '', body = '';
+  if (s.k === 'plus') {
+    title = 'Kaj želite?';
+    body = `<button class="row" id="pRep"><span class="ic">${ic('tool')}</span><span class="tx"><b>Prijavi okvaro</b><span>Fotografija, glasovno ali besedilo. Najdem mojstra.</span></span><span class="chev">${ic('chev', 18)}</span></button>
+      <button class="row" id="pAdd"><span class="ic c3">${ic('cam')}</span><span class="tx"><b>Dodaj v potni list</b><span>Fotografirajte račun, tablico ali dokument.</span></span><span class="chev">${ic('chev', 18)}</span></button>`;
+  } else if (s.k === 'item') {
+    const it = itm(s.id); const st = stOf(it); title = it.name;
+    body = `<div class="row" style="cursor:default;margin:0"><span class="ic ${it.c}">${ic(it.icon)}</span><span class="tx"><b>${S.done[it.id] ? 'Opravljeno' : S.booked[it.id] ? 'Rezervirano' : it.next}</b><span>${dueOf(it)}</span></span><span class="pill ${st}">${pillTxt[st]}</span></div>
+      ${it.warr != null ? `<div class="card"><div style="display:flex;justify-content:space-between;font-size:13.5px"><b>Garancija</b><span style="color:var(--muted)">${it.kv.find((x) => x[0] === 'Garancija do')[1]}</span></div><div class="wbar"><i style="width:${100 - it.warr}%"></i></div><span class="note">Pred koncem garancije vas opomnim, da preverite stroj.</span></div>` : ''}
+      <div class="card"><div class="kv">${it.kv.map(([k, v]) => `<span>${k}</span><b>${v}</b>`).join('')}</div></div>
+      <div><div class="lbl" style="margin-top:4px"><span>Dokumenti</span></div><div class="docs">${it.docs.map((d) => `<span class="doc">${ic('doc', 16)}${d}</span>`).join('')}</div></div>
+      <div><div class="lbl" style="margin-top:4px"><span>Zgodovina</span></div><div class="card"><ul class="tl">${(S.done[it.id] && S.job && FAULTS[S.job.f].item === it.id ? [['danes', FAULTS[S.job.f].fix, PROS[S.job.pro].name + ', ' + FAULTS[S.job.f].price + ' €']] : []).concat(it.hist).map((h) => `<li><div><b>${h[1]}</b><span>${h[0]}${h[2] ? ' · ' + h[2] : ''}</span></div></li>`).join('')}</ul></div></div>
+      ${it.act === 'tyres' && !S.booked.car ? `<button class="btn" id="iAct">Rezerviraj menjavo gum</button>` : ''}
+      ${it.act === 'service' && !S.booked.boiler ? `<button class="btn" id="iAct">Rezerviraj servis peči</button>` : ''}
+      ${it.act === 'battery' && !S.done.smoke ? `<button class="btn" id="iAct">${ic('check', 18)}Baterijo sem zamenjala</button>` : ''}
+      ${it.id === 'flat' ? `<button class="btn" id="iProp">${ic('book', 18)}Odpri potni list nepremičnine</button>` : `<button class="btn line" id="iRep">${ic('tool', 18)}Prijavi okvaro</button>`}`;
+  } else if (s.k === 'report') {
+    title = ['Kaj je narobe?', 'Razumem', 'Izberite mojstra', 'Rezervirano'][s.step];
+    if (s.step === 0) {
+      body = `<div class="modes"><button class="mode" data-mode="cam"><span class="ic">${ic('cam')}</span>Fotografija</button><button class="mode" data-mode="mic"><span class="ic c2">${ic('mic')}</span>Glasovno</button><button class="mode" data-mode="text"><span class="ic c3">${ic('text')}</span>Besedilo</button></div>
+        ${s.rec ? `<div class="vn"><span class="rec-dot" aria-hidden="true"></span><i></i><small>0:0${s.rec}</small></div>` : ''}
+        <div class="lbl" style="margin-top:6px"><span>Ali izberite primer</span></div>
+        <div class="chips">${Object.entries(FAULTS).map(([k, f]) => `<button class="chip" data-f="${k}">${f.label}</button>`).join('')}</div>
+        <p class="note">Demo: fotografija in glasovno sporočilo uporabita prvi primer.</p>`;
+    } else if (s.step === 1) {
+      const f = FAULTS[s.f];
+      body = `<div class="vn"><span class="pb">${ic('mic', 16)}</span><i></i><small>0:05</small></div><p class="note" style="margin-top:-4px">${f.say}</p>
+        <div class="ai"><small>Unbusyness je razumel</small><div class="kv"><span>Kaj</span><b>${f.what}</b><span>Nujnost</span><b>${f.urg}</b><span>Potrebujete</span><b>${f.need}</b>${f.item ? `<span>Iz potnega lista</span><b>${itm(f.item).name}</b>` : ''}</div><p style="margin:0;font-size:13.5px;color:var(--muted)">${f.why}</p></div>
+        <button class="btn" id="rNext">Poišči mojstre</button><button class="btn soft" id="rBack">Ni prav, popravi</button>`;
+    } else if (s.step === 2) {
+      const f = FAULTS[s.f];
+      body = `<p class="note">Najbližji preverjeni mojstri za »${f.need.toLowerCase()}«, razvrščeni po točnosti.</p>
+        ${f.pros.map((id) => `<button class="pro" data-pick="${id}" aria-pressed="${s.pick === id}"><div class="top"><span class="face">${PROS[id].ini}</span><span class="tx"><b>${PROS[id].name}</b><span>${PROS[id].trade}${PROS[id].mine ? ' · ' + PROS[id].mine : ''}</span></span><span class="pill soon">${PROS[id].price}</span></div><div class="meta"><span><span class="star">★</span> ${PROS[id].stars.toFixed(1).replace('.', ',')}</span><span class="g">Točnost ${PROS[id].punct} %</span><span>${PROS[id].slot}</span></div></button>`).join('')}
+        <p class="note">Cena je okvirna, mojster jo potrdi na mestu. Termin je zagotovljeno časovno okno, ne »nekje dopoldne«.</p>
+        <button class="btn" id="rBook" ${s.pick ? '' : 'disabled style="opacity:.45"'}>Rezerviraj termin</button>`;
+    } else {
+      const f = FAULTS[s.f], p = PROS[s.pick];
+      body = `<div class="ok-big"><span class="ic">${ic('check', 30, 2.4)}</span><h4>${p.name} pride ${p.slot}</h4><p>Večer prej vas opomnim, na dan obiska vidite, ko je na poti. Po obisku se račun shrani v potni list.</p></div>
+        <div class="card"><div class="kv"><span>Naslov</span><b>${ME.addr}</b><span>Okvara</span><b>${f.what}</b><span>Okvirna cena</span><b>${p.price}</b></div></div>
+        <button class="btn" id="rDone">Na začetni zaslon</button>`;
+    }
+  } else if (s.k === 'add') {
+    title = ['Dodaj v potni list', 'Preberem …', 'Preverite podatke'][s.step];
+    if (s.step < 2) body = `<div class="scan"><div class="paper"><i class="b"></i><i class="m"></i><i class="s"></i><i></i><i class="m"></i><i class="s"></i><i></i><i class="b" style="margin-top:8px"></i></div><span class="corner"></span>${s.step === 1 ? '<span class="beam"></span>' : ''}</div>
+      <p class="note" style="text-align:center">Račun, garancijski list, tablica z oznako ali polica.</p>
+      ${s.step === 0 ? `<button class="btn" id="aShot">${ic('cam', 18)}Fotografiraj (demo)</button>` : '<button class="btn soft" disabled>Berem račun …</button>'}`;
+    else body = `<div class="ai"><small>Prebrano z računa</small><p style="margin:0;font-size:13.5px;color:var(--muted)">Preverite in shranite. Opomnik za konec garancije nastavim sam.</p></div>
+      <div class="field"><label for="aN">Stvar</label><input id="aN" value="Sesalnik brez vrečke"></div>
+      <div class="field"><label for="aD">Kupljen</label><input id="aD" value="2. 11. 2026"></div>
+      <div class="field"><label for="aW">Garancija do</label><input id="aW" value="2. 11. 2029"></div>
+      <div class="field"><label for="aP">Cena</label><input id="aP" value="249,00 €"></div>
+      <button class="btn" id="aSave">Shrani v potni list</button>`;
+  } else if (s.k === 'rate') {
+    const p = PROS[S.job.pro]; title = 'Kako je bilo?';
+    body = `<p class="note">Ocena pomaga sosedom in odloča, kdo dobi naslednja dela.</p>
+      ${['Točnost', 'Kakovost dela'].map((l, k) => `<div class="card"><b>${l}</b><div class="rate" data-r="${k}">${[1, 2, 3, 4, 5].map((n) => `<button data-n="${n}" class="${n <= (s.r?.[k] || 0) ? 'on' : ''}" aria-label="${n} od 5">★</button>`).join('')}</div></div>`).join('')}
+      <button class="btn" id="rtSave">Pošlji oceno za ${p.name}</button>`;
+  } else if (s.k === 'pro') {
+    const p = PROS[s.id]; title = p.name;
+    body = proCard(p, false) + `<div class="card"><div class="kv"><span>Opravljenih del</span><b>${p.jobs}</b><span>Prišel v terminu</span><b>${p.punct} %</b><span>Okvirna cena</span><b>${p.price}</b><span>Prvi prost termin</span><b>${p.slot}</b></div></div>
+      <div class="btns"><button class="btn line" id="pCall">${ic('phone', 18)}Pokliči</button><button class="btn" id="pBook">Rezerviraj</button></div>`;
+  } else if (s.k === 'brep') {
+    title = 'Okvara v skupnih prostorih';
+    body = s.sent ? `<div class="ok-big"><span class="ic">${ic('check', 30, 2.4)}</span><h4>Poslano upravniku</h4><p>Upravnik Center je dobil pripravljeno nalogo s fotografijo. Ko bo mojster naročen, vas obvestim.</p></div><button class="btn" id="bDone">V redu</button>`
+      : `<p class="note">Kaj je narobe? Pošljite fotografijo ali izberite primer.</p><div class="modes"><button class="mode" data-b="Dvigalo stoji med nadstropji"><span class="ic">${ic('lift')}</span>Dvigalo</button><button class="mode" data-b="Luč v kleti ne sveti"><span class="ic c2">${ic('light')}</span>Razsvetljava</button><button class="mode" data-b="Vhodna vrata se ne zapirajo"><span class="ic c3">${ic('door')}</span>Vhodna vrata</button></div>`;
+  } else if (s.k === 'share') {
+    const pp = PROPS[s.id]; title = 'Deli potni list';
+    s.opt = s.opt || { docs: true, works: true, warr: true, price: false };
+    const sw = (k, l, d) => `<div class="sw"><span>${l}<br><span style="font-weight:500;color:var(--muted);font-size:12.5px">${d}</span></span><button role="switch" aria-checked="${s.opt[k]}" data-opt="${k}" aria-label="${l}"></button></div>`;
+    body = s.link ? `<div class="ok-big"><span class="ic">${ic('check', 30, 2.4)}</span><h4>Povezava je pripravljena</h4><p>${s.agent || 'Agent'} vidi potni list za ${pp.name.split(',')[0].toLowerCase()} 30 dni. Dostop lahko kadar koli prekličete.</p></div>
+        <div class="linkbox">${ic('share', 16)}unbusyness.com/p/${pp.id.toUpperCase()}-7KQ2</div>
+        <div class="btns"><button class="btn line" id="shCopy">Kopiraj</button><button class="btn" id="shSend">Pošlji agentu</button></div>
+        <p class="note">Vsako odprtje povezave vidite v aplikaciji.</p>`
+      : `<p class="note" style="margin:0">${pp.name}. Agent dobi povezavo do potnega lista, brez prijave v aplikacijo.</p>
+        <div class="field"><label for="shA">Nepremičninski agent</label><input id="shA" placeholder="Ime ali agencija" value="${s.agent || ''}"></div>
+        <div class="field"><label for="shE">E-pošta agenta</label><input id="shE" type="email" placeholder="agent@agencija.si"></div>
+        <div class="lbl" style="margin-top:4px"><span>Kaj deliš</span></div>
+        ${sw('works', 'Zgodovina vzdrževanja', 'Vsa dela z oznakami Verified')}${sw('docs', 'Dokumentacija', 'Energetska izkaznica, dovoljenja, zemljiška knjiga')}${sw('warr', 'Veljavne garancije', 'Streha, aparati, ogrevanje')}${sw('price', 'Cene del', 'Privzeto skrite')}
+        <button class="btn" id="shMake">Ustvari povezavo za 30 dni</button>`;
+  } else if (s.k === 'me') {
+    title = ME.full;
+    body = `<div class="card"><div class="kv"><span>Naslov</span><b>${ME.addr}</b><span>Gospodinjstvo</span><b>Maja, Luka (partner)</b><span>Opomniki</span><b>7 dni prej, ob 9:00</b><span>Kanal</span><b>Aplikacija in e-pošta</b></div></div>
+      <div class="row" style="cursor:default"><span class="ic c2">${ic('users')}</span><span class="tx"><b>Povabi člana gospodinjstva</b><span>Vidi isti potni list in prejema opomnike.</span></span></div>
+      <p class="note">Demo z izmišljenimi podatki.</p>`;
+  }
+  layer.innerHTML = `<div class="scrim" id="scrim"></div><div class="sheet" role="dialog" aria-modal="true" aria-label="${title}"><div class="grab"></div><div class="sh"><h3>${title}</h3><button class="x" id="sx" aria-label="Zapri">${ic('x', 18)}</button></div><div class="sb">${body}</div></div>`;
+  document.getElementById('scrim').onclick = closeSheet; document.getElementById('sx').onclick = closeSheet;
+  const g = (id, fn) => { const e = document.getElementById(id); if (e) e.onclick = fn; };
+  g('pRep', () => openSheet({ k: 'report', step: 0 })); g('pAdd', () => openSheet({ k: 'add', step: 0 }));
+  g('iRep', () => openSheet({ k: 'report', step: 0 }));
+  g('iProp', () => { sheetState = null; layer.innerHTML = ''; openProp('cel'); });
+  g('iAct', () => { const it = itm(s.id); if (it.act === 'tyres') { S.booked.car = 'sob 9:00, Vulkanizer Bežigrad'; mini('Rezervirano: sobota ob 9:00'); } else if (it.act === 'service') { S.booked.boiler = 'sre 10:00–12:00, Toplota servis'; mini('Servis peči rezerviran'); } else { S.done.smoke = 'zamenjano danes'; mini('Super. Naslednji opomnik čez eno leto.'); } drawSheet(); render(); });
+  document.querySelectorAll('[data-mode]').forEach((b) => (b.onclick = () => {
+    if (b.dataset.mode === 'mic') { let n = 0; s.rec = 1; drawSheet(); const t = setInterval(() => { n++; if (sheetState !== s) return clearInterval(t); if (n < 4) { s.rec = n + 1; drawSheet(); } else { clearInterval(t); openSheet({ k: 'report', step: 1, f: 'tap' }); } }, 600); }
+    else openSheet({ k: 'report', step: 1, f: 'tap' });
+  }));
+  document.querySelectorAll('[data-f]').forEach((b) => (b.onclick = () => openSheet({ k: 'report', step: 1, f: b.dataset.f })));
+  g('rNext', () => openSheet({ k: 'report', step: 2, f: s.f, pick: FAULTS[s.f].pros[0] })); g('rBack', () => openSheet({ k: 'report', step: 0 }));
+  document.querySelectorAll('[data-pick]').forEach((b) => (b.onclick = () => { s.pick = b.dataset.pick; drawSheet(); }));
+  g('rBook', () => { if (!s.pick) return; S.job = { f: s.f, pro: s.pick, stage: 0 }; openSheet({ k: 'report', step: 3, f: s.f, pick: s.pick }); });
+  g('rDone', () => { S.tab = 'home'; closeSheet(); scr.scrollTop = 0; });
+  g('aShot', () => { s.step = 1; drawSheet(); setTimeout(() => { if (sheetState === s) { s.step = 2; drawSheet(); } }, 1500); });
+  g('aSave', () => { const v = (id) => document.getElementById(id).value.trim(); S.added.unshift({ id: 'n' + Date.now(), cat: 'aparati', name: v('aN') || 'Nova stvar', sub: 'Kupljen ' + v('aD'), icon: 'doc', c: 'c3', next: 'Garancija poteče', due: v('aW'), st: 'ok', kv: [['Kupljen', v('aD')], ['Garancija do', v('aW')], ['Cena', v('aP')]], warr: 0, docs: ['Račun (fotografija)'], hist: [[v('aD'), 'Nakup', 'dodano s fotografijo računa']] }); S.tab = 'pass'; S.cat = 'vse'; closeSheet(); mini('Dodano v potni list'); });
+  document.querySelectorAll('.rate button').forEach((b) => (b.onclick = () => { s.r = s.r || [0, 0]; s.r[+b.parentElement.dataset.r] = +b.dataset.n; drawSheet(); }));
+  g('rtSave', () => { const p = PROS[S.job.pro]; S.job = null; closeSheet(); mini(`Hvala! Ocena za ${p.name} je poslana.`); });
+  g('pCall', () => mini('Demo: tu bi poklicali mojstra')); g('pBook', () => openSheet({ k: 'report', step: 0 }));
+  document.querySelectorAll('[data-b]').forEach((b) => (b.onclick = () => { S.bReports.unshift({ t: b.dataset.b, s: 'Poslano upravniku, čaka mojstra', st: 'soon', by: 'Prijavila: vi, pravkar' }); s.sent = true; drawSheet(); render(); }));
+  g('bDone', closeSheet);
+  document.querySelectorAll('[data-opt]').forEach((b) => (b.onclick = () => { s.opt[b.dataset.opt] = !s.opt[b.dataset.opt]; s.agent = (document.getElementById('shA') || {}).value || s.agent; drawSheet(); }));
+  g('shMake', () => { s.agent = document.getElementById('shA').value.trim(); s.link = true; drawSheet(); });
+  g('shCopy', () => { try { navigator.clipboard.writeText('https://unbusyness.com/p/' + s.id.toUpperCase() + '-7KQ2'); } catch {} mini('Povezava kopirana'); });
+  g('shSend', () => { sheetState = null; layer.innerHTML = ''; mini('Demo: povezava poslana agentu'); });
+
+}
+
+
+/* ---------- property passport (full screen) ---------- */
+let propOpen = null;
+function openProp(id) { propOpen = id; drawProp(); }
+function drawProp() {
+  let f = document.getElementById('propFull');
+  if (!propOpen) { if (f) f.remove(); return; }
+  const pp = PROPS[propOpen];
+  const works = pp.works.filter((w) => w[5] !== 'jobOnly' || S.done.tap);
+  const badge = (k) => k === 'v' ? `<span class="ver">${ic('check', 12, 3)}Verified</span>` : k === 'b' ? `<span class="ver">${ic('check', 12, 3)}Verified · stavba</span>` : `<span class="ver own">Dodano ročno</span>`;
+  const html = `<div class="fbar"><button class="x" id="pfBack" aria-label="Nazaj">${ic('chev', 18).replace('M9 6l6 6-6 6', 'M15 6l-6 6 6 6')}</button><b>Potni list nepremičnine</b><button class="x" id="pfShare" aria-label="Deli">${ic('share', 18)}</button></div>
+    <div class="fbody">
+      <div class="cert"><small>Unbusyness · potni list nepremičnine</small><h3>${pp.name}</h3><p>${pp.place}</p>
+        <div class="seal"><span class="ring" style="--v:${pp.score}"><span>${pp.score}%</span></span><div><b>Redno vzdrževana</b><span class="s">Popolnost potnega lista. Dela z oznako Verified so opravljena in plačana prek Unbusyness.</span></div></div>
+        <div class="cgrid">${pp.nums.map(([n, l]) => `<div><b>${n}</b><span>${l}</span></div>`).join('')}</div>
+        <p style="font-size:12px;opacity:.8">Zadnja posodobitev: danes · ID potnega lista UB-${pp.id.toUpperCase()}-2026 (demo)</p></div>
+      <div class="btns"><button class="btn" id="pfShare2">${ic('share', 18)}Deli z agentom</button><button class="btn line" id="pfPdf">${ic('doc', 18)}PDF</button></div>
+      <button class="btn soft" id="pfMarket" style="justify-content:space-between"><span>Objavi na Unbusyness marketplacu</span><span class="pill soonx">Kmalu</span></button>
+      <div class="lbl"><span>Podatki o nepremičnini</span></div>
+      <div class="card"><div class="kv">${pp.facts.map(([k, v]) => `<span>${k}</span><b>${v}</b>`).join('')}</div></div>
+      <div class="lbl"><span>Zgodovina vzdrževanja</span></div>
+      ${works.map((w) => `<div class="wk"><span class="ic ${w[3] === 'o' ? 'c2' : w[3] === 'b' ? 'c3' : ''}">${ic(w[4])}</span><div><b>${w[1]}</b><span class="s">${w[0]} · ${w[2]}</span>${badge(w[3])}</div></div>`).join('')}
+      <div class="lbl"><span>Dokumentacija</span></div>
+      <div class="dl">${pp.docs.map(([d, m]) => `<div class="dlr">${ic('doc', 18)}<span>${d}</span><span class="m">${m}</span></div>`).join('')}</div>
+      <div class="legend"><b style="color:var(--ink);font-size:13px">Kaj pomenijo oznake</b>
+        <span><span class="ver">${ic('check', 12, 3)}Verified</span> delo je bilo naročeno, opravljeno in plačano prek Unbusyness. Račun, fotografije in garancija so priloženi.</span>
+        <span><span class="ver">${ic('check', 12, 3)}Verified · stavba</span> delo na skupnih delih stavbe, zabeleženo pri upravniku, ki uporablja Unbusyness.</span>
+        <span><span class="ver own">Dodano ročno</span> zapis lastnika z dokazili, ki jih Unbusyness ni preveril.</span></div>
+      <p class="note">Ko nepremičnino prodajate ali oddajate, kupec vidi vse na enem mestu: dela, garancije in dokumente. Demo z izmišljenimi podatki.</p>
+    </div>`;
+  if (!f) { f = document.createElement('div'); f.className = 'full'; f.id = 'propFull'; f.setAttribute('role', 'dialog'); f.setAttribute('aria-label', 'Potni list nepremičnine'); document.getElementById('phone').appendChild(f); }
+  f.innerHTML = html;
+  const g = (id, fn) => { const e = document.getElementById(id); if (e) e.onclick = fn; };
+  g('pfBack', () => { propOpen = null; drawProp(); });
+  g('pfShare', () => openSheet({ k: 'share', id: pp.id })); g('pfShare2', () => openSheet({ k: 'share', id: pp.id }));
+  g('pfPdf', () => mini('Demo: PDF potnega lista je pripravljen'));
+  g('pfMarket', () => mini('Marketplace pride kasneje. Obvestimo vas.'));
+}
+
+/* ---------- push reminder ---------- */
+function toast() {
+  if (sheetState || S.tab !== 'home' || S.booked.car) return;
+  const t = document.createElement('div'); t.className = 'toast'; t.setAttribute('role', 'status');
+  t.innerHTML = `<div class="th"><i>${ic('bell', 13, 2.4).replace('currentColor', '#fff')}</i>Unbusyness Home · zdaj</div><p><b>Zimske gume do 15. 11.</b> Vulkanizer Bežigrad ima prost termin v soboto ob 9:00. Vaše gume so že pri njem. Rezerviram?</p><div class="btns"><button class="btn soft" data-t="no">Kasneje</button><button class="btn" data-t="yes">Rezerviraj</button></div>`;
+  document.getElementById('phone').appendChild(t);
+  t.querySelectorAll('[data-t]').forEach((b) => (b.onclick = () => { if (b.dataset.t === 'yes') { S.booked.car = 'sob 9:00, Vulkanizer Bežigrad'; render(); mini('Rezervirano: sobota ob 9:00'); } t.remove(); }));
+  setTimeout(() => t.remove(), 12000);
+}
+
+function render() {
+  ({ home, pass, pros, bld })[S.tab]();
+  tabs();
+}
+render();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,519 @@
+<!doctype html>
+<html lang="sl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+</head>
+<body>
+<title>Unbusyness za hotele · telefon</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<style>
+/* Layout: phone-first app; on wide screens it sits in a device frame. One primary action per card, 56px+ targets, bottom tab bar with a raised voice button. */
+:root{
+  --green:#1F4D45; --green-dark:#173D37; --green-soft:#E6EEEB; --green-line:#3D6C62; --on-green:#CFE0DA;
+  --apricot:#E8915F; --apricot-light:#F2A57A; --apricot-ink:#A84E22; --apricot-soft:#FBE8DC;
+  --slate:#4F5F80; --slate-soft:#E9ECF3;
+  --sand:#F4EFE6; --linen:#FBFAF7; --white:#FFFFFF;
+  --ink:#14201E; --muted:#56615F; --line:#E7E3DA;
+  --red:#B23A32; --red-soft:#FBEAE8; --ok:#2F7A55; --ok-soft:#E4F1E8;
+  --font:'Plus Jakarta Sans','Segoe UI',system-ui,-apple-system,sans-serif;
+  color-scheme:light;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{margin:0;background:var(--sand);color:var(--ink);font-family:var(--font);font-size:17px;line-height:1.45;-webkit-font-smoothing:antialiased}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none;padding:0}
+input,textarea{font:inherit;color:inherit}
+@media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
+
+/* stage + device */
+.stage{min-height:100%;display:flex;align-items:center;justify-content:center;gap:56px;padding-block:32px;padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px))}
+.side{max-width:330px;display:flex;flex-direction:column;gap:16px}
+.side h1{margin:0;font-size:40px;line-height:1.05;letter-spacing:-1.5px;font-weight:700;text-wrap:balance}
+.side h1 span{color:var(--green)}
+.side p{margin:0;color:var(--muted);font-size:16px}
+.side ul{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:10px;font-size:15px}
+.side li{display:flex;gap:10px;align-items:flex-start}
+.side li:before{content:"";width:8px;height:8px;border-radius:50%;background:var(--apricot);margin-top:8px;flex-shrink:0}
+.brandrow{display:flex;align-items:center;gap:10px;font-size:20px;font-weight:700;letter-spacing:-.5px}
+.phone{position:relative;width:390px;height:844px;max-height:calc(100vh - 64px);border-radius:48px;background:var(--linen);box-shadow:0 0 0 10px #14201E,0 30px 80px rgba(20,32,30,.28);overflow:hidden;display:flex;flex-direction:column}
+@media (max-width:820px){.side{display:none}.stage{padding:0;gap:0;align-items:stretch}.phone{width:100%;height:100vh;height:100dvh;max-height:none;border-radius:0;box-shadow:none}}
+
+/* app chrome */
+.screen{flex:1;overflow-y:auto;overflow-x:hidden;padding:18px 18px 130px;scroll-behavior:smooth}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:20px 18px 6px;background:var(--linen)}
+@media (max-width:820px){.topbar{padding-top:calc(14px + env(safe-area-inset-top, 0px))}}
+.hello small{display:block;font-size:13px;font-weight:600;letter-spacing:1.2px;text-transform:uppercase;color:var(--muted)}
+.hello strong{font-size:26px;font-weight:700;letter-spacing:-.8px}
+.avatar{width:44px;height:44px;border-radius:50%;background:var(--apricot-soft);color:var(--apricot-ink);display:grid;place-items:center;font-weight:700;font-size:15px}
+.back{display:flex;align-items:center;gap:6px;min-height:48px;padding:0 14px 0 8px;margin-left:-8px;border-radius:99px;font-weight:700;font-size:16px;color:var(--green)}
+.back:active{background:var(--green-soft)}
+.title{font-size:20px;font-weight:700;letter-spacing:-.4px}
+
+/* tab bar */
+.tabs{position:absolute;left:0;right:0;bottom:0;background:var(--white);border-top:1px solid var(--line);display:grid;grid-template-columns:1fr 1fr 96px 1fr 1fr;align-items:end;padding:8px 6px calc(10px + env(safe-area-inset-bottom, 0px));z-index:5}
+.tab{display:flex;flex-direction:column;align-items:center;gap:3px;min-height:56px;justify-content:center;font-size:12px;font-weight:600;color:var(--muted);border-radius:14px;position:relative}
+.tab.on{color:var(--green)}
+.tab.on:after{content:"";position:absolute;top:2px;width:22px;height:3px;border-radius:3px;background:var(--green)}
+.tab .badge{position:absolute;top:4px;left:calc(50% + 6px);min-width:18px;height:18px;padding:0 5px;border-radius:9px;background:var(--red);color:#fff;font-size:11px;font-weight:700;display:grid;place-items:center}
+.mic{justify-self:center;width:76px;height:76px;margin-top:-34px;border-radius:50%;background:var(--green);color:var(--linen);display:grid;place-items:center;box-shadow:0 0 0 6px var(--white),0 10px 26px rgba(31,77,69,.38);position:relative}
+.mic:after{content:"";position:absolute;inset:-12px;border-radius:50%;border:2px solid var(--apricot-light);opacity:.0;animation:ring 2.6s ease-out infinite}
+@keyframes ring{0%{transform:scale(.85);opacity:.7}100%{transform:scale(1.15);opacity:0}}
+.mic:active{transform:scale(.96)}
+.miclabel{grid-column:3;justify-self:center;font-size:12px;font-weight:700;color:var(--green);margin-top:4px}
+
+/* building blocks */
+.eyebrow{font-size:13px;font-weight:700;letter-spacing:1.3px;text-transform:uppercase;color:var(--muted);margin:26px 2px 10px;display:flex;justify-content:space-between;align-items:center}
+.eyebrow .count{background:var(--red);color:#fff;border-radius:99px;padding:2px 9px;font-size:12px;letter-spacing:0}
+.ailine{display:flex;gap:12px;align-items:center;background:var(--sand);border-radius:20px;padding:14px 16px;font-size:15px;margin-top:10px}
+.ailine .dot{width:36px;height:36px;border-radius:50%;background:var(--green);color:var(--apricot-light);display:grid;place-items:center;flex-shrink:0}
+.card{background:var(--white);border:1px solid var(--line);border-radius:22px;padding:16px;display:flex;flex-direction:column;gap:12px}
+.card+.card{margin-top:12px}
+.need{padding:12px 12px 12px 14px}
+.need .main strong{font-size:16px}.need .main span{font-size:14px}
+.pbtn{min-height:48px;min-width:84px;padding:0 16px;border-radius:14px;background:var(--green-soft);color:var(--green);font-weight:700;font-size:15px;flex-shrink:0}
+.pbtn.hot{background:var(--green);color:var(--linen)}
+.pbtn:active{transform:scale(.97)}
+.row{display:flex;align-items:center;gap:12px}
+.ic{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;flex-shrink:0}
+.ic.green{background:var(--green-soft);color:var(--green)} .ic.red{background:var(--red-soft);color:var(--red)} .ic.apricot{background:var(--apricot-soft);color:var(--apricot-ink)} .ic.slate{background:var(--slate-soft);color:var(--slate)}
+.main{flex:1;min-width:0}
+.main strong{display:block;font-size:17px;font-weight:700;line-height:1.3}
+.main span{display:block;font-size:15px;color:var(--muted);overflow:hidden;text-overflow:ellipsis}
+.tag{display:inline-flex;align-items:center;border-radius:99px;padding:3px 10px;font-size:12px;font-weight:700;white-space:nowrap}
+.tag.red{background:var(--red-soft);color:var(--red)} .tag.green{background:var(--green-soft);color:var(--green)} .tag.apricot{background:var(--apricot-soft);color:var(--apricot-ink)} .tag.ok{background:var(--ok-soft);color:var(--ok)} .tag.slate{background:var(--slate-soft);color:var(--slate)}
+.btn{min-height:56px;border-radius:16px;padding:0 18px;font-weight:700;font-size:17px;display:inline-flex;align-items:center;justify-content:center;gap:10px;width:100%;transition:transform .1s}
+.btn:active{transform:scale(.98)}
+.btn.primary{background:var(--green);color:var(--linen)}
+.btn.primary:active{background:var(--green-dark)}
+.btn.apricot{background:var(--apricot);color:var(--ink)}
+.btn.soft{background:var(--green-soft);color:var(--green)}
+.btn.line{background:var(--white);border:1.5px solid var(--line);color:var(--ink)}
+.btn.danger{background:var(--red);color:#fff}
+.btns{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.btns.three{grid-template-columns:1fr 1fr 1fr}
+.btns.three .btn{flex-direction:column;gap:4px;min-height:72px;font-size:14px;padding:0 6px}
+:focus-visible{outline:3px solid var(--apricot);outline-offset:2px}
+
+/* next job hero */
+.next{background:var(--green);color:var(--linen);border-radius:26px;padding:20px;display:flex;flex-direction:column;gap:14px}
+.next .when{display:flex;justify-content:space-between;align-items:center;font-size:14px;font-weight:700;color:var(--on-green);letter-spacing:.4px}
+.next h2{margin:0;font-size:24px;letter-spacing:-.6px;line-height:1.2}
+.next p{margin:0;color:var(--on-green);font-size:16px}
+.next .btn.primary{background:var(--apricot);color:var(--ink)}
+.next .btn.soft{background:rgba(255,255,255,.12);color:var(--linen)}
+.next .btns.three .btn{background:rgba(255,255,255,.12);color:var(--linen)}
+
+/* lists */
+.list .item{display:flex;align-items:center;gap:12px;padding:14px 4px;border-bottom:1px solid var(--line);width:100%;text-align:left;min-height:72px}
+.list .item:last-child{border-bottom:0}
+.time{width:56px;font-weight:800;font-size:17px;flex-shrink:0}
+.chev{color:#8A938F;flex-shrink:0}
+
+/* detail */
+.field{display:flex;flex-direction:column;gap:2px;padding:12px 0;border-bottom:1px solid var(--line)}
+.field:last-child{border-bottom:0}
+.field small{font-size:13px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:1px}
+.field b{font-size:18px;font-weight:700}
+.summary{background:var(--sand);border-radius:18px;padding:16px;font-size:16px}
+.steps{display:flex;gap:6px;margin:4px 0 2px}
+.steps i{flex:1;height:6px;border-radius:6px;background:var(--line)}
+.steps i.on{background:var(--green)}
+.stepname{font-size:14px;font-weight:700;color:var(--green)}
+.slot{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:64px;padding:0 16px;border-radius:16px;border:1.5px solid var(--line);background:var(--white);font-weight:700;width:100%;text-align:left}
+.slot.sel{border-color:var(--green);background:var(--green-soft);color:var(--green)}
+.slot span{font-weight:500;color:var(--muted);font-size:14px}
+.stack{display:flex;flex-direction:column;gap:10px}
+.price{display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--sand);border-radius:20px;padding:10px}
+.price button{width:56px;height:56px;border-radius:16px;background:var(--white);font-size:26px;font-weight:700;color:var(--green)}
+.price output{font-size:34px;font-weight:800;letter-spacing:-1px}
+.lines .ln{display:flex;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid var(--line);font-size:16px}
+.lines .ln:last-child{border-bottom:0}
+.photo{height:96px;border-radius:16px;border:2px dashed #CFC8BA;display:flex;align-items:center;justify-content:center;gap:8px;font-weight:700;color:var(--muted);width:100%}
+.who{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.who button{min-height:58px;border-radius:14px;border:1.5px solid var(--line);background:var(--white);color:var(--ink);text-align:left;padding:8px 12px;display:flex;flex-direction:column;justify-content:center;gap:1px}
+.who button b{font-size:16px}.who button span{font-size:12.5px;color:var(--muted)}
+.who button.on{border-color:var(--green);background:var(--green-soft);box-shadow:inset 0 0 0 1px var(--green)}
+.thumbs{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0}
+.thumb{position:relative;aspect-ratio:1;border-radius:14px;overflow:hidden;background:var(--sand);display:grid;place-items:center;color:var(--green)}
+.thumb img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0}
+.thumb.inv{background:#fff;border:1px solid var(--line);color:var(--apricot-ink)}
+.thumb.job{background:linear-gradient(135deg,#C9D9D3,#8FB0A6);color:#fff}
+.thumb .lbl{position:absolute;left:6px;bottom:6px;right:6px;border-radius:8px;padding:2px 6px;font-size:11px;font-weight:800;text-align:center;background:var(--green);color:#fff}
+.thumb.inv .lbl{background:var(--apricot);color:var(--ink)}
+.scrim{position:absolute;inset:0;z-index:25;background:rgba(20,32,30,.42);display:flex;align-items:flex-end}
+.psheet{background:var(--linen);width:100%;max-height:92%;overflow-y:auto;border-radius:26px 26px 0 0;padding:18px 18px calc(22px + env(safe-area-inset-bottom, 0px));display:flex;flex-direction:column;gap:12px;animation:up .25s ease}
+.orb{flex-shrink:0}.orb.small{width:84px;height:84px;margin:4px auto 10px;box-shadow:0 0 0 10px rgba(242,165,122,.16)}
+.voice{overflow-y:auto}.voice .close{flex-shrink:0}
+.psheet h2{margin:0;font-size:22px;letter-spacing:-.4px}
+.lblpick{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.lblpick button{border:2px solid var(--line);background:var(--white);border-radius:18px;padding:14px 12px;text-align:left;display:flex;flex-direction:column;gap:4px;color:var(--ink)}
+.lblpick button b{font-size:17px}.lblpick button span{font-size:13px;color:var(--muted);line-height:1.35}
+.lblpick button.on{border-color:var(--green);background:var(--green-soft)}
+.btn.off{opacity:.4;pointer-events:none}
+.photo.done{border-style:solid;border-color:var(--green);background:var(--green-soft);color:var(--green)}
+textarea{width:100%;min-height:90px;border:1.5px solid var(--line);border-radius:16px;padding:14px;font-size:16px;resize:vertical;background:var(--white)}
+textarea:focus{outline:none;border-color:var(--green)}
+.bigok{display:flex;flex-direction:column;align-items:center;text-align:center;gap:10px;padding:36px 10px 10px}
+.bigok .ic{width:84px;height:84px;background:var(--ok-soft);color:var(--ok)}
+.bigok h2{margin:0;font-size:26px;letter-spacing:-.6px}
+.bigok p{margin:0;color:var(--muted)}
+.money{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.money .card{gap:4px;margin-top:0}
+.money b{font-size:26px;letter-spacing:-.6px}
+.money small{color:var(--muted);font-size:14px;font-weight:600}
+
+/* voice sheet */
+.voice{position:absolute;inset:0;background:var(--green);color:var(--linen);z-index:20;display:flex;flex-direction:column;padding:20px 20px calc(24px + env(safe-area-inset-bottom, 0px));animation:up .25s ease}
+@media (max-width:820px){.voice{padding-top:calc(16px + env(safe-area-inset-top, 0px))}}
+@keyframes up{from{transform:translateY(30px);opacity:0}to{transform:none;opacity:1}}
+.voice .close{align-self:flex-end;width:48px;height:48px;border-radius:50%;background:rgba(255,255,255,.12);display:grid;place-items:center}
+.voice .hint{color:var(--on-green);font-size:15px;text-align:center}
+.orb{width:150px;height:150px;border-radius:50%;margin:28px auto 18px;background:radial-gradient(circle at 50% 45%,var(--apricot-light),var(--apricot) 60%);display:grid;place-items:center;color:var(--ink);box-shadow:0 0 0 18px rgba(242,165,122,.16),0 0 0 36px rgba(242,165,122,.08)}
+.orb.live{animation:pulse 1.4s ease-in-out infinite}
+@keyframes pulse{50%{box-shadow:0 0 0 26px rgba(242,165,122,.2),0 0 0 50px rgba(242,165,122,.07)}}
+.said{font-size:22px;line-height:1.4;font-weight:600;min-height:96px;text-align:center;letter-spacing:-.3px}
+.said .caret{display:inline-block;width:2px;height:22px;background:var(--apricot-light);vertical-align:-3px;margin-left:2px;animation:blink 1s step-end infinite}
+@keyframes blink{50%{opacity:0}}
+.plan{background:var(--linen);color:var(--ink);border-radius:24px;padding:18px;display:flex;flex-direction:column;gap:6px;margin-top:auto}
+.plan .field b{font-size:17px}
+.examples{display:flex;flex-direction:column;gap:8px;margin-top:auto}
+.examples button{min-height:52px;border-radius:16px;background:rgba(255,255,255,.1);color:var(--linen);font-size:15px;font-weight:600;text-align:left;padding:10px 16px}
+
+/* translator + crew */
+.explain{display:flex;gap:10px;align-items:flex-start;background:var(--apricot-soft);border-radius:16px;padding:12px 14px;font-size:14px;line-height:1.45;color:#5A3A26;margin:14px 0 4px}
+.explain b{color:var(--apricot-ink)}
+.explain .ei{width:26px;height:26px;border-radius:50%;background:var(--white);color:var(--apricot-ink);display:grid;place-items:center;flex-shrink:0;font-weight:800;font-size:14px}
+.langbar{display:flex;align-items:center;justify-content:space-between;gap:8px;background:var(--green);color:var(--linen);border-radius:20px;padding:12px 14px}
+.langbar .who{display:flex;flex-direction:column;font-size:13px;color:var(--on-green);font-weight:600}
+.langbar .who b{font-size:17px;color:var(--linen)}
+.langbar .swap{width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.14);display:grid;place-items:center;color:var(--apricot-light);flex-shrink:0}
+.convo{display:flex;flex-direction:column;gap:10px;margin-top:14px}
+.bub{border-radius:20px;padding:12px 14px;max-width:92%;display:flex;flex-direction:column;gap:4px;animation:up .2s ease}
+.bub.w{align-self:flex-end;background:var(--green-soft)}
+.bub.c{align-self:flex-start;background:var(--white);border:1px solid var(--line)}
+.bub .lbl{font-size:12px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--muted)}
+.bub .orig{font-size:15px;color:var(--muted)}
+.bub .big{font-size:21px;font-weight:700;line-height:1.3;color:var(--ink)}
+.bub .gloss{font-size:13px;color:#7A8481;font-style:italic}
+.speak2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+.speak2 .btn{flex-direction:column;gap:4px;min-height:84px;font-size:15px}
+.phr{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.phr button{min-height:76px;border-radius:16px;background:var(--white);border:1.5px solid var(--line);text-align:left;padding:10px 12px;font-weight:700;font-size:14px;line-height:1.3;display:flex;flex-direction:column;gap:6px}
+.phr button span{color:var(--green)}
+.showcard{position:absolute;inset:0;z-index:25;background:var(--white);display:flex;flex-direction:column;padding:22px 22px calc(24px + env(safe-area-inset-bottom, 0px));animation:up .2s ease}
+@media (max-width:820px){.showcard{padding-top:calc(18px + env(safe-area-inset-top, 0px))}}
+.showcard .for{font-size:13px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--muted)}
+.showcard .huge{font-size:38px;line-height:1.15;font-weight:800;letter-spacing:-1px;margin:18px 0 14px;color:var(--ink)}
+.showcard .sub{font-size:17px;color:var(--muted)}
+.brief .seg{display:grid;grid-template-columns:1fr 1fr;background:var(--sand);border-radius:14px;padding:4px;gap:4px}
+.brief .seg button{min-height:44px;border-radius:11px;font-weight:700;font-size:14px;color:var(--muted)}
+.brief .seg button.on{background:var(--white);color:var(--green)}
+.brief .txt{font-size:19px;line-height:1.5}
+.check{display:flex;gap:12px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--line);font-size:16px}
+.check:last-child{border-bottom:0}
+.check i{width:24px;height:24px;border-radius:8px;border:2px solid var(--green);flex-shrink:0;margin-top:1px}
+.crewline{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--on-green);font-weight:600}
+.crewline .flag{background:rgba(255,255,255,.14);color:var(--linen);border-radius:99px;padding:3px 10px;font-size:12px}
+.lang{display:inline-flex;align-items:center;gap:6px;border-radius:99px;padding:4px 10px;font-size:13px;font-weight:700;background:var(--slate-soft);color:var(--slate)}
+
+/* owner view */
+.brief-card{background:var(--green);color:var(--linen);border-radius:24px;padding:18px;display:flex;flex-direction:column;gap:12px}
+.brief-card .top{display:flex;align-items:center;gap:12px}
+.playbtn{width:56px;height:56px;border-radius:50%;background:var(--apricot);color:var(--ink);display:grid;place-items:center;flex-shrink:0}
+.brief-card .lines{display:flex;flex-direction:column;gap:6px;font-size:16px;line-height:1.4}
+.brief-card .lines p{margin:0;color:rgba(251,250,247,.45);transition:color .3s}
+.brief-card .lines p.on{color:var(--linen)}
+.brief-card .lines p.done{color:var(--on-green)}
+.value{background:var(--white);border:1px solid var(--line);border-radius:24px;padding:18px;display:flex;flex-direction:column;gap:12px}
+.value .roi{display:flex;align-items:baseline;gap:8px}
+.value .roi b{font-size:40px;letter-spacing:-1.5px;color:var(--green);line-height:1}
+.funnel{display:flex;flex-direction:column;gap:8px}
+.funnel .fr{display:grid;grid-template-columns:136px 1fr 40px;align-items:center;gap:10px;font-size:14px}
+.funnel .bar{height:14px;border-radius:7px;background:var(--green-soft);overflow:hidden}
+.funnel .bar i{display:block;height:100%;border-radius:7px;background:var(--green)}
+.funnel .fr b{text-align:right;font-variant-numeric:tabular-nums}
+.prof .pr{display:grid;grid-template-columns:1fr 70px;gap:6px 10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}
+.prof .pr:last-child{border-bottom:0}
+.prof .pr .bar{grid-column:1 / -1;height:10px;border-radius:5px;background:var(--sand);overflow:hidden}
+.prof .pr .bar i{display:block;height:100%;border-radius:5px}
+.prof .pr b{text-align:right;font-variant-numeric:tabular-nums}
+.switch{width:58px;height:34px;border-radius:17px;background:#CFC8BA;position:relative;flex-shrink:0;transition:background .2s}
+.switch:after{content:"";position:absolute;top:3px;left:3px;width:28px;height:28px;border-radius:50%;background:#fff;transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+.switch[aria-checked="true"]{background:var(--green)}
+.switch[aria-checked="true"]:after{transform:translateX(24px)}
+.offbanner{display:flex;gap:12px;align-items:center;background:var(--slate);color:#fff;border-radius:18px;padding:12px 14px;font-size:15px;margin-top:14px}
+.offbanner b{display:block}
+.mrow{display:flex;align-items:center;gap:12px;width:100%;text-align:left;min-height:64px}
+
+/* week view */
+.week{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-top:8px}
+.week button{min-height:64px;border-radius:14px;background:var(--white);border:1.5px solid var(--line);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:12px;font-weight:700;color:var(--muted)}
+.week button b{font-size:17px;color:var(--ink)}
+.week button.today{border-color:var(--green)}
+.week button.sel{background:var(--green);border-color:var(--green);color:var(--on-green)}
+.week button.sel b{color:var(--linen)}
+.week .dots{display:flex;gap:2px;height:6px}
+.week .dots i{width:5px;height:5px;border-radius:50%;background:var(--apricot)}
+.week button.past .dots i{background:#B9C7C2}
+.week button.sel .dots i{background:var(--apricot-light)}
+.wsum{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
+.wsum div{background:var(--sand);border-radius:16px;padding:10px 12px;display:flex;flex-direction:column}
+.wsum b{font-size:20px;letter-spacing:-.4px}
+.wsum span{font-size:12px;font-weight:600;color:var(--muted)}
+
+/* toast */
+.toast{position:absolute;left:16px;right:16px;bottom:118px;background:var(--ink);color:var(--linen);border-radius:18px;padding:14px 16px;font-weight:600;font-size:15px;display:flex;gap:10px;align-items:center;z-index:30;animation:up .2s ease}
+
+/* building-manager additions */
+.muted{color:var(--muted)}
+.seg{display:grid;grid-template-columns:repeat(3,1fr);background:var(--white);border:1px solid var(--line);border-radius:16px;padding:4px;gap:4px}
+.seg button{min-height:46px;border-radius:12px;font-weight:700;font-size:15px;color:var(--muted)}
+.seg button.on{background:var(--green-soft);color:var(--green)}
+.vbar{position:relative;height:20px;border-radius:10px;background:var(--sand);display:flex}
+.vbar i{display:block;height:100%;background:var(--ok);border-radius:10px 0 0 10px}.vbar i.n{background:var(--red);border-radius:0}
+.vbar span{position:absolute;top:-5px;bottom:-5px;width:2px;background:var(--ink)}
+.voice .convo .bub.c{background:var(--white)}
+.money button.card{gap:4px;margin-top:0}
+.tabs{grid-template-columns:1fr 1fr 96px 1fr 1fr}
+
+
+/* hotel additions */
+.phone{overflow:clip}
+.wa{background:#EFE7DC;border-radius:18px;padding:12px;display:flex;flex-direction:column;gap:8px;background-image:radial-gradient(rgba(20,32,30,.05) 1px,transparent 1px);background-size:14px 14px}
+.wam{align-self:flex-start;max-width:88%;background:#fff;border-radius:14px 14px 14px 4px;padding:9px 12px;font-size:15px;line-height:1.4;box-shadow:0 1px 1px rgba(0,0,0,.06);color:#14201E}
+.wam.me{align-self:flex-end;background:#DCF2D4;border-radius:14px 14px 4px 14px}
+.wam small{display:block;text-align:right;font-size:11px;color:#6b7572;margin-top:2px}
+.vn{display:flex;align-items:center;gap:8px;font-weight:700;font-size:13px;color:#1F4D45}
+.vn i{display:block;width:110px;height:16px;background:repeating-linear-gradient(90deg,#1F4D45 0 2px,transparent 2px 5px);opacity:.5}
+.trbox{margin-top:8px;background:var(--slate-soft);color:var(--slate);border-radius:14px;padding:10px 12px;font-size:14px}
+.trbox small{display:block;font-size:11px;font-weight:800;letter-spacing:1px;text-transform:uppercase}
+.rnum{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;font-weight:800;font-size:13px;background:var(--sand);color:var(--muted);flex-shrink:0}
+.rnum.on{background:var(--green);color:#fff}.rnum.now{background:var(--red)}
+.rgrid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:6px}
+.room{position:relative;aspect-ratio:1.2;border-radius:10px;background:color-mix(in srgb,var(--c) 16%,#fff);border:1.5px solid color-mix(in srgb,var(--c) 45%,#fff);font-weight:800;font-size:13px}
+.rb{position:absolute;top:-6px;right:-6px;min-width:18px;height:18px;border-radius:9px;background:var(--red);color:#fff;font-size:11px;display:grid;place-items:center;padding:0 4px}
+.legend2{display:flex;flex-wrap:wrap;gap:8px 14px;font-size:13px;color:var(--muted)}
+.legend2 i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px}
+.wascreen{position:absolute;inset:0;z-index:25;background:#EFE7DC;display:flex;flex-direction:column;background-image:radial-gradient(rgba(20,32,30,.05) 1px,transparent 1px);background-size:14px 14px;animation:up .2s ease}
+.wahead{background:#1F4D45;color:#fff;display:flex;align-items:center;gap:10px;padding:16px 14px 12px}
+@media (max-width:820px){.wahead{padding-top:calc(12px + env(safe-area-inset-top,0px))}}
+.wahead small{display:block;font-size:12.5px;color:#CFE0DA}
+.wav{width:40px;height:40px;border-radius:50%;background:#F2A57A;color:#14201E;display:grid;place-items:center;font-weight:800}
+.wabody{flex:1;overflow-y:auto;padding:16px 12px;display:flex;flex-direction:column;gap:8px}
+.wahint{margin:auto;color:#56615F;font-size:15px;text-align:center}
+.wafoot{padding:10px 12px calc(14px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:10px;background:rgba(255,255,255,.6)}
+.wabtn{min-height:52px;border-radius:26px;background:#2F7A55;color:#fff;font-weight:800;font-size:16px;display:flex;align-items:center;justify-content:center;gap:8px}
+.waswitch{display:grid;grid-template-columns:1fr 1fr;gap:6px;background:#fff;border-radius:14px;padding:4px}
+.waswitch button{min-height:40px;border-radius:10px;font-weight:700;font-size:14px;color:#56615F}
+.waswitch button.on{background:#E6EEEB;color:#1F4D45}
+</style>
+
+<div class="stage">
+  <div class="side">
+    <div class="brandrow">
+      <svg width="36" height="36" viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="24" fill="#1F4D45"/><path d="M14.5 19 V25.5 a9.5 9.5 0 0 0 19 0 V19" fill="none" stroke="#FBFAF7" stroke-width="4" stroke-linecap="round"/><circle cx="24" cy="15.5" r="3.4" fill="#F2A57A"/></svg>
+      unbusyness
+    </div>
+    <h1>Cel hotel, <span>v žepu.</span></h1>
+    <p>Unbusyness za hotele na telefonu. Osebje piše na WhatsApp kot vedno, vi vidite samo, kar zamuja.</p>
+    <ul>
+      <li>Pregled: kaj zamuja in kdo je obveščen</li>
+      <li>Naloge s ciljnimi časi in stopnjevanjem</li>
+      <li>Dodeli drugemu z enim dotikom</li>
+      <li>Sobe po nadstropjih, z odprtimi nalogami</li>
+      <li>Ekipa v izmeni, v več jezikih</li>
+      <li><b>Novo:</b> poglejte, kaj vidi osebje na WhatsApp</li>
+    </ul>
+    <p style="font-size:13px">Interaktivni demo z izmišljenimi podatki. Poskusite <b>Poglej, kaj vidi osebje</b> na zaslonu Pregled.</p>
+  </div>
+  <div class="phone" id="phone">
+    <div class="topbar" id="topbar"></div>
+    <main class="screen" id="screen"></main>
+    <nav class="tabs" aria-label="Glavni meni">
+      <button class="tab" data-tab="today"><span data-i="home"></span>Pregled</button>
+      <button class="tab" data-tab="jobs"><span data-i="list"></span>Naloge<span class="badge" id="jobBadge"></span></button>
+      <button class="mic" id="micBtn" aria-label="Glasovni ukaz"><span data-i="mic" data-s="32"></span></button>
+      <button class="tab" data-tab="rooms"><span data-i="bed"></span>Sobe</button>
+      <button class="tab" data-tab="team"><span data-i="team"></span>Ekipa</button>
+    </nav>
+    <div id="overlay"></div>
+    <div id="toastHost"></div>
+  </div>
+</div>
+<script>
+/* ---------- Example data (izmišljeno) ---------- */
+const HOTEL = { name: 'Hotel Jezero (demo)', short: 'HJ', rooms: 120, floors: 4, gm: 'Sara Novak', gmi: 'SN', now: '09:12' };
+const DEP = {
+  hk: { id: 'hk', name: 'Gospodinjstvo', color: '#2F7A55', lead: 'petra' },
+  mnt: { id: 'mnt', name: 'Vzdrževanje', color: '#4F5F80', lead: 'rok' },
+  fo: { id: 'fo', name: 'Recepcija', color: '#A84E22', lead: 'ana' },
+  rs: { id: 'rs', name: 'Strežba v sobi', color: '#8A5A9E', lead: 'tina' },
+  it: { id: 'it', name: 'IT', color: '#1F4D45', lead: 'tina' },
+};
+const STAFF = {
+  nina: { id: 'nina', name: 'Nina Kos', role: 'Sobarica, 2. nadstropje', dep: 'hk', lang: 'SL', on: true },
+  ivana: { id: 'ivana', name: 'Ivana Melnyk', role: 'Sobarica, 3. nadstropje', dep: 'hk', lang: 'UA', on: true },
+  amir: { id: 'amir', name: 'Amir Hodžić', role: 'Sobar, 1. nadstropje', dep: 'hk', lang: 'BS', on: true },
+  petra: { id: 'petra', name: 'Petra Zupan', role: 'Vodja gospodinjstva', dep: 'hk', lang: 'SL', on: true, lead: true },
+  marko: { id: 'marko', name: 'Marko Vidmar', role: 'Vzdrževalec, jutranja izmena', dep: 'mnt', lang: 'SL', on: true },
+  luka: { id: 'luka', name: 'Luka Breznik', role: 'Vzdrževalec, popoldanska izmena', dep: 'mnt', lang: 'SL', on: false },
+  rok: { id: 'rok', name: 'Rok Kranjc', role: 'Vodja vzdrževanja', dep: 'mnt', lang: 'SL', on: true, lead: true },
+  ana: { id: 'ana', name: 'Ana Golob', role: 'Receptorka', dep: 'fo', lang: 'SL/EN/DE', on: true, lead: true },
+  jure: { id: 'jure', name: 'Jure Petek', role: 'IT podpora', dep: 'it', lang: 'SL/EN', on: true },
+  tina: { id: 'tina', name: 'Tina Rozman', role: 'Dežurna vodja', dep: 'fo', lang: 'SL/EN/IT', on: true, lead: true, duty: true },
+};
+// Request types with target times (minutes): accept, finish
+const TYPES = [
+  { id: 'leak', name: 'Puščanje vode', dep: 'mnt', acc: 5, fin: 30, night: true },
+  { id: 'ac', name: 'Klima / ogrevanje', dep: 'mnt', acc: 10, fin: 45, night: false },
+  { id: 'tv', name: 'TV, Wi-Fi, telefon', dep: 'it', acc: 10, fin: 30, night: false },
+  { id: 'lock', name: 'Ključavnica, kartica', dep: 'fo', acc: 5, fin: 15, night: true },
+  { id: 'towel', name: 'Brisače, kopalniški pribor', dep: 'hk', acc: 5, fin: 15, night: false },
+  { id: 'bed', name: 'Dodatna postelja', dep: 'hk', acc: 10, fin: 30, night: false },
+  { id: 'clean', name: 'Ponovno čiščenje sobe', dep: 'hk', acc: 10, fin: 40, night: false },
+  { id: 'elec', name: 'Elektrika v sobi', dep: 'mnt', acc: 10, fin: 40, night: false },
+  { id: 'food', name: 'Naročilo v sobo', dep: 'rs', acc: 3, fin: 25, night: true },
+];
+const typ = (id) => TYPES.find((t) => t.id === id);
+// Jobs. st: 0 čaka sprejem · 1 sprejeto · 2 opravljeno. esc: 0 none, 1 vodja izmene, 2 vodja oddelka, 3 dežurni
+const JOBS = [
+  { id: 3127, room: '214', type: 'leak', title: 'Tuš pušča po tleh', by: 'nina', ch: 'voice', t: '07:58', who: 'marko', st: 2, acceptedAt: '08:09', doneAt: '08:27', esc: 1, photo: 1,
+    orig: '»Soba 214, tuš pušča po tleh.«', thread: [['s', 'voice', 'Glasovno sporočilo · 0:06', '07:58'], ['b', 'Razumem. Naloga #3127: soba 214, puščanje tuša. Poslano Marku (vzdrževanje, v izmeni).', '07:58'], ['b', 'Marko je sprejel in je na poti.', '08:09'], ['b', 'Popravljeno: novo tesnilo. Hvala za prijavo, Nina!', '08:27']],
+    log: [['07:58', 'Glasovno sporočilo razumljeno', 'Soba 214, puščanje tuša → vzdrževanje.'], ['08:03', 'Ni sprejeto v 5 min', 'Marko dobi opomnik, Rok (vodja vzdrževanja) je obveščen.'], ['08:09', 'Marko sprejel', 'Z enim dotikom na WhatsApp.'], ['08:27', 'Opravljeno', 'Zamenjano tesnilo. Nina je obveščena. 29 min skupaj.']] },
+  { id: 3131, room: '118', type: 'ac', title: 'Klima ne hladi', by: 'ana', ch: 'text', t: '08:21', who: 'marko', st: 1, acceptedAt: '08:26', esc: 2, late: 12, guest: true,
+    orig: '»Gost v 118 pravi, da klima piha toplo. Prosim čim prej, imajo otroka.«', thread: [['s', 'text', 'Gost v 118 pravi, da klima piha toplo. Prosim čim prej, imajo otroka.', '08:21'], ['b', 'Naloga #3131: soba 118, klima. Poslano Marku. Gostu sporočite, da je vzdrževalec obveščen.', '08:21'], ['b', 'Marko je sprejel.', '08:26']],
+    log: [['08:21', 'Prijava z recepcije', 'Klima → vzdrževanje, prednost: gost z otrokom.'], ['08:26', 'Marko sprejel', ''], ['09:06', 'Ni opravljeno v 45 min', 'Obveščen Rok Kranjc, vodja vzdrževanja.']] },
+  { id: 3133, room: '307', type: 'bed', title: 'Dodatna postelja za otroka', by: 'ana', ch: 'text', t: '08:40', who: 'ivana', st: 1, acceptedAt: '08:47', esc: 1, late: 4, guest: true,
+    orig: '»307 rabi dodatno posteljo do 9h, prihajajo z otrokom.«', thread: [['s', 'text', '307 rabi dodatno posteljo do 9h, prihajajo z otrokom.', '08:40'], ['b', 'Naloga #3133: soba 307, dodatna postelja. Poslano Ivani (prevod v ukrajinščino).', '08:40'], ['b', 'Ivana je sprejela.', '08:47']],
+    log: [['08:40', 'Prijava z recepcije', 'Dodatna postelja → gospodinjstvo.'], ['08:47', 'Ivana sprejela', 'Prejela v ukrajinščini.'], ['09:08', 'Ni opravljeno v 30 min', 'Obveščena Petra Zupan, vodja gospodinjstva.']] },
+  { id: 3134, room: '305', type: 'tv', title: 'TV ne dela', by: 'amir', ch: 'text', t: '08:52', who: 'jure', st: 1, acceptedAt: '08:55', esc: 0, split: 3135,
+    orig: '»305 TV ne radi, i treba im peškiri.«', tr: 'Soba 305: TV ne dela, potrebujejo tudi brisače.', thread: [['s', 'text', '305 TV ne radi, i treba im peškiri.', '08:52'], ['b', 'Dve nalogi: #3134 TV (IT, Jure) in #3135 brisače (gospodinjstvo, Amir).', '08:52']],
+    log: [['08:52', 'Sporočilo v bosanščini', 'Razdeljeno na dve nalogi za dva oddelka.'], ['08:55', 'Jure sprejel', '']] },
+  { id: 3135, room: '305', type: 'towel', title: 'Brisače za 2 osebi', by: 'amir', ch: 'text', t: '08:52', who: 'amir', st: 2, acceptedAt: '08:53', doneAt: '09:01', esc: 0, split: 3134,
+    orig: '»305 TV ne radi, i treba im peškiri.«', tr: 'Soba 305: TV ne dela, potrebujejo tudi brisače.', thread: [['s', 'text', '305 TV ne radi, i treba im peškiri.', '08:52'], ['b', 'Dve nalogi: #3134 TV (IT, Jure) in #3135 brisače (gospodinjstvo, Amir).', '08:52'], ['b', 'Brisače dostavljene. Hvala, Amir!', '09:01']],
+    log: [['08:52', 'Iz istega sporočila kot #3134', ''], ['09:01', 'Opravljeno', '9 min.']] },
+  { id: 3136, room: '402', type: 'clean', title: 'Gost želi ponovno čiščenje kopalnice', by: 'ana', ch: 'text', t: '09:04', who: null, st: 0, esc: 0, guest: true,
+    orig: '»402 kopalnica ni bila očiščena, gost je nejevoljen.«', thread: [['s', 'text', '402 kopalnica ni bila očiščena, gost je nejevoljen.', '09:04'], ['b', 'Naloga #3136: soba 402, ponovno čiščenje. Ponujeno sobaricam v 4. nadstropju.', '09:04']],
+    log: [['09:04', 'Prijava z recepcije', 'Ponovno čiščenje → gospodinjstvo, 4. nadstropje.'], ['09:04', 'Čaka sprejem', 'Ciljni čas sprejema: 10 min.']] },
+  { id: 3122, room: '221', type: 'lock', title: 'Kartica ne odpre vrat', by: 'tina', ch: 'text', t: '02:14', who: 'tina', st: 2, acceptedAt: '02:14', doneAt: '02:20', esc: 3, night: true,
+    orig: '»Gost 221 ne more v sobo, kartica ne dela.«', thread: [['s', 'text', 'Gost 221 ne more v sobo, kartica ne dela.', '02:14'], ['b', 'Nočno pravilo: naloga #3122 gre dežurni vodji (Tina).', '02:14'], ['b', 'Opravljeno: nova kartica izdana.', '02:20']],
+    log: [['02:14', 'Nočno pravilo', 'Nujna naloga ponoči → dežurna vodja.'], ['02:20', 'Opravljeno', 'Nova kartica, 6 min.']] },
+];
+const ROOMS = (() => { const out = []; const st = ['clean', 'occ', 'occ', 'dirty', 'occ', 'clean', 'occ', 'occ']; for (let f = 1; f <= 4; f++) for (let n = 1; n <= 30; n++) { const id = `${f}${String(n).padStart(2, '0')}`; out.push({ id, f, st: st[(f * 7 + n * 3) % st.length] }); } return out; })();
+['214', '118', '307', '305', '402', '221'].forEach((r) => { const x = ROOMS.find((y) => y.id === r); if (x) x.st = 'occ'; });
+ROOMS.find((r) => r.id === '118').st = 'block';
+const RST = { clean: ['Prosta, očiščena', '#2F7A55'], occ: ['Zasedena', '#4F5F80'], dirty: ['Čaka čiščenje', '#E8915F'], block: ['Težava v sobi', '#B23A32'] };
+const WEEK = { hk: [14, 13, 12, 12], mnt: [44, 41, 38, 35], fo: [9, 8, 8, 8], rs: [22, 21, 20, 19], it: [26, 25, 22, 21] };
+
+/* ---------- helpers ---------- */
+const I={
+ home:'<path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/>',list:'<path d="M9 6h11M9 12h11M9 18h11"/><path d="M4 6l1 1 2-2M4 12l1 1 2-2M4 18l1 1 2-2"/>',
+ bed:'<path d="M3 18V8M3 14h18v4M21 14v-2a3 3 0 0 0-3-3h-7v5"/><circle cx="7" cy="11" r="2"/>',team:'<circle cx="9" cy="8" r="3.2"/><path d="M3 19a6 6 0 0 1 12 0"/><circle cx="17" cy="9" r="2.5"/><path d="M15.5 14.2A5 5 0 0 1 21 19"/>',
+ mic:'<rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/>',check:'<path d="M5 12l4 4 10-10"/>',x:'<path d="M6 6l12 12M18 6L6 18"/>',back:'<path d="M15 5l-7 7 7 7"/>',chev:'<path d="M9 5l7 7-7 7"/>',
+ clock:'<circle cx="12" cy="12" r="8.5"/><path d="M12 7v5l3 2"/>',alert:'<path d="M12 3l9 16H3z"/><path d="M12 10v4M12 17v.5"/>',moon:'<path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/>',swap:'<path d="M7 4L3 8l4 4M3 8h14M17 20l4-4-4-4M21 16H7"/>',
+ bell:'<path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15z"/><path d="M10 20a2 2 0 0 0 4 0"/>',spark:'<path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/>',play:'<path d="M7 4l13 8-13 8z"/>',msg:'<path d="M4 5h16v11H8l-4 4z"/>',
+ drop:'<path d="M12 3s6 7 6 11a6 6 0 0 1-12 0c0-4 6-11 6-11z"/>',snow:'<path d="M12 2v20M4 6l16 12M20 6L4 18"/>',tv:'<rect x="3" y="5" width="18" height="12" rx="2"/><path d="M8 21h8"/>',key:'<circle cx="8" cy="15" r="4"/><path d="M11 12l9-9M17 6l3 3"/>',
+ towel:'<path d="M6 3h12v18H6z"/><path d="M6 8h12"/>',plate:'<circle cx="12" cy="13" r="7"/><path d="M3 5v5M21 5v5"/>',broom:'<path d="M14 3l-3 9M6 21l2-9h6l2 9z"/>',bulb:'<path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-4 10.5c.8.8 1 1.5 1 2.5h6c0-1 .2-1.7 1-2.5A6 6 0 0 0 12 3z"/>'
+};
+const TIC={elec:'bulb',leak:'drop',ac:'snow',tv:'tv',lock:'key',towel:'towel',bed:'bed',clean:'broom',food:'plate'};
+const svg=(n,s=22,w=2)=>`<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${I[n]||I.list}</svg>`;
+const esc=t=>String(t??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+const tag=(t,c)=>`<span class="tag ${c}">${esc(t)}</span>`;
+const $=s=>document.querySelector(s);
+const job=id=>JOBS.find(j=>j.id===id);
+const first=id=>id?STAFF[id].name.split(' ')[0]:'—';
+const stTag=j=>j.st===2?tag('Opravljeno','ok'):j.late?tag('+'+j.late+' min','red'):j.st===1?tag('Sprejeto','slate'):tag('Čaka','apricot');
+const ESC=['Zaposleni v izmeni','Vodja izmene','Vodja oddelka','Dežurni vodja'];
+function toast(m){const h=$('#toastHost');h.innerHTML=`<div class="toast" role="status">${svg('check',18)}<span>${esc(m)}</span></div>`;clearTimeout(window._t);window._t=setTimeout(()=>h.innerHTML='',3200)}
+function overlay(h){$('#overlay').innerHTML=h}
+function closeOv(){$('#overlay').innerHTML=''}
+
+const S={tab:'today',view:null,dep:'all'};
+function go(tab){S.tab=tab;S.view=null;closeOv();render();$('#screen').scrollTop=0}
+function back(){S.view=null;render()}
+function drawTop(){const tb=$('#topbar');
+  if(S.view){tb.innerHTML=`<button class="back" onclick="back()">${svg('back',20)}Nazaj</button><span class="title">${esc(S.view.title)}</span><span style="width:44px"></span>`;return}
+  const T={today:null,jobs:'Naloge',rooms:'Sobe',team:'Ekipa'};
+  tb.innerHTML=T[S.tab]?`<span class="title" style="font-size:24px">${T[S.tab]}</span><button class="avatar" onclick="more()" aria-label="Meni">${HOTEL.gmi}</button>`:`<div class="hello"><small>Petek · ${HOTEL.now}</small><strong>Dobro jutro, Sara</strong></div><button class="avatar" onclick="more()" aria-label="Meni">${HOTEL.gmi}</button>`}
+function render(){drawTop();document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('on',t.dataset.tab===S.tab&&!S.view));
+  const late=JOBS.filter(j=>j.st<2&&j.late).length;$('#jobBadge').textContent=late||'';$('#jobBadge').style.display=late?'grid':'none';
+  $('#screen').innerHTML=S.view?S.view.html():({today:sToday,jobs:sJobs,rooms:sRooms,team:sTeam})[S.tab]()}
+
+/* ---------- Pregled ---------- */
+function sToday(){const open=JOBS.filter(j=>j.st<2),late=open.filter(j=>j.late),top=late.sort((a,b)=>b.late-a.late)[0];
+  const hero=top?`<div class="next"><div class="when"><span>ZAMUJA · SOBA ${top.room}</span>${tag('+'+top.late+' min','apricot')}</div><h2>${esc(top.title)}</h2><p>${esc(STAFF[top.who].name)} je sprejel ob ${top.acceptedAt}. Obveščen: ${ESC[top.esc].toLowerCase()}.${top.guest?' Gost čaka.':''}</p>
+    <button class="btn primary" onclick="reassign(${top.id})">${svg('swap',20)}Dodeli drugemu</button><div class="btns three"><button class="btn" onclick="toast('Klic: ${esc(STAFF[top.who].name)}')">${svg('msg',20)}Pokliči</button><button class="btn" onclick="toast('${first(top.who)} je dobil opomnik na WhatsApp.')">${svg('bell',20)}Opomni</button><button class="btn" onclick="openJob(${top.id})">${svg('list',20)}Odpri</button></div></div>`
+    :`<div class="next"><div class="when"><span>VSE TEČE</span>${tag('Pravočasno','ok')}</div><h2>Nič ne zamuja</h2><p>Do vas pridejo samo zamujene naloge.</p></div>`;
+  return `<div class="ailine"><span class="dot">${svg('moon',18)}</span><div><b>Ponoči:</b> gost v 221 ni mogel v sobo. Nočno pravilo je poslalo nalogo Tini, rešeno v 6 minutah.</div></div>
+  <div class="eyebrow">Najbolj zamuja</div>${hero}
+  <div class="eyebrow">Danes</div><div class="money"><button class="card" style="text-align:left" onclick="go('jobs')"><small>Odprte naloge</small><b>${open.length}</b><small>${late.length} zamujata</small></button><div class="card"><small>Pravočasno</small><b>92 %</b><small>povpr. 24 min</small></div></div>
+  <div class="eyebrow">Zamuja ${late.length?`<span class="count">${late.length}</span>`:''}</div>
+  ${late.map(j=>`<div class="card need"><div class="row"><span class="ic red">${svg(TIC[j.type])}</span><div class="main"><strong>Soba ${j.room} · ${esc(j.title)}</strong><span>${first(j.who)} · +${j.late} min</span></div><button class="pbtn hot" onclick="reassign(${j.id})">Dodeli</button></div></div>`).join('')||'<div class="card"><div class="row"><span class="ic green">'+svg('check')+'</span><div class="main"><strong>Nič ne zamuja</strong></div></div></div>'}
+  <button class="btn line" style="margin-top:14px" onclick="staffView()">${svg('msg',20)}Poglej, kaj vidi osebje (WhatsApp)</button>`}
+
+/* ---------- Naloge ---------- */
+function sJobs(){const deps=[['all','Vsi'],...Object.values(DEP).slice(0,3).map(d=>[d.id,d.name])];const list=JOBS.filter(j=>S.dep==='all'||typ(j.type).dep===S.dep).sort((a,b)=>(a.st===2)-(b.st===2)||(b.late||0)-(a.late||0)||b.t.localeCompare(a.t));
+  return `<div class="seg" style="grid-template-columns:repeat(4,1fr)">${deps.map(([k,l])=>`<button class="${S.dep===k?'on':''}" aria-pressed="${S.dep===k}" onclick="S.dep='${k}';render()">${l.slice(0,10)}${l.length>10?'.':''}</button>`).join('')}</div>
+  <div class="card list" style="margin-top:12px;padding:4px 14px">${list.map(j=>`<button class="item" onclick="openJob(${j.id})"><span class="ic ${j.late?'red':j.st===2?'green':'slate'}">${svg(TIC[j.type])}</span><div class="main"><strong>${j.room} · ${esc(j.title)}</strong><span>${j.t} · ${first(j.who)}</span></div>${stTag(j)}</button>`).join('')}</div>`}
+function openJob(id){S.tab='jobs';S.view={title:'#'+id,html:()=>jobView(id)};closeOv();render();$('#screen').scrollTop=0}
+function jobView(id){const j=job(id),T=typ(j.type);
+  return `<div class="stack"><div><div class="row" style="gap:8px;flex-wrap:wrap">${stTag(j)}${tag(DEP[T.dep].name,'slate')}${j.guest?tag('Gost čaka','apricot'):''}</div><h2 style="margin:10px 0 2px;font-size:24px;letter-spacing:-.6px">Soba ${j.room} · ${esc(j.title)}</h2><div class="muted">Prijavil(a) ${first(j.by)} ob ${j.t}</div></div>
+  <div class="money"><div class="card"><small>Sprejem</small><b>${T.acc} min</b><small>${j.acceptedAt?'ob '+j.acceptedAt:'čaka'}</small></div><div class="card"><small>Izvedba</small><b>${T.fin} min</b><small>${j.doneAt?'ob '+j.doneAt:j.late?'+'+j.late+' min':'teče'}</small></div></div>
+  <div class="card" style="gap:6px"><small class="muted" style="font-weight:700">STOPNJEVANJE</small>${ESC.map((e,i)=>`<div class="row" style="gap:10px;font-size:15px;${i<=j.esc?'':'color:var(--muted)'}"><span class="rnum ${i<=j.esc?'on':''} ${i===j.esc&&j.st<2&&i>0?'now':''}">${i+1}</span>${e}</div>`).join('')}</div>
+  ${j.st===0?`<button class="btn primary" onclick="assign(${id})">${svg('team',20)}Dodeli</button>`:''}${j.st===1?`<button class="btn primary" onclick="finish(${id})">${svg('check',20)}Označi kot opravljeno</button><button class="btn line" onclick="reassign(${id})">${svg('swap',20)}Dodeli drugemu</button>`:''}
+  <div class="eyebrow" style="margin-top:6px">WhatsApp</div><div class="wa">${j.thread.map(m=>m[0]==='s'?`<div class="wam me">${m[1]==='voice'?`<span class="vn">${svg('play',12)}<i></i>0:06</span>`:esc(m[2])}<small>${first(j.by)} · ${m[3]}</small></div>`:`<div class="wam">${esc(m[1])}<small>Unbusyness · ${m[2]}</small></div>`).join('')}</div>${j.tr?`<div class="trbox"><small>Prevod</small>${esc(j.tr)}</div>`:''}
+  <div class="eyebrow">Potek</div><div class="card" style="gap:0;padding:4px 16px">${j.log.map(l=>`<div class="field"><small>${esc(l[0])}</small><b style="font-size:16px">${esc(l[1])}</b>${l[2]?`<span class="muted" style="font-size:14px">${esc(l[2])}</span>`:''}</div>`).join('')}</div></div>`}
+function pick(id,title,cb){const j=job(id),dep=typ(j.type).dep,ppl=Object.values(STAFF).filter(s=>s.dep===dep&&s.id!==j.who&&s.on);S.cb=cb;
+  overlay(`<div class="scrim" onclick="if(event.target===this)closeOv()"><div class="psheet" role="dialog" aria-label="${title}"><h2>${title}</h2><div class="stack">${ppl.map(s=>`<button class="slot" onclick="S.cb('${s.id}')"><div>${esc(s.name)}<br><span>${esc(s.role)} · ${s.lang}</span></div>${svg('chev',20)}</button>`).join('')}</div><button class="btn line" onclick="closeOv()">Prekliči</button></div></div>`)}
+function reassign(id){pick(id,'Dodeli drugemu',k=>{const j=job(id);j.who=k;j.late=0;j.esc=0;j.log.push([HOTEL.now,'Predodeljeno: '+STAFF[k].name,'']);closeOv();render();toast(`Predodeljeno: ${STAFF[k].name}. Dobil(a) je nalogo na WhatsApp.`)})}
+function assign(id){pick(id,'Komu dodelim?',k=>{const j=job(id);j.who=k;j.st=1;j.acceptedAt=HOTEL.now;closeOv();render();toast(`${STAFF[k].name} je sprejel(a).`)})}
+function finish(id){const j=job(id);j.st=2;j.late=0;j.doneAt=HOTEL.now;render();toast(`Opravljeno. ${first(j.by)} je obveščen(a).`)}
+
+/* ---------- Sobe ---------- */
+function sRooms(){return `<div class="legend2">${Object.entries(RST).map(([k,[l,c]])=>`<span><i style="background:${c}"></i>${l}</span>`).join('')}</div>${[4,3,2,1].map(f=>`<div class="eyebrow">${f}. nadstropje</div><div class="rgrid">${ROOMS.filter(r=>r.f===f).map(r=>{const n=JOBS.filter(j=>j.room===r.id&&j.st<2).length;return `<button class="room" style="--c:${RST[r.st][1]}" onclick="roomV('${r.id}')" aria-label="Soba ${r.id}">${r.id}${n?`<span class="rb">${n}</span>`:''}</button>`}).join('')}</div>`).join('')}`}
+function roomV(id){const r=ROOMS.find(x=>x.id===id),js=JOBS.filter(j=>j.room===id);S.view={title:'Soba '+id,html:()=>`<div class="next" style="background:${RST[r.st][1]}"><div class="when"><span>${r.f}. NADSTROPJE</span></div><h2>Soba ${id}</h2><p>${RST[r.st][0]}</p></div><div class="eyebrow">Naloge</div><div class="card list" style="padding:4px 14px">${js.map(j=>`<button class="item" onclick="openJob(${j.id})"><span class="ic slate">${svg(TIC[j.type])}</span><div class="main"><strong>${esc(j.title)}</strong><span>${j.t}</span></div>${stTag(j)}</button>`).join('')||'<div style="padding:16px 0" class="muted">Danes ni nalog.</div>'}</div>${id==='118'?'<div class="explain"><span class="ei">!</span><div><b>3 prijave klime v 30 dneh.</b> Predlog: servis pri zunanjem izvajalcu.</div></div>':''}`};render();$('#screen').scrollTop=0}
+
+/* ---------- Ekipa ---------- */
+function sTeam(){return Object.values(DEP).map(d=>`<div class="eyebrow">${d.name}</div><div class="card list" style="padding:4px 14px">${Object.values(STAFF).filter(s=>s.dep===d.id).map(s=>`<div class="item"><span class="ic" style="background:var(--sand);color:var(--green);font-weight:800;font-size:14px">${s.name.split(' ').map(x=>x[0]).join('')}</span><div class="main"><strong>${esc(s.name)}</strong><span>${esc(s.role)} · ${s.lang}</span></div>${s.on?tag('V izmeni','ok'):tag('Prost','slate')}</div>`).join('')}</div>`).join('')}
+
+/* ---------- Staff WhatsApp view ---------- */
+function staffView(){S.wa={who:'marko',step:0};drawWa()}
+function drawWa(){const w=S.wa;const marko=w.who==='marko';
+  const msgs=marko?[['b','Nova naloga #3138\nSoba 226 · Daljinec za TV ne dela\nSprejem v 10 min · izvedba v 30 min','09:14'],...(w.step>=1?[['me','✅ Sprejmem','09:15'],['b','Hvala, Marko. Nina je obveščena, da si na poti.','09:15']]:[]),...(w.step>=2?[['me','✅ Opravljeno: nove baterije','09:22'],['b','Naloga #3138 zaprta. 8 min. Odlično!','09:22']]:[])]
+    :[...(w.step>=1?[['me','voice','09:16'],['b','Razumem. Naloga #3139: soba 231, manjka sušilnik za lase. Poslano: gospodinjstvo (Nina).','09:16']]:[])];
+  const action=marko?(w.step===0?`<button class="wabtn" onclick="S.wa.step=1;drawWa()">Sprejmem</button>`:w.step===1?`<button class="wabtn" onclick="S.wa.step=2;drawWa()">Opravljeno</button>`:''):(w.step===0?`<button class="wabtn mic2" onclick="S.wa.step=1;drawWa()">${svg('mic',20)} Pošlji glasovno sporočilo</button>`:'');
+  overlay(`<div class="wascreen" role="dialog" aria-label="WhatsApp pogled osebja"><div class="wahead"><button class="back" style="color:#fff" onclick="closeOv()">${svg('back',20)}</button><span class="wav">U</span><div><b>Unbusyness · Hotel Jezero</b><small>${marko?'Marko Vidmar, vzdrževanje':'Nina Kos, sobarica'}</small></div></div>
+  <div class="wabody">${msgs.map(m=>m[0]==='me'?`<div class="wam me">${m[1]==='voice'?`<span class="vn">${svg('play',12)}<i></i>0:04</span>`:esc(m[1])}<small>${m[2]}</small></div>`:`<div class="wam">${esc(m[1]).replace(/\n/g,'<br>')}<small>${m[2]}</small></div>`).join('')||'<div class="wahint">Nina bo poslala glasovno sporočilo.</div>'}</div>
+  <div class="wafoot">${action}<div class="waswitch"><button class="${marko?'on':''}" onclick="S.wa={who:'marko',step:0};drawWa()">Kot Marko</button><button class="${!marko?'on':''}" onclick="S.wa={who:'nina',step:0};drawWa()">Kot Nina</button></div></div></div>`)}
+
+/* ---------- menu + voice ---------- */
+function more(){overlay(`<div class="scrim" onclick="if(event.target===this)closeOv()"><div class="psheet" role="dialog" aria-label="Meni"><h2>${HOTEL.gm}</h2><div class="muted" style="margin-top:-6px">Direktorica · ${HOTEL.name}</div><div class="stack">
+  <button class="slot" onclick="closeOv();staffView()"><div>Kaj vidi osebje<br><span>WhatsApp: sprejem in zaključek naloge</span></div>${svg('chev',20)}</button>
+  <button class="slot" onclick="closeOv();rulesV()"><div>Pravila in ciljni časi<br><span>${TYPES.length} vrst prošenj · nočna pravila</span></div>${svg('chev',20)}</button></div><button class="btn line" onclick="closeOv()">Zapri</button></div></div>`)}
+function rulesV(){S.view={title:'Pravila',html:()=>`<div class="card list" style="padding:4px 14px">${TYPES.map(t=>`<div class="item"><span class="ic slate">${svg(TIC[t.id])}</span><div class="main"><strong>${esc(t.name)}</strong><span>sprejem ${t.acc} min · izvedba ${t.fin} min</span></div>${t.night?tag('Ponoči takoj','red'):''}</div>`).join('')}</div>`};S.tab='today';render()}
+const VOICE=[
+ {say:'Kdo je danes dežuren ponoči?',plan:[['Odgovor','Tina Rozman, dežurna vodja'],['Telefon','na voljo v aplikaciji']],done:()=>toast('Dežurna ponoči: Tina Rozman.')},
+ {say:'Daj klimo v 118 Luku namesto Marku.',plan:[['Naloga','#3131 · soba 118, klima'],['Novo','Luka Breznik (ni v izmeni → Rok)']],done:()=>{const j=job(3131);j.who='rok';j.late=0;j.esc=0;render();toast('Predodeljeno: Rok Kranjc, ker Luka ni v izmeni.')}},
+ {say:'Pošlji povzetek dneva vodjem oddelkov.',plan:[['Prejemniki','Petra, Rok, Ana, Tina'],['Kanal','WhatsApp ob 18:00']],done:()=>toast('Povzetek bo poslan ob 18:00.')},
+];
+function openVoice(){S.v={i:-1};drawVoice()}
+function drawVoice(){const v=S.v,c=v.i>=0?VOICE[v.i]:null;
+  overlay(`<div class="voice" role="dialog" aria-label="Glasovni ukaz"><button class="close" onclick="closeOv()" aria-label="Zapri">${svg('x')}</button><div class="orb ${v.live?'live':''}">${svg('mic',48)}</div><div class="said">${c?'»'+esc(c.say)+'«':'Povejte, kaj naj naredim.'}</div>
+  ${c&&!v.live?`<div class="plan">${c.plan.map(([a,b])=>`<div class="field"><small>${a}</small><b>${esc(b)}</b></div>`).join('')}<div class="btns" style="margin-top:6px"><button class="btn primary" onclick="const f=VOICE[${v.i}].done;closeOv();f()">${svg('check',20)}Potrdi</button><button class="btn line" onclick="S.v={i:-1};drawVoice()">Drugo</button></div></div>`:''}
+  ${!c?`<div class="hint">Na primer:</div><div class="examples">${VOICE.map((x,i)=>`<button onclick="sayV(${i})">»${esc(x.say)}«</button>`).join('')}</div>`:''}</div>`)}
+function sayV(i){S.v={i,live:true};drawVoice();setTimeout(()=>{if(S.v&&S.v.i===i){S.v.live=false;drawVoice()}},1300)}
+
+document.querySelectorAll('[data-i]').forEach(e=>e.innerHTML=svg(e.dataset.i,+(e.dataset.s||22)));
+document.querySelectorAll('.tab').forEach(t=>t.addEventListener('click',()=>go(t.dataset.tab)));
+$('#micBtn').addEventListener('click',openVoice);
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeOv()});
+render();
+
+</script>
+
+</body>
+</html>

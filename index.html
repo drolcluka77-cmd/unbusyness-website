@@ -55,6 +55,7 @@ h2{font-size:clamp(30px,4.2vw,48px);line-height:1.08}
 .choices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
 .choice{display:grid;grid-template-columns:52px minmax(0,1fr);gap:14px;align-items:center;text-align:left;background:var(--surface);border:1.5px solid var(--line);border-radius:20px;padding:18px;transition:border-color .15s,transform .15s}
 .choice:hover{border-color:var(--green);transform:translateY(-1px)}
+a.choice{color:inherit;text-decoration:none}
 .choice .ic{width:52px;height:52px;border-radius:16px;display:grid;place-items:center;background:var(--sand);color:var(--green)}
 .choice b{display:block;font-size:18px;letter-spacing:-.01em}
 .choice span{display:block;color:var(--muted);font-size:14.5px;line-height:1.4;margin-top:2px}
@@ -229,9 +230,13 @@ function render() {
       <button class="choice lang" data-l="en" type="button"><span class="ic">EN</span><div><b>English</b><span>Continue in English</span></div></button></div></section>`;
     st.querySelectorAll("[data-l]").forEach((x) => (x.onclick = () => { lang = x.dataset.l; try { localStorage.setItem("ub-lang", lang); } catch {} go("role"); }));
   } else if (S.step === "role") {
-    const c = (k, ic) => `<button class="choice" data-r="${k}" type="button"><span class="ic">${svg(ic)}</span><div><b>${t("r" + k)}</b><span>${t("r" + k + "D")}</span></div></button>`;
+    // Residents, building managers and hotels go straight to their own page (language is kept in localStorage).
+    // Tradespeople have no page yet, so they pick a trade and sign up here.
+    const ROLE = { Res: "resident", Man: "manager", Trade: "trade", Hotel: "hotel" };
+    const c = (k, ic) => { const inner = `<span class="ic">${svg(ic)}</span><div><b>${t("r" + k)}</b><span>${t("r" + k + "D")}</span></div>`; const page = PAGES[ROLE[k]];
+      return page ? `<a class="choice" href="${page}">${inner}</a>` : `<button class="choice" data-r="${k}" type="button">${inner}</button>`; };
     st.innerHTML = `<section class="step"><h2>${t("roleQ")}</h2><p class="lede">${t("roleLede")}</p><div class="choices">${c("Res", "res")}${c("Man", "man")}${c("Trade", "trade")}${c("Hotel", "hotel")}</div></section>`;
-    st.querySelectorAll("[data-r]").forEach((x) => (x.onclick = () => { S.role = { Res: "resident", Man: "manager", Trade: "trade", Hotel: "hotel" }[x.dataset.r]; go(S.role === "trade" ? "trade" : "form"); }));
+    st.querySelectorAll("[data-r]").forEach((x) => (x.onclick = () => { S.role = ROLE[x.dataset.r]; go(S.role === "trade" ? "trade" : "form"); }));
   } else if (S.step === "trade") {
     st.innerHTML = `<section class="step"><h2>${t("tradeQ")}</h2><p class="lede">${t("tradeLede")}</p>
       <div class="trades">${t("trades").map((x, i) => `<button class="trade" type="button" data-i="${i}" aria-pressed="${S.trade === x}">${esc(x)}</button>`).join("")}<button class="trade" type="button" data-i="other" aria-pressed="${S.trade === "other"}">${t("otherTrade")}</button></div>

@@ -15,7 +15,7 @@ Static site, no build step. Every page is one self-contained HTML file (styles a
 | `/demo/hotels-desktop.html`, `-phone.html` | Interactive hotel demo (made-up data) |
 | `/demo/home-phone.html` | Interactive Unbusyness Home phone app demo, including the property passport (made-up data) |
 | `/demo/trades-desktop.html`, `trades-phone.html` | Unbusyness Business demos for tradespeople (English only, made-up data). The old addresses `/unbusyness-demo.html` and `/unbusyness-mobile-demo.html` redirect here. |
-| `/media/` | Preview videos and poster images used on `/contractor/`. `unbusyness-preview.mp4` is the 30-second brand film (plumber under a sink, call, job, logo). `unbusyness-home-preview.mp4` is the 26-second Home film, also shown on `/home/`. The receptionist, crew and care plan videos still have to be copied over from the old site. |
+| `/media/` | Preview videos and poster images used on `/contractor/`. `unbusyness-preview.mp4` is the 30-second brand film (plumber under a sink, call, job, logo). `unbusyness-home-preview.mp4` is the 26-second Home film, also shown on `/home/`. `unbusyness-receptionist-preview.mp4`, `-crew-preview.mp4` and `-care-plan-preview.mp4` are the three 30-second feature films. |
 
 Every demo except the trades demos has a Slovenian file and an English `-en.html` file; a small bar in each demo links back to its waitlist and switches language.
 

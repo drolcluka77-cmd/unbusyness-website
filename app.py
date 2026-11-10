@@ -190,11 +190,11 @@ def _parse_signup(environ) -> dict:
     return cleaned
 
 
-def _build_message(data: dict, sender: str) -> EmailMessage:
+def _build_message(data: dict) -> EmailMessage:
     segment = data["segment"]
     message = EmailMessage()
     message["Subject"] = f"New Unbusyness waitlist signup — {SEGMENT_LABELS[segment]}"
-    message["From"] = sender
+    message["From"] = RECIPIENT
     message["To"] = RECIPIENT
     message["Reply-To"] = data["email"]
     lines = [
@@ -218,6 +218,7 @@ def _build_message(data: dict, sender: str) -> EmailMessage:
 
 def _smtp_login(server, username: str, password: str):
     """Use AUTH LOGIN explicitly; some servers reject PLAIN despite advertising both."""
+    server.ehlo_or_helo_if_needed()
     responses = iter((username, password))
 
     def answer(_challenge):
@@ -242,7 +243,7 @@ def _send_email(data: dict):
     if not 1 <= port <= 65535:
         raise MissingSmtpConfiguration
 
-    message = _build_message(data, username)
+    message = _build_message(data)
     context = ssl.create_default_context()
     if port == 465:
         with smtplib.SMTP_SSL(host, port, timeout=15, context=context) as server:
@@ -310,6 +311,17 @@ def application(environ, start_response):
             logging.warning("Waitlist SMTP delivery failed (%s)", type(exc).__name__)
             if isinstance(exc, smtplib.SMTPResponseException):
                 logging.warning("SMTP response code: %s", exc.smtp_code)
+            elif isinstance(exc, smtplib.SMTPRecipientsRefused):
+                codes = sorted({str(response[0]) for response in exc.recipients.values()})
+                logging.warning("SMTP recipient response codes: %s", ", ".join(codes))
+                details = []
+                for response in exc.recipients.values():
+                    detail = response[1]
+                    if isinstance(detail, bytes):
+                        detail = detail.decode("utf-8", "replace")
+                    detail = re.sub(r"(?i)[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}", "[address]", str(detail))
+                    details.append(detail[:180])
+                logging.warning("SMTP recipient rejection detail: %s", " | ".join(details)[:360])
             elif isinstance(exc, OSError):
                 logging.warning("SMTP network error code: %s", exc.errno)
             return _json_response(start_response, "502 Bad Gateway", {"error": "The sign-up email could not be sent."})

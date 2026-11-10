@@ -121,5 +121,61 @@ class WaitlistApiTests(unittest.TestCase):
         self.assertIs(params[3], True)
 
 
+
+class StaticFileTests(unittest.TestCase):
+    def get(self, path, range_header=None):
+        environ = {"PATH_INFO": path, "REQUEST_METHOD": "GET", "HTTP_HOST": "example.test"}
+        if range_header:
+            environ["HTTP_RANGE"] = range_header
+        result = {}
+
+        def start_response(status, headers):
+            result["status"] = status
+            result["headers"] = headers
+
+        result["body"] = b"".join(application(environ, start_response))
+        return result
+
+    @staticmethod
+    def header(response, name):
+        values = [value for key, value in response["headers"] if key.lower() == name.lower()]
+        return values
+
+    def test_video_byte_range_for_safari(self):
+        full = self.get("/media/unbusyness-preview.mp4")
+        self.assertEqual(full["status"], "200 OK")
+        self.assertEqual(self.header(full, "Accept-Ranges"), ["bytes"])
+        size = len(full["body"])
+
+        first = self.get("/media/unbusyness-preview.mp4", "bytes=0-1")
+        self.assertEqual(first["status"], "206 Partial Content")
+        self.assertEqual(first["body"], full["body"][:2])
+        self.assertEqual(self.header(first, "Content-Range"), [f"bytes 0-1/{size}"])
+
+        open_ended = self.get("/media/unbusyness-preview.mp4", "bytes=100-")
+        self.assertEqual(open_ended["body"], full["body"][100:])
+
+        suffix = self.get("/media/unbusyness-preview.mp4", "bytes=-10")
+        self.assertEqual(suffix["body"], full["body"][-10:])
+
+        too_far = self.get("/media/unbusyness-preview.mp4", f"bytes={size}-")
+        self.assertEqual(too_far["status"], "416 Range Not Satisfiable")
+
+    def test_one_cache_header_per_response(self):
+        video = self.get("/media/unbusyness-preview.mp4")
+        self.assertEqual(self.header(video, "Cache-Control"), ["public, max-age=86400"])
+        page = self.get("/contractor/")
+        self.assertEqual(page["status"], "200 OK")
+        self.assertEqual(self.header(page, "Cache-Control"), ["no-cache"])
+
+    def test_source_and_hidden_files_are_not_served(self):
+        for path in ("/app.py", "/waitlist_db.py", "/.replit", "/README.md", "/db/schema.sql", "/pyproject.toml", "/tests/test_waitlist_api.py", "/../etc/passwd"):
+            self.assertEqual(self.get(path)["status"], "404 Not Found", path)
+
+    def test_new_pages_are_served(self):
+        for path in ("/investors/", "/manager/", "/contractor/sl/"):
+            self.assertEqual(self.get(path)["status"], "200 OK", path)
+
+
 if __name__ == "__main__":
     unittest.main()

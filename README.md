@@ -1,6 +1,8 @@
 # unbusyness.com: marketing site and waitlists
 
-Static site, no build step. Every page is one self-contained HTML file (styles and scripts inline, fonts from Google Fonts).
+Every page is one self-contained HTML file (styles and scripts inline, fonts from Google Fonts), with no build step. A small Python app (`app.py`, run with Gunicorn on Replit) serves the pages and the waitlist endpoint `/api/waitlist`; see "Waitlist submissions" below and `replit.md`. Videos are served with byte ranges so they play in Safari on iPhone and Mac.
+
+Tests: `python -m unittest tests.test_waitlist_api`.
 
 ## Pages
 
@@ -9,13 +11,17 @@ Static site, no build step. Every page is one self-contained HTML file (styles a
 | `/` | Welcome page: greeting with the cortisol meter and an SL/EN switch in the header, then "who are you". Each choice opens its own page (resident → `/home/`, building manager → `/building-managers/`, tradesperson → `/contractor/`, hotel → `/hotels/`). |
 | `/building-managers/` | Waitlist for building managers (upravniki), SL/EN |
 | `/hotels/` | Waitlist for "Unbusyness for Hotels", SL/EN |
-| `/contractor/` | Waitlist for tradespeople (plumbers, HVAC, electricians, other trades): Unbusyness Business, 30-second videos, building managers and Home teasers, investor request, SL/EN. `/contractor/sl/` redirects to the Slovenian version. |
+| `/manager` | Redirects to `/building-managers/` (the address used on the old unbusyness.com). |
+| `/contractor/` | Waitlist for tradespeople (plumbers, HVAC, electricians, other trades): hero sign-up, why + 30-second film, how it works, six features (three with short films), final sign-up. SL/EN. `/contractor/sl/` redirects to the Slovenian version. |
+| `/investors/` | Request for the investor presentation (email, phone). Linked from the footer of the waitlist pages. |
 | `/home/` | Waitlist for Unbusyness Home (residents and homeowners): digital passport, reminders, reliable tradespeople, property passport, recommend-to-your-manager, SL/EN |
 | `/demo/building-managers-desktop.html`, `-phone.html` | Interactive demo for building managers (made-up data) |
 | `/demo/hotels-desktop.html`, `-phone.html` | Interactive hotel demo (made-up data) |
 | `/demo/home-phone.html` | Interactive Unbusyness Home phone app demo, including the property passport (made-up data) |
 | `/demo/trades-desktop.html`, `trades-phone.html` | Unbusyness Business demos for tradespeople (English only, made-up data). The old addresses `/unbusyness-demo.html` and `/unbusyness-mobile-demo.html` redirect here. |
-| `/media/` | Preview videos and poster images used on `/contractor/`. `unbusyness-preview.mp4` is the 30-second brand film (plumber under a sink, call, job, logo). The other four (receptionist, crew, care plan, Home) still have to be copied over from the old site. |
+| `/media/` | Preview videos and poster images used on `/contractor/`. `unbusyness-preview.mp4` is the 30-second brand film (plumber under a sink, call, job, logo). `unbusyness-home-preview.mp4` is the 26-second Home film, also shown on `/home/`. `unbusyness-receptionist-preview.mp4`, `-crew-preview.mp4` and `-care-plan-preview.mp4` are the three 30-second feature films. |
+
+The four waitlist pages (`/contractor/`, `/building-managers/`, `/hotels/`, `/home/`) share a row of audience tabs under the header (For trades · For building managers · For hotels · For your home) so visitors can switch; on phones it becomes a 2×2 grid.
 
 Every demo except the trades demos has a Slovenian file and an English `-en.html` file; a small bar in each demo links back to its waitlist and switches language.
 

@@ -9,6 +9,7 @@ Static site, no build step. Every page is one self-contained HTML file (styles a
 | `/` | Welcome page: greeting with the cortisol meter and an SL/EN switch in the header, then "who are you". Each choice opens its own page (resident → `/home/`, building manager → `/building-managers/`, tradesperson → `/contractor/`, hotel → `/hotels/`). |
 | `/building-managers/` | Waitlist for building managers (upravniki), SL/EN |
 | `/hotels/` | Waitlist for "Unbusyness for Hotels", SL/EN |
+| `/manager` | Redirects to `/building-managers/` (the address used on the old unbusyness.com). |
 | `/contractor/` | Waitlist for tradespeople (plumbers, HVAC, electricians, other trades): Unbusyness Business, 30-second videos, building managers and Home teasers, investor request, SL/EN. `/contractor/sl/` redirects to the Slovenian version. |
 | `/home/` | Waitlist for Unbusyness Home (residents and homeowners): digital passport, reminders, reliable tradespeople, property passport, recommend-to-your-manager, SL/EN |
 | `/demo/building-managers-desktop.html`, `-phone.html` | Interactive demo for building managers (made-up data) |

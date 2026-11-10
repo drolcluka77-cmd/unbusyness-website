@@ -216,6 +216,16 @@ def _build_message(data: dict, sender: str) -> EmailMessage:
     return message
 
 
+def _smtp_login(server, username: str, password: str):
+    """Use AUTH LOGIN explicitly; some servers reject PLAIN despite advertising both."""
+    responses = iter((username, password))
+
+    def answer(_challenge):
+        return next(responses)
+
+    server.auth("LOGIN", answer, initial_response_ok=False)
+
+
 def _send_email(data: dict):
     host = os.environ.get("SMTP_HOST", "").strip()
     port_value = os.environ.get("SMTP_PORT", "").strip()
@@ -236,14 +246,14 @@ def _send_email(data: dict):
     context = ssl.create_default_context()
     if port == 465:
         with smtplib.SMTP_SSL(host, port, timeout=15, context=context) as server:
-            server.login(username, password)
+            _smtp_login(server, username, password)
             server.send_message(message)
     else:
         with smtplib.SMTP(host, port, timeout=15) as server:
             server.ehlo()
             server.starttls(context=context)
             server.ehlo()
-            server.login(username, password)
+            _smtp_login(server, username, password)
             server.send_message(message)
 
 

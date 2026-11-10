@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import logging
 import mimetypes
 import os
 import re
@@ -295,7 +296,12 @@ def application(environ, start_response):
             _send_email(data)
         except MissingSmtpConfiguration:
             return _json_response(start_response, "503 Service Unavailable", {"error": "Waitlist email is not configured."})
-        except (smtplib.SMTPException, OSError, ssl.SSLError):
+        except (smtplib.SMTPException, OSError, ssl.SSLError) as exc:
+            logging.warning("Waitlist SMTP delivery failed (%s)", type(exc).__name__)
+            if isinstance(exc, smtplib.SMTPResponseException):
+                logging.warning("SMTP response code: %s", exc.smtp_code)
+            elif isinstance(exc, OSError):
+                logging.warning("SMTP network error code: %s", exc.errno)
             return _json_response(start_response, "502 Bad Gateway", {"error": "The sign-up email could not be sent."})
         return _json_response(start_response, "200 OK", {"ok": True})
 

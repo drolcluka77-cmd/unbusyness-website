@@ -1,0 +1,685 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Unbusyness Business</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<style>
+/* Layout: desktop workspace — sidebar nav, sticky top bar, content area with cards; documents open as A4 sheets; same tokens as the phone demo. */
+:root{
+  --green:#1F4D45; --green-dark:#173D37; --green-soft:#E6EEEB; --on-green:#CFE0DA;
+  --apricot:#E8915F; --apricot-light:#F2A57A; --apricot-ink:#A84E22; --apricot-soft:#FBE8DC;
+  --slate:#4F5F80; --slate-soft:#E9ECF3;
+  --sand:#F4EFE6; --linen:#FBFAF7; --white:#FFFFFF; --side:#FDFCFA;
+  --ink:#14201E; --muted:#56615F; --line:#E7E3DA; --line2:#EFEBE3;
+  --red:#B23A32; --red-soft:#FBEAE8; --ok:#2F7A55; --ok-soft:#E4F1E8;
+  --font:'Plus Jakarta Sans','Segoe UI',system-ui,-apple-system,sans-serif;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--linen);color:var(--ink);font-family:var(--font);font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none;padding:0}
+input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--apricot);outline-offset:2px}
+@media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
+
+.app{display:grid;grid-template-columns:248px minmax(0,1fr);min-height:100%}
+.side{background:var(--side);border-right:1px solid var(--line);padding:22px 14px;display:flex;flex-direction:column;gap:20px;position:sticky;top:0;height:100vh;overflow-y:auto}
+.brand{display:flex;align-items:center;gap:10px;padding:0 8px;font-size:20px;font-weight:700;letter-spacing:-.6px}
+.ws{margin:0 4px;background:var(--sand);border-radius:14px;padding:11px 12px;display:flex;gap:10px;align-items:center}
+.ws .av{width:32px;height:32px;border-radius:50%;background:var(--green-soft);color:var(--green);display:grid;place-items:center;font-weight:700;font-size:12px}
+.ws small{display:block;color:var(--muted);font-size:11px}
+.navlabel{font-size:10px;font-weight:700;letter-spacing:1.6px;color:#8A938F;padding:0 12px;margin-bottom:6px}
+.nav{display:flex;flex-direction:column;gap:2px}
+.nav button{display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:12px;color:var(--muted);font-weight:600;text-align:left;width:100%}
+.nav button:hover{background:var(--sand)}
+.nav button.on{background:var(--green-soft);color:var(--green);font-weight:700}
+.nav .cnt{margin-left:auto;background:var(--white);border:1px solid var(--line);border-radius:99px;padding:0 7px;font-size:11px;color:var(--muted)}
+.nav .cnt.hot{background:var(--red);border-color:var(--red);color:#fff}
+.sidecard{margin-top:auto;background:var(--sand);border-radius:16px;padding:14px;font-size:12px;color:var(--muted)}
+.sidecard b{display:block;color:var(--ink);font-size:13px;margin-bottom:4px}
+
+.main{min-width:0}
+.top{height:66px;position:sticky;top:0;z-index:10;background:rgba(251,250,247,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 32px;gap:16px}
+.crumb{color:var(--muted);font-size:13px}
+.crumb b{color:var(--ink)}
+.topr{display:flex;align-items:center;gap:10px}
+.iconbtn{width:38px;height:38px;border-radius:50%;background:var(--white);border:1px solid var(--line);display:grid;place-items:center;color:var(--muted)}
+.user{display:flex;align-items:center;gap:9px;padding-left:10px;border-left:1px solid var(--line);font-size:12px}
+.user .av{width:36px;height:36px;border-radius:50%;background:var(--apricot-soft);color:var(--apricot-ink);display:grid;place-items:center;font-weight:700}
+.offpill{display:flex;align-items:center;gap:8px;background:var(--slate);color:#fff;border-radius:99px;padding:6px 12px;font-size:12px;font-weight:700}
+.content{max-width:1360px;margin:0 auto;padding:28px 32px 120px}
+
+.head{display:flex;justify-content:space-between;align-items:flex-end;gap:18px;margin-bottom:22px;flex-wrap:wrap}
+.eyebrow{font-size:11px;font-weight:700;letter-spacing:1.8px;text-transform:uppercase;color:var(--green);margin-bottom:6px}
+.head h1{margin:0;font-size:30px;font-weight:600;letter-spacing:-1.1px}
+.head p{margin:6px 0 0;color:var(--muted);font-size:14px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:40px;padding:0 16px;border-radius:12px;font-weight:700;font-size:13px;white-space:nowrap}
+.btn.primary{background:var(--green);color:var(--linen)}
+.btn.primary:hover{background:var(--green-dark)}
+.btn.apricot{background:var(--apricot);color:var(--ink)}
+.btn.soft{background:var(--green-soft);color:var(--green)}
+.btn.line{background:var(--white);border:1px solid var(--line)}
+.btn.line:hover{background:var(--sand)}
+.btn.sm{min-height:32px;padding:0 12px;font-size:12px;border-radius:10px}
+.btns{display:flex;gap:8px;flex-wrap:wrap}
+
+.grid{display:grid;gap:16px}
+.g4{grid-template-columns:repeat(4,minmax(0,1fr))}
+.g3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.g2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.gmain{grid-template-columns:minmax(0,1.65fr) minmax(300px,1fr);align-items:start}
+.card{background:var(--white);border:1px solid var(--line);border-radius:20px;min-width:0}
+.ch{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:16px 20px;border-bottom:1px solid var(--line2)}
+.ch h2{margin:0;font-size:15px;font-weight:700;letter-spacing:-.2px}
+.ch p{margin:2px 0 0;color:var(--muted);font-size:12px}
+.cb{padding:16px 20px}
+.stat{padding:16px 18px;display:flex;flex-direction:column;gap:4px}
+.stat .lbl{display:flex;justify-content:space-between;align-items:center;color:var(--muted);font-size:12px;font-weight:600}
+.stat .ic{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:var(--green-soft);color:var(--green)}
+.stat b{font-size:27px;font-weight:700;letter-spacing:-.8px;font-variant-numeric:tabular-nums}
+.stat small{color:var(--muted);font-size:12px}
+.pill{display:inline-flex;align-items:center;gap:5px;border-radius:99px;padding:3px 10px;font-size:11px;font-weight:700;white-space:nowrap}
+.pill.green{background:var(--green-soft);color:var(--green)} .pill.red{background:var(--red-soft);color:var(--red)} .pill.apricot{background:var(--apricot-soft);color:var(--apricot-ink)} .pill.ok{background:var(--ok-soft);color:var(--ok)} .pill.slate{background:var(--slate-soft);color:var(--slate)} .pill.ink{background:var(--ink);color:var(--linen)}
+.muted{color:var(--muted)}
+.row{display:flex;align-items:center;gap:12px}
+.ic{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;flex-shrink:0}
+.ic.green{background:var(--green-soft);color:var(--green)} .ic.red{background:var(--red-soft);color:var(--red)} .ic.apricot{background:var(--apricot-soft);color:var(--apricot-ink)} .ic.slate{background:var(--slate-soft);color:var(--slate)} .ic.sand{background:var(--sand);color:var(--green)}
+.explain{display:flex;gap:10px;align-items:flex-start;background:var(--apricot-soft);border-radius:14px;padding:12px 14px;font-size:13px;color:#5A3A26;line-height:1.5}
+.explain b{color:var(--apricot-ink)}
+.explain .ei{width:22px;height:22px;border-radius:50%;background:var(--white);color:var(--apricot-ink);display:grid;place-items:center;flex-shrink:0;font-weight:800;font-size:12px}
+
+/* tables */
+.tbl{width:100%;border-collapse:collapse;font-size:13px}
+.tbl th{text-align:left;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted);padding:10px 14px;border-bottom:1px solid var(--line)}
+.tbl td{padding:12px 14px;border-bottom:1px solid var(--line2);vertical-align:middle}
+.tbl tr:last-child td{border-bottom:0}
+.tbl tr.click{cursor:pointer}
+.tbl tr.click:hover td{background:var(--linen)}
+.tbl .num{text-align:right;font-variant-numeric:tabular-nums}
+.tscroll{overflow-x:auto}
+
+/* task node tree */
+.root{background:var(--green);color:var(--linen);border-radius:16px;padding:14px 16px;display:flex;align-items:center;gap:12px}
+.root .ri{width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.14);color:var(--apricot-light);display:grid;place-items:center}
+.root small{display:block;font-size:10px;letter-spacing:1.4px;color:var(--on-green);font-weight:700}
+.stem{width:1px;height:18px;background:#CFC8BA;margin:0 auto}
+.branches{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.branch{border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.bh{display:flex;align-items:center;gap:10px;padding:12px;background:var(--side)}
+.bh strong{display:block;font-size:13px}.bh small{display:block;color:var(--muted);font-size:11px}
+.task{display:flex;gap:9px;align-items:flex-start;padding:10px 12px;border-top:1px solid var(--line2);width:100%;text-align:left}
+.task:hover{background:var(--linen)}
+.dot{width:8px;height:8px;border-radius:50%;margin-top:6px;flex-shrink:0;background:var(--green)}
+.dot.red{background:var(--red)}.dot.apricot{background:var(--apricot)}
+.task b{display:block;font-size:12.5px;font-weight:700}.task span{display:block;font-size:11.5px;color:var(--muted)}
+
+/* briefing */
+.brief{background:var(--green);color:var(--linen);border-radius:20px;padding:18px}
+.brief .play{width:48px;height:48px;border-radius:50%;background:var(--apricot);color:var(--ink);display:grid;place-items:center;flex-shrink:0}
+.brief p{margin:6px 0 0;color:rgba(251,250,247,.45);font-size:13.5px;transition:color .3s}
+.brief p.on{color:var(--linen)} .brief p.done{color:var(--on-green)}
+.act{display:flex;gap:10px;padding:12px 0;border-bottom:1px solid var(--line2)}
+.act:last-child{border-bottom:0}
+.act b{display:block;font-size:12.5px}.act span{display:block;font-size:12px;color:var(--muted)}.act time{font-size:11px;color:#8A938F}
+
+/* calls */
+.split{display:grid;grid-template-columns:minmax(300px,.9fr) minmax(0,1.4fr);gap:16px;align-items:start}
+.citem{display:flex;gap:12px;align-items:center;padding:14px 18px;border-bottom:1px solid var(--line2);width:100%;text-align:left}
+.citem:hover{background:var(--linen)}
+.citem.sel{background:var(--green-soft)}
+.citem b{display:block;font-size:13.5px}.citem span{display:block;font-size:12px;color:var(--muted)}
+.summary{background:var(--sand);border-radius:16px;padding:14px 16px;font-size:14px}
+.fields{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.fld{border:1px solid var(--line);border-radius:14px;padding:10px 12px}
+.fld small{display:block;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted)}
+.fld b{font-size:13.5px}
+.modes{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.mode{border:1.5px solid var(--line);border-radius:16px;padding:14px;text-align:left;background:var(--white)}
+.mode.on{border-color:var(--green);background:var(--green-soft)}
+.mode b{display:block;font-size:14px}.mode span{font-size:12px;color:var(--muted)}
+
+/* week board */
+.weekhead{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px;flex-wrap:wrap}
+.board{display:grid;grid-template-columns:repeat(7,minmax(150px,1fr));gap:10px;min-width:1080px}
+.col{background:var(--side);border:1px solid var(--line);border-radius:16px;padding:10px;display:flex;flex-direction:column;gap:8px;min-height:380px}
+.col.today{border-color:var(--green);box-shadow:inset 0 0 0 1px var(--green)}
+.col .dh{display:flex;justify-content:space-between;align-items:baseline;padding:2px 4px 6px}
+.col .dh b{font-size:13px}.col .dh span{font-size:11px;color:var(--muted)}
+.jc{background:var(--white);border:1px solid var(--line);border-left:4px solid var(--green);border-radius:12px;padding:8px 10px;text-align:left;width:100%;display:flex;flex-direction:column;gap:2px}
+.jc:hover{box-shadow:0 4px 14px rgba(20,32,30,.08)}
+.jc b{font-size:12.5px;line-height:1.3}.jc span{font-size:11px;color:var(--muted)}
+.jc .t{font-size:11px;font-weight:800;color:var(--ink)}
+.jc.done{opacity:.62}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--muted)}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+.steps{display:flex;gap:5px}
+.steps i{flex:1;height:6px;border-radius:6px;background:var(--line)}
+.steps i.on{background:var(--green)}
+
+/* drawer + modal */
+.scrim{position:fixed;inset:0;background:rgba(20,32,30,.38);z-index:40;display:flex;justify-content:flex-end;animation:fade .15s ease}
+.scrim.center{justify-content:center;align-items:flex-start;padding:32px 16px;overflow-y:auto}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+.drawer{width:min(480px,100%);height:100%;background:var(--linen);overflow-y:auto;padding:22px 24px 40px;display:flex;flex-direction:column;gap:14px;animation:slide .2s ease}
+@keyframes slide{from{transform:translateX(30px)}to{transform:none}}
+.modal{width:min(880px,100%);background:var(--linen);border-radius:24px;padding:22px 24px 26px;display:flex;flex-direction:column;gap:14px;animation:slide .2s ease}
+.mh{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.mh h2{margin:0;font-size:20px;letter-spacing:-.5px}
+.x{width:38px;height:38px;border-radius:50%;background:var(--white);border:1px solid var(--line);display:grid;place-items:center}
+
+/* translator */
+.langbar{display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--green);color:var(--linen);border-radius:16px;padding:12px 16px}
+.langbar small{display:block;color:var(--on-green);font-size:11px;font-weight:700}
+.langbar b{font-size:15px}
+.convo{display:flex;flex-direction:column;gap:8px}
+.bub{border-radius:16px;padding:10px 14px;max-width:80%;display:flex;flex-direction:column;gap:2px}
+.bub.w{align-self:flex-end;background:var(--green-soft)} .bub.c{align-self:flex-start;background:var(--white);border:1px solid var(--line)}
+.bub .l{font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted)}
+.bub .o{font-size:13px;color:var(--muted)} .bub .big{font-size:17px;font-weight:700} .bub .gl{font-size:12px;color:#7A8481;font-style:italic}
+.phr{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.phr button{border:1px solid var(--line);background:var(--white);border-radius:12px;padding:10px 12px;text-align:left;font-weight:600;font-size:12.5px;display:flex;gap:8px;align-items:flex-start}
+.phr button:hover{background:var(--sand)}
+
+/* documents: A4 sheet */
+.tabs{display:flex;gap:4px;background:var(--sand);border-radius:12px;padding:4px;width:max-content;max-width:100%;overflow-x:auto}
+.tabs button{padding:8px 14px;border-radius:9px;font-weight:700;font-size:13px;color:var(--muted);white-space:nowrap}
+.tabs button.on{background:var(--white);color:var(--green)}
+.docwrap{display:grid;grid-template-columns:minmax(0,1fr) 280px;gap:18px;align-items:start}
+.sheet{background:#fff;border:1px solid var(--line);border-radius:6px;box-shadow:0 10px 40px rgba(20,32,30,.10);padding:44px 48px;color:#1b2422;font-size:12.5px;aspect-ratio:210/297;max-width:100%;display:flex;flex-direction:column}
+.sheet .sh{display:flex;justify-content:space-between;gap:24px;align-items:flex-start}
+.sheet .co b{font-size:15px}
+.sheet .co div,.sheet .meta div{color:#4b5653;font-size:11.5px;line-height:1.55}
+.sheet h3{margin:28px 0 4px;font-size:24px;letter-spacing:-.6px;font-weight:700}
+.sheet .meta{display:grid;grid-template-columns:auto auto;gap:2px 16px;font-size:11.5px;text-align:right}
+.sheet .meta span{color:#7b8582}
+.sheet .bill{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin:18px 0 22px}
+.sheet .bill small{display:block;font-size:9.5px;font-weight:700;letter-spacing:1.2px;color:#7b8582;text-transform:uppercase;margin-bottom:4px}
+.sheet table{width:100%;border-collapse:collapse;font-size:11.5px}
+.sheet th{background:var(--sand);text-align:left;font-size:9.5px;letter-spacing:1px;text-transform:uppercase;padding:8px 10px;color:#4b5653}
+.sheet td{padding:9px 10px;border-bottom:1px solid #eee9df}
+.sheet .r{text-align:right;font-variant-numeric:tabular-nums}
+.sheet .tot{margin-left:auto;width:270px;margin-top:14px;font-size:12px}
+.sheet .tot div{display:flex;justify-content:space-between;padding:5px 10px}
+.sheet .tot .grand{background:var(--green);color:#fff;border-radius:6px;font-weight:800;font-size:14px;padding:9px 10px;margin-top:4px}
+.sheet .pay{margin-top:auto;display:grid;grid-template-columns:1fr 92px;gap:16px;border-top:1px solid #eee9df;padding-top:14px;font-size:11px;color:#4b5653}
+.qr{width:92px;height:92px;border-radius:6px;background:conic-gradient(#1b2422 25%,#fff 0 50%,#1b2422 0 75%,#fff 0) 0 0/16px 16px;border:6px solid #fff;outline:1px solid #ddd}
+.stamp{display:inline-block;border:2px solid var(--ok);color:var(--ok);border-radius:6px;padding:2px 10px;font-weight:800;letter-spacing:2px;transform:rotate(-6deg);font-size:14px}
+.timeline{display:flex;flex-direction:column;gap:0}
+.tl{display:flex;gap:10px;align-items:flex-start;padding:8px 0;position:relative}
+.tl i{width:12px;height:12px;border-radius:50%;background:var(--line);margin-top:4px;flex-shrink:0}
+.tl.on i{background:var(--green)}
+.tl b{display:block;font-size:12.5px}.tl span{font-size:11.5px;color:var(--muted)}
+.integ{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.integ .card{padding:14px;display:flex;flex-direction:column;gap:8px}
+.logo{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;font-weight:800;color:#fff;font-size:14px}
+.bars .br{display:grid;grid-template-columns:150px 1fr 70px;gap:10px;align-items:center;padding:6px 0;font-size:13px}
+.bars .bar{height:12px;border-radius:6px;background:var(--sand);overflow:hidden}
+.bars .bar i{display:block;height:100%;border-radius:6px}
+.bars b{text-align:right;font-variant-numeric:tabular-nums}
+.switch{width:50px;height:30px;border-radius:15px;background:#CFC8BA;position:relative;flex-shrink:0;transition:background .2s}
+.switch:after{content:"";position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:#fff;transition:transform .2s}
+.switch[aria-checked="true"]{background:var(--green)}
+.switch[aria-checked="true"]:after{transform:translateX(20px)}
+
+/* voice */
+.fab{position:fixed;right:28px;bottom:28px;z-index:30;width:64px;height:64px;border-radius:50%;background:var(--green);color:var(--linen);display:grid;place-items:center;box-shadow:0 12px 30px rgba(31,77,69,.38)}
+.fab:after{content:"";position:absolute;inset:-7px;border-radius:50%;border:2px solid var(--apricot-light);animation:ring 2.6s ease-out infinite;opacity:0}
+@keyframes ring{0%{transform:scale(.9);opacity:.7}100%{transform:scale(1.15);opacity:0}}
+.voice{width:min(560px,100%);background:var(--green);color:var(--linen);border-radius:24px;padding:22px;display:flex;flex-direction:column;gap:12px;margin-top:60px}
+.orb{width:110px;height:110px;border-radius:50%;margin:8px auto;background:radial-gradient(circle at 50% 45%,var(--apricot-light),var(--apricot) 60%);display:grid;place-items:center;color:var(--ink);box-shadow:0 0 0 14px rgba(242,165,122,.16)}
+.orb.live{animation:pulse 1.4s ease-in-out infinite}
+@keyframes pulse{50%{box-shadow:0 0 0 24px rgba(242,165,122,.2)}}
+.said{font-size:19px;font-weight:600;text-align:center;min-height:56px}
+.ex button{display:block;width:100%;text-align:left;background:rgba(255,255,255,.1);border-radius:12px;padding:10px 14px;margin-top:6px;font-weight:600}
+.plan{background:var(--linen);color:var(--ink);border-radius:16px;padding:12px 16px}
+.plan .pr{display:flex;justify-content:space-between;gap:12px;padding:6px 0;border-bottom:1px solid var(--line2);font-size:13.5px}
+.plan .pr:last-of-type{border-bottom:0}
+
+.who{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.who button{border:1.5px solid var(--line);background:var(--white);border-radius:12px;padding:8px 12px;text-align:left;display:flex;flex-direction:column;color:var(--ink)}
+.who button b{font-size:13.5px}.who button span{font-size:11.5px;color:var(--muted)}
+.who button.on{border-color:var(--green);background:var(--green-soft);box-shadow:inset 0 0 0 1px var(--green)}
+.plan .who{grid-template-columns:repeat(4,1fr);margin-top:6px}
+.thumbs{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.thumb{position:relative;aspect-ratio:1;border-radius:12px;overflow:hidden;display:grid;place-items:center;border:0;width:100%}
+.thumb.job{background:linear-gradient(135deg,#C9D9D3,#8FB0A6);color:#fff}.thumb.inv{background:#fff;border:1px solid var(--line);color:var(--apricot-ink)}
+.thumb img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.thumb .lbl{position:absolute;left:5px;right:5px;bottom:5px;border-radius:6px;font-size:10px;font-weight:800;text-align:center;padding:1px 4px;background:var(--green);color:#fff}
+.thumb.inv .lbl{background:var(--apricot);color:var(--ink)}
+.thumb.flag{outline:3px solid var(--red);outline-offset:-3px}
+.thumb .warn{position:absolute;top:5px;right:5px;width:20px;height:20px;border-radius:50%;background:var(--red);color:#fff;display:grid;place-items:center;font-weight:800;font-size:12px}
+.lblpick{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.lblpick button{border:2px solid var(--line);background:var(--white);border-radius:16px;padding:14px;text-align:left;display:flex;flex-direction:column;gap:4px;color:var(--ink)}
+.lblpick button b{font-size:15px;display:flex;gap:8px;align-items:center}.lblpick button span{font-size:12.5px;color:var(--muted)}
+.lblpick button.on{border-color:var(--green);background:var(--green-soft)}
+.btn.off{opacity:.4;pointer-events:none}
+.flagbox{display:flex;gap:10px;align-items:flex-start;background:var(--red-soft);color:#6d2420;border-radius:14px;padding:12px 14px;font-size:13px;line-height:1.5}
+.flagbox .ei{width:22px;height:22px;border-radius:50%;background:var(--red);color:#fff;display:grid;place-items:center;flex-shrink:0;font-weight:800;font-size:12px}
+.flagbox b{color:var(--red)}
+.okbox{display:flex;gap:10px;align-items:flex-start;background:var(--ok-soft);color:#1f4a35;border-radius:14px;padding:12px 14px;font-size:13px}
+.receipt{background:#fff;border:1px solid var(--line);border-radius:8px;padding:18px 20px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:11.5px;line-height:1.6;box-shadow:0 8px 24px rgba(20,32,30,.10);transform:rotate(-1.2deg);color:#28302e}
+.receipt .rr{display:flex;justify-content:space-between;gap:10px}
+.receipt hr{border:0;border-top:1px dashed #bbb;margin:8px 0}
+.receipt.blur{filter:blur(1.1px)}
+.wrongpic{aspect-ratio:4/3;border-radius:12px;background:radial-gradient(circle at 40% 45%,#7a8f88 0 18%,#5c716a 19% 24%,transparent 25%),linear-gradient(135deg,#9DB8AF,#4E6E64);display:grid;place-items:end start;color:#fff;padding:12px;font-size:12px;font-weight:700}
+.toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%);background:var(--ink);color:var(--linen);border-radius:14px;padding:12px 16px;font-weight:600;font-size:13px;z-index:60;display:flex;gap:8px;align-items:center;max-width:min(560px,calc(100% - 32px))}
+
+@media (max-width:1100px){.g4{grid-template-columns:repeat(2,minmax(0,1fr))}.gmain,.split,.docwrap{grid-template-columns:1fr}.integ{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:760px){.app{grid-template-columns:1fr}.side{position:static;height:auto;flex-direction:row;flex-wrap:wrap;gap:8px;padding:12px 16px}.side .ws,.side .navlabel,.sidecard{display:none}.nav{flex-direction:row;flex-wrap:wrap}.nav button{width:auto;padding:8px 10px}.top{padding:0 16px}.content{padding:20px 16px 110px}.g3,.g2,.branches,.fields,.modes,.phr,.integ{grid-template-columns:1fr}.sheet{padding:24px;aspect-ratio:auto}.user span{display:none}}
+</style>
+
+<div class="app">
+  <aside class="side">
+    <div class="brand"><svg width="34" height="34" viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="24" fill="#1F4D45"/><path d="M14.5 19 V25.5 a9.5 9.5 0 0 0 19 0 V19" fill="none" stroke="#FBFAF7" stroke-width="4" stroke-linecap="round"/><circle cx="24" cy="15.5" r="3.4" fill="#F2A57A"/></svg>unbusyness</div>
+    <div class="ws"><span class="av">DP</span><div><b style="font-size:12.5px">Demo Plumbing Co.</b><small>Unbusyness Business</small></div></div>
+    <div><div class="navlabel">WORKSPACE</div><nav class="nav" id="nav1"></nav></div>
+    <div><div class="navlabel">BUSINESS</div><nav class="nav" id="nav2"></nav></div>
+    <div class="sidecard"><b>Interactive demo</b>Example data. Tap the green mic for voice commands. Sound uses your device's voices.</div>
+  </aside>
+  <div class="main">
+    <header class="top"><div class="crumb" id="crumb"></div><div class="topr" id="topr"></div></header>
+    <main class="content" id="content"></main>
+  </div>
+</div>
+<button class="fab" id="fab" aria-label="Voice command"></button>
+<div id="layer"></div>
+<div id="toastHost"></div>
+
+<script>
+/* ---------- helpers ---------- */
+const I={
+ home:'<path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/>',tree:'<path d="M12 3v5M6 13v-2h12v2M6 13v3M18 13v3"/><circle cx="12" cy="8" r="2"/><circle cx="6" cy="18" r="2"/><circle cx="18" cy="18" r="2"/>',
+ phone:'<path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"/>',cal:'<rect x="3.5" y="5" width="17" height="15" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/>',
+ user:'<circle cx="12" cy="8" r="3.5"/><path d="M5 20a7 7 0 0 1 14 0"/>',doc:'<path d="M7 3h7l5 5v13H7z"/><path d="M14 3v5h5M10 13h6M10 17h4"/>',
+ euro:'<path d="M17 6.5A7 7 0 1 0 17 17.5M4 10h10M4 14h10"/>',team:'<circle cx="9" cy="8" r="3.2"/><path d="M3 19a6 6 0 0 1 12 0"/><circle cx="17" cy="9" r="2.5"/><path d="M15.5 14.2A5 5 0 0 1 21 19"/>',
+ chart:'<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>',gear:'<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/>',
+ mic:'<rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/>',spark:'<path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/>',
+ check:'<path d="M5 12l4 4 10-10"/>',x:'<path d="M6 6l12 12M18 6L6 18"/>',play:'<path d="M7 4l13 8-13 8z"/>',pause:'<path d="M8 5v14M16 5v14"/>',
+ send:'<path d="M4 12l16-8-6 16-3-7z"/>',dl:'<path d="M12 4v11M7 10l5 5 5-5M5 20h14"/>',copy:'<rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3"/>',
+ edit:'<path d="M4 20h4L19 9l-4-4L4 16z"/>',plus:'<path d="M12 5v14M5 12h14"/>',search:'<circle cx="11" cy="11" r="6.5"/><path d="M16 16l4 4"/>',bell:'<path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15z"/><path d="M10 20a2 2 0 0 0 4 0"/>',
+ lang:'<path d="M3 5h10M8 3v2M5 5c.5 3.5 3 6.5 7 8M11 5c-.8 3.6-3.4 6.6-7 8"/><path d="M13 21l4-9 4 9M14.6 17.5h4.8"/>',speaker:'<path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M16 9a4 4 0 0 1 0 6M18.5 6.5a7.5 7.5 0 0 1 0 11"/>',
+ truck:'<path d="M3 6h11v10H3zM14 10h4l3 3v3h-7"/><circle cx="7" cy="18" r="2"/><circle cx="17" cy="18" r="2"/>',repeat:'<path d="M17 2l4 4-4 4"/><path d="M3 11V9a3 3 0 0 1 3-3h15M7 22l-4-4 4-4"/><path d="M21 13v2a3 3 0 0 1-3 3H3"/>',
+ moon:'<path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/>',alert:'<path d="M12 3l9 16H3z"/><path d="M12 10v4M12 17v.5"/>',clock:'<circle cx="12" cy="12" r="8.5"/><path d="M12 7v5l3 2"/>',
+ receipt:'<path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9 8h6M9 12h6"/>',link:'<path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/>',
+ cam:'<path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/>',list:'<path d="M9 6h11M9 12h11M9 18h11"/><path d="M4 6l1 1 2-2M4 12l1 1 2-2M4 18l1 1 2-2"/>',swap:'<path d="M7 4L3 8l4 4M3 8h14M17 20l4-4-4-4M21 16H7"/>'
+};
+const svg=(n,s=18,w=2)=>`<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${I[n]}</svg>`;
+const esc=t=>String(t).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+const eur=n=>'€'+Number(n).toLocaleString('en-US',{minimumFractionDigits:0,maximumFractionDigits:0});
+const eur2=n=>'€'+Number(n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+const explain=t=>`<div class="explain"><span class="ei">i</span><div>${t}</div></div>`;
+function toast(m){const h=document.getElementById('toastHost');h.innerHTML=`<div class="toast" role="status">${svg('check',16)}<span>${esc(m)}</span></div>`;clearTimeout(window._t);window._t=setTimeout(()=>h.innerHTML='',2800)}
+
+/* ---------- speech (device voices) ---------- */
+const TTS=('speechSynthesis' in window)?window.speechSynthesis:null; let VOICES=[];
+function loadV(){try{VOICES=TTS?TTS.getVoices():[]}catch(e){VOICES=[]}} if(TTS){loadV();try{TTS.addEventListener('voiceschanged',loadV)}catch(e){}}
+const pickV=l=>VOICES.find(v=>v.lang&&v.lang.toLowerCase()===l.toLowerCase())||VOICES.find(v=>v.lang&&v.lang.toLowerCase().startsWith(l.slice(0,2)))||null;
+function hush(){try{TTS&&TTS.cancel()}catch(e){}}
+function speak(text,lang){if(!TTS){toast('This browser cannot play speech.');return}hush();if(!VOICES.length)loadV();const v=pickV(lang);
+ if(!v&&VOICES.length&&!lang.startsWith('en')){toast('No voice for this language on this device. Showing text only.');return}
+ const u=new SpeechSynthesisUtterance(text);u.lang=lang;if(v)u.voice=v;TTS.speak(u)}
+
+/* ---------- business + example data (same as the phone demo) ---------- */
+const CO={name:'Demo Plumbing Co. d.o.o.',addr:'Celovška cesta 100, 1000 Ljubljana, Slovenia',vat:'SI 12345678 (example)',reg:'Reg. no. 1234567000 (example)',iban:'SI56 1234 5678 9012 345 (example)',bank:'Example Bank d.d.',email:'office@demoplumbing.example',phone:'+386 1 234 56 78'};
+const CREW={
+ carlos:{name:'Carlos',full:'Carlos Méndez',role:'Plumber',lang:'Spanish',native:'Español',since:'8 months',color:'#1F4D45',demo:true},
+ arjun:{name:'Arjun',full:'Arjun Sharma',role:'Plumber',lang:'Hindi',native:'हिन्दी',since:'4 months',color:'#E8915F'},
+ wei:{name:'Wei',full:'Wei Zhang',role:'Electrician',lang:'Chinese',native:'中文',since:'5 months',color:'#4F5F80'}
+};
+const WEEK=[['Mon','Monday',19],['Tue','Tuesday',20],['Wed','Wednesday',21],['Today','Thursday',22],['Tomorrow','Friday',23],['Sat','Saturday',24],['Sun','Sunday',25]];
+const NEXT=[['Next Mon','Monday',26],['Next Tue','Tuesday',27],['Next Wed','Wednesday',28],['Next Thu','Thursday',29],['Next Fri','Friday',30],['Next Sat','Saturday',31],['Next Sun','Sunday',1]];
+const STEP=['Scheduled','On the way','Working','Done','Invoiced','Paid'];
+const J=(id,time,day,name,address,what,price,status,crew)=>({id,time,day,name,address,what,price,status,crew});
+const S={
+ page:'today', callSel:'c1', voiceMode:1, week:0, docTab:'invoices', doc:null, off:false, line:-1, playing:false, reminded:false, talk:{log:[],wi:0,ci:0}, briefOrig:false,
+ calls:[
+  {id:'c1',name:'Marko Kranjc',phone:'+386 40 555 018',time:'Today 09:42',len:'2 min 18 s',address:'Tržaška cesta 18, Ljubljana',need:'Water leaking under the kitchen sink',urgent:true,mode:'AI Receptionist',status:'new',summary:'Marko has water leaking under his kitchen sink and turned off the valve. He wants someone today and is home until 18:00.'},
+  {id:'c2',name:'Nina Horvat',phone:'+386 41 890 112',time:'Today 08:58',len:'1 min 51 s',address:'Rožna dolina 4, Ljubljana',need:'Yearly heat-pump service',urgent:false,mode:'AI Receptionist',status:'new',summary:'Nina wants the regular yearly service of her heat pump. She is free next Thursday morning.'},
+  {id:'c3',name:'Janez Novak',phone:'+386 31 222 640',time:'Yesterday 16:10',len:'8 min 04 s',address:'Vojkova cesta 5, Ljubljana',need:'Bathroom renovation',urgent:false,mode:'AI Call Assistant',status:'quoted',summary:'You agreed on a site visit today at 14:00. Janez expects a rough price of €2,000–2,500. The AI drafted a quote for you to check.'}
+ ],
+ jobs:[
+  J('m1','08:00','Mon','Eva Oblak','Kersnikova 8','Leak repair',98,5,'carlos'),J('m2','10:30','Mon','Jure Pirc','Trubarjeva 41','Radiator bleed and valve',148,5,'arjun'),J('m3','13:00','Mon','Sara Mlakar','Šmartinska 15','Shower drain',164,5,'carlos'),J('m4','15:30','Mon','Gregor Kovač','Dunajska 160','Water heater check',139,5,'wei'),
+  J('t1','09:00','Tue','Maja Kralj','Rakovniška 3','Boiler service',131,5,'arjun'),J('t2','13:30','Tue','Rok Vidmar','Cesta v Mestni log 22','New sink tap',160,5,'carlos'),J('t3','15:00','Tue','Klemen Žagar','Viška 12','Outdoor socket install',119,4,'wei'),
+  J('w1','08:30','Wed','Ana Kos','Pražakova 9','Blocked drain',143,5,'carlos'),J('w2','11:00','Wed','Tomaž Golob','Ilirska 27','Toilet repair',115,5,'arjun'),J('w3','14:30','Wed','Irena Hočevar','Vegova 6','Light fittings',164,4,'wei'),
+  Object.assign(J('j0','08:00','Today','Bojan Sušnik','Tomšičeva 14','Drain cleaning',110,3,'arjun'),{photos:[{label:'job'},{label:'job'},{label:'invoice',rid:'r7',flag:'Labelled as invoice, but it looks like a photo of the drain pipe.'}]}),J('j1','10:30','Today','Petra Zupan','Celovška cesta 112','Boiler service',120,0,'carlos'),J('j4','12:30','Today','Simon Kastelic','Poljanska 30','Replace light fittings',140,0,'wei'),J('j2','14:00','Today','Janez Novak','Vojkova cesta 5','Bathroom site visit',0,0,null),J('j3','16:30','Today','Mojca Bizjak','Linhartova 22','Replace bathroom tap',95,0,'arjun'),
+  J('f1','08:00','Tomorrow','Luka Debeljak','Celovška 260','Heat pump service',165,0,'carlos'),J('f2','09:30','Tomorrow','Vesna Majcen','Zaloška 54','Kitchen sink unblock',95,0,'arjun'),J('f3','11:00','Tomorrow','Peter Ambrožič','Jamova 18','Fuse box check',120,0,'wei'),J('f4','13:30','Tomorrow','Alenka Strnad','Gerbičeva 44','Toilet cistern',110,0,'carlos'),J('f5','15:00','Tomorrow','Damjan Lah','Litijska 81','Radiator valve',125,0,'arjun'),
+  J('s1','09:00','Sat','Helena Rupnik','Rožna dolina 12','Emergency leak (on call)',180,0,'carlos'),
+  J('n1','08:00','Next Mon','Robert Zupančič','Bravničarjeva 7','Boiler service',160,0,'arjun'),J('n2','10:00','Next Mon','Tanja Bergant','Ob Ljubljanici 34','Bathroom tap and shower head',150,0,'carlos'),J('n3','09:00','Next Tue','Uroš Pavlin','Celovška 180','Socket and switch repair',115,0,'wei'),J('n4','13:00','Next Wed','Mateja Gorjup','Cesta na Rožnik 5','Water heater replacement',195,0,'carlos')
+ ],
+ quotes:[{id:'q1',no:'Q-2026-0058',name:'Janez Novak',address:'Vojkova cesta 5, 1000 Ljubljana',what:'Bathroom renovation',status:'draft',date:'22 Oct 2026',valid:'5 Nov 2026',
+   lines:[['Remove old tiles and fittings',1,'job',350],['Plumbing for shower and sink',1,'job',780],['New tiles, supplied and laid',12,'m²',74.17],['Fit toilet, sink and shower',1,'job',380]]}]
+};
+/* invoices: 8 paid this week (€1,340), 22 unpaid (€3,860) — amounts incl. 22% VAT */
+const PAID=[['Ana Kos','Blocked drain',175,1],['Tomaž Golob','Toilet repair',140,1],['Maja Kralj','Boiler service',160,2],['Rok Vidmar','New sink tap',195,2],['Eva Oblak','Leak repair',120,3],['Jure Pirc','Radiator bleed and valve',180,3],['Sara Mlakar','Shower drain',200,3],['Gregor Kovač','Water heater check',170,3]];
+const UNPAID=[['Irena Hočevar','Light fittings',200,1],['Klemen Žagar','Outdoor socket install',145,2],['Luka Perko','Radiator valve',140,3],['Nika Zajc','Bathroom tap',190,3],['Matej Hribar','Blocked drain',165,4],['Tina Košir','Boiler service',200,4],['Blaž Turk','Toilet cistern',145,5],['Ana Bizjak','Pipe repair',180,6],['Primož Kos','Heat pump check',195,7],['Urška Zupan','Kitchen sink',160,7],['Aleš Novak','Leak repair',175,7],['Mojca Kolar','Boiler service',200,8],['Žiga Rozman','Radiator valve',185,9],['Petra Leban','Shower mixer',150,10],['Andrej Kern','Drain cleaning',170,11],['Katja Medved','Water heater',190,12],['Boštjan Erjavec','Boiler service',200,14],['Lara Furlan','Toilet repair',165,14],['Miha Jereb','Pipe insulation',180,14],['Nina Sever','Tap replacement',155,14],['David Pečnik','Heating check',195,21],['Špela Breznik','Leak repair',175,21]];
+const MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const dateAgo=d=>{const t=new Date(Date.UTC(2026,9,22-d));return `${t.getUTCDate()} ${MON[t.getUTCMonth()]} 2026`};
+function linesFor(total,what){const net=Math.round(total/1.22*100)/100;const call=25,h=net>150?2:1.5,lab=Math.round(Math.min(48*h,net-call-12)*100)/100;const parts=Math.round((net-call-lab)*100)/100;
+ return [['Call-out and diagnosis',1,'pc',call],[`${what}: labour`,h,'h',Math.round(lab/h*100)/100],['Parts and materials',1,'set',parts]]}
+let inv=0; S.invoices=[];
+[...UNPAID.map(x=>[...x,'unpaid']),...PAID.map(x=>[...x,'paid'])].sort((a,b)=>a[3]-b[3]).forEach(x=>{inv++;const [name,what,amount,ago,st]=x;
+ const due=ago-8;S.invoices.push({id:'i'+inv,no:'INV-2026-'+String(160-inv).padStart(4,'0'),name,what,amount,ago,status:st,issued:dateAgo(ago),due:dateAgo(due),overdue:st==='unpaid'&&due>0,daysLate:due,lines:linesFor(amount,what),viewed:st==='paid'||ago<9})});
+S.invoices.sort((a,b)=>a.ago-b.ago);
+const RCV=(id,supplier,no,date,items,job,by,total,status,note)=>({id,supplier,no,date,items,job,by,total,status,note});
+S.received=[
+ RCV('r7','—','—','22 Oct 2026','No invoice found in the photo','j0','Arjun',0,'wrong','This looks like a photo of a drain pipe, not an invoice. Nothing was added to expenses.'),
+ RCV('r6','Bauhaus d.o.o.','BH-2026-78012','22 Oct 2026','Shower mixer cartridge','j3','Arjun',48.90,'check','The photo is blurry. The AI read a total of €48.90 but is not sure. Please confirm.'),
+ RCV('r1','Merkur d.o.o.','MER-2026-48211','21 Oct 2026','Pressure valve, fittings, valves','j1','Carlos',612.40,'ok'),
+ RCV('r3','Petrol d.d.','PET-0921-554','20 Oct 2026','Diesel, 2 refills','Van','Arjun',164.00,'ok'),
+ RCV('r2','Bauhaus d.o.o.','BH-2026-77310','19 Oct 2026','Taps and shower parts','Stock','Janez',348.90,'ok'),
+ RCV('r4','Elektro d.o.o.','EL-2026-1182','17 Oct 2026','Cables, sockets, light fittings','j4','Wei',221.35,'ok'),
+ RCV('r5','Hit Rent d.o.o.','TR-5521','15 Oct 2026','Pipe press rental, 1 day','Bathroom renovation · Janez Novak','Janez',90.00,'ok')
+];
+const rcv=id=>S.received.find(r=>r.id===id);
+const rJob=r=>{const j=job(r.job);return j?`${j.what} · ${j.name}`:r.job};
+const EXP=[['Supplier: Merkur','Pipes, fittings, valves',612.40,'21 Oct'],['Supplier: Bauhaus','Taps and shower parts',348.90,'19 Oct'],['Fuel','Van, 2 refills',164.00,'20 Oct'],['Supplier: Elektro d.o.o.','Cables, sockets',221.35,'17 Oct'],['Tools','Pipe press rental',90.00,'15 Oct']];
+const call=id=>S.calls.find(c=>c.id===id), job=id=>S.jobs.find(j=>j.id===id), quote=id=>S.quotes.find(q=>q.id===id), invoice=id=>S.invoices.find(i=>i.id===id);
+const unpaidSum=()=>S.invoices.filter(i=>i.status==='unpaid').reduce((a,i)=>a+i.amount,0);
+const paidSum=()=>S.invoices.filter(i=>i.status==='paid').reduce((a,i)=>a+i.amount,0);
+
+/* translator content (Carlos speaks Spanish, customer Slovenian) */
+const TALK_W=[{o:'Tengo que cortar el agua durante 30 minutos.',t:'Za 30 minut moram zapreti vodo.',en:'I need to turn off the water for 30 minutes.'},{o:'Sí, pero primero mi jefe confirmará el precio.',t:'Da, vendar bo ceno najprej potrdil moj šef.',en:'Yes, but my boss will confirm the price first.'}];
+const TALK_C=[{o:'V redu. Ali boste zamenjali tudi ventil?',t:'De acuerdo. ¿También va a cambiar la válvula?',en:'Okay. Will you also replace the valve?'}];
+const PHR=[['I need to turn off the water for 30 minutes.','Za 30 minut moram zapreti vodo.'],['Where is the main water valve?','Kje je glavni ventil za vodo?'],['I need access to the basement.','Potrebujem dostop do kleti.'],['This part must be replaced.','Ta del je treba zamenjati.'],['The job is finished. Please check.','Delo je končano. Prosim, preverite.'],['Please sign here.','Prosim, podpišite tukaj.']];
+const BRIEF={en:'Petra is home until 12:00. The boiler is in the basement, take the stairs on the left. Bring a new pressure valve. Do not park in front of the garage.',es:'Petra está en casa hasta las 12:00. La caldera está en el sótano, baje por la escalera de la izquierda. Traiga una válvula de presión nueva. No aparque delante del garaje.'};
+
+/* ---------- navigation ---------- */
+const PAGES=[['today','Task Node Tree','tree',1],['calls','Calls & Voice Agent','phone',1],['jobs','Jobs & Calendar','cal',1],['customers','Customers','user',1],['docs','Quotes & Invoices','doc',2],['money','Money & Accounting','euro',2],['team','Team & Languages','team',2],['owner','Owner insights','chart',2],['settings','Settings & Integrations','gear',2]];
+function nav(p){hush();S.playing=false;S.reassign=null;S.page=p;S.doc=null;closeLayer();render();window.scrollTo({top:0})}
+function drawNav(){
+ const cnt={calls:S.calls.filter(c=>c.status==='new').length,docs:S.quotes.filter(q=>q.status==='draft').length+S.received.filter(r=>r.status!=='ok').length};
+ ['nav1','nav2'].forEach((id,k)=>document.getElementById(id).innerHTML=PAGES.filter(p=>p[3]===k+1).map(p=>`<button class="${S.page===p[0]?'on':''}" onclick="nav('${p[0]}')" aria-current="${S.page===p[0]?'page':'false'}">${svg(p[2])}${p[1]}${cnt[p[0]]?`<span class="cnt ${p[0]==='calls'?'hot':''}">${cnt[p[0]]}</span>`:''}</button>`).join(''));
+ document.getElementById('crumb').innerHTML=`Workspace / <b>${PAGES.find(p=>p[0]===S.page)[1]}</b>`;
+ document.getElementById('topr').innerHTML=`${S.off?`<span class="offpill">${svg('moon',14)}Day off · AI handles all</span>`:''}<button class="iconbtn" aria-label="Search" onclick="toast('Search customers, jobs, calls and invoices.')">${svg('search')}</button><button class="iconbtn" aria-label="Notifications" onclick="toast('1 urgent lead, 1 quote to approve.')">${svg('bell')}</button><div class="user"><span class="av">JD</span><span><b>Janez Demo</b><br><span class="muted">Owner</span></span></div>`;
+}
+function head(eb,title,sub,btn=''){return `<div class="head"><div><div class="eyebrow">${eb}</div><h1>${title}</h1>${sub?`<p>${sub}</p>`:''}</div>${btn}</div>`}
+const stat=(l,n,s,ic,tone='green')=>`<div class="card stat"><div class="lbl">${l}<span class="ic ${tone}">${svg(ic)}</span></div><b>${n}</b><small>${s}</small></div>`;
+
+/* ---------- Task Node Tree ---------- */
+function briefLines(){const today=S.jobs.filter(j=>j.day==='Today'&&j.status<3),f=today[0],u=S.calls.find(c=>c.status==='new'&&c.urgent),d=S.quotes.filter(q=>q.status==='draft').length;
+ return [`Good morning, Janez. You have ${today.length} jobs left today.`,f?`First: ${f.what} for ${f.name.split(' ')[0]} at ${f.time}${f.crew?', '+CREW[f.crew].name+' is on it':''}.`:'No more jobs today.',u?`1 urgent lead: ${u.need.toLowerCase()}.`:'No urgent leads.',`${d} quote${d===1?'':'s'} to approve, and ${eur(unpaidSum())} still to be paid.`,'Weather is dry, about 25 minutes of driving today.']}
+function playBrief(){const L=briefLines();if(S.playing){S.playing=false;hush();clearInterval(window._bt);render();return}
+ S.playing=true;S.line=0;render();let started=false;
+ const fin=()=>{clearInterval(window._bt);S.playing=false;S.line=99;render()};
+ const timed=()=>{clearInterval(window._bt);window._bt=setInterval(()=>{if(!S.playing){clearInterval(window._bt);return}S.line++;if(S.line>=L.length)fin();else render()},1800)};
+ if(!TTS){timed();return} hush();const v=pickV('en-US');
+ L.forEach((l,i)=>{const u=new SpeechSynthesisUtterance(l);u.lang='en-US';if(v)u.voice=v;u.onstart=()=>{started=true;if(S.playing){S.line=i;render()}};if(i===L.length-1)u.onend=()=>{if(S.playing)fin()};TTS.speak(u)});
+ setTimeout(()=>{if(S.playing&&!started){hush();timed()}},2000)}
+function pToday(){
+ const nNew=S.calls.filter(c=>c.status==='new'),today=S.jobs.filter(j=>j.day==='Today'),drafts=S.quotes.filter(q=>q.status==='draft'),late=S.invoices.filter(i=>i.overdue);
+ const T=(dot,b,s,act)=>`<button class="task" onclick="${act}"><span class="dot ${dot}"></span><div><b>${esc(b)}</b><span>${esc(s)}</span></div></button>`;
+ const L=briefLines();
+ let h=head('Your business · Thursday, 22 October','Good morning, Janez.','Here is what matters today.',`<button class="btn primary" onclick="openVoice()">${svg('mic',16)}Tell Unbusyness what to do</button>`);
+ h+=`<div class="grid g4" style="margin-bottom:16px">${stat('Jobs today',today.length,`${today.filter(j=>j.status>=3).length} done · ${today.filter(j=>j.status<3).length} to go`,'cal')}${stat('New leads',nNew.length,'1 urgent','user','red')}${stat('Waiting to be paid',eur(unpaidSum()),`${late.length} overdue invoices`,'euro','apricot')}${stat('Quotes to approve',drafts.length,drafts.length?eur(qTotal(drafts[0]).gross)+' waiting':'All clear','doc','slate')}</div>`;
+ h+=`<div class="grid gmain"><section class="card"><div class="ch"><div><h2>Task Node Tree</h2><p>Every call, job, quote and payment becomes a next step</p></div><span class="pill green">Live</span></div><div class="cb">
+  <div class="root"><span class="ri">${svg('spark')}</span><div style="flex:1"><small>MAIN GOAL</small><b>Close more jobs with less admin</b></div><div style="text-align:right"><b style="font-size:18px">${S.jobs.filter(j=>WEEK.some(w=>w[0]===j.day)&&j.status>=3).length}/${S.jobs.filter(j=>WEEK.some(w=>w[0]===j.day)).length}</b><small>jobs done this week</small></div></div><div class="stem"></div>
+  <div class="branches">
+   <div class="branch"><div class="bh"><span class="ic red" style="width:32px;height:32px">${svg('user',16)}</span><div><strong>New leads</strong><small>From the AI receptionist</small></div><span class="pill red" style="margin-left:auto">${nNew.length}</span></div>${nNew.map(c=>T(c.urgent?'red':'',(c.urgent?'Call back ':'Book ')+c.name,c.need+(c.urgent?' · urgent':''),`nav('calls');S.callSel='${c.id}';render()`)).join('')}</div>
+   <div class="branch"><div class="bh"><span class="ic green" style="width:32px;height:32px">${svg('cal',16)}</span><div><strong>Jobs today</strong><small>Crew and status</small></div><span class="pill green" style="margin-left:auto">${today.filter(j=>j.status<3).length}</span></div>${today.filter(j=>j.status<3).slice(0,3).map(j=>T('',j.time+' '+j.what,j.name+(j.crew?' · '+CREW[j.crew].name:''),`openJob('${j.id}')`)).join('')}</div>
+   <div class="branch"><div class="bh"><span class="ic apricot" style="width:32px;height:32px">${svg('doc',16)}</span><div><strong>Quotes and documents</strong><small>Drafts waiting for you</small></div><span class="pill apricot" style="margin-left:auto">${drafts.length}</span></div>${drafts.map(q=>T('apricot','Approve quote '+eur(qTotal(q).gross),q.name+' · '+q.what,`openDoc('quote','${q.id}')`)).join('')||'<div class="task"><span class="muted">Nothing to approve.</span></div>'}</div>
+   <div class="branch"><div class="bh"><span class="ic slate" style="width:32px;height:32px">${svg('repeat',16)}</span><div><strong>Follow-ups</strong><small>Money and repeat work</small></div><span class="pill slate" style="margin-left:auto">2</span></div>${T('apricot',late.length+' overdue invoices',eur(late.reduce((a,i)=>a+i.amount,0))+' · send reminders',`nav('money')`)}${T('','38 customers due a yearly service','Offer the Care plan',`nav('owner')`)}${S.received.some(r=>r.status!=='ok')?T('red',S.received.filter(r=>r.status!=='ok').length+' received invoices to check','AI flagged a wrong or blurry photo',`S.page='docs';S.docTab='received';S.doc=null;render()`):''}</div>
+  </div></div></section>
+  <aside class="grid" style="gap:16px"><div class="brief"><div class="row"><button class="play" onclick="playBrief()" aria-label="Play morning briefing">${svg(S.playing?'pause':'play',20)}</button><div><b>Morning briefing</b><div style="color:var(--on-green);font-size:12px">30 seconds · read aloud at 7:00 and 18:00</div></div></div>${L.map((l,i)=>`<p class="${S.line===i?'on':(S.line>i?'done':'')}">${esc(l)}</p>`).join('')}</div>
+   <div class="card"><div class="ch"><div><h2>Recent activity</h2><p>What the AI did for you</p></div></div><div class="cb" style="padding-top:4px">
+    <div class="act"><span class="ic red">${svg('phone',16)}</span><div><b>AI answered: Marko Kranjc</b><span>Urgent leak, lead created</span><time>8 minutes ago</time></div></div>
+    <div class="act"><span class="ic apricot">${svg('doc',16)}</span><div><b>Quote drafted for Janez Novak</b><span>${eur(qTotal(S.quotes[0]).gross)} · waiting for your approval</span><time>Yesterday</time></div></div>
+    <div class="act"><span class="ic green">${svg('euro',16)}</span><div><b>Invoice paid: Ana Kos</b><span>€175 via payment link</span><time>Yesterday</time></div></div>
+    <div class="act"><span class="ic slate">${svg('lang',16)}</span><div><b>Carlos's voice note translated</b><span>Spanish → English, added to job</span><time>Yesterday</time></div></div></div></div></aside></div>`;
+ return h;
+}
+
+/* ---------- Calls ---------- */
+function pCalls(){
+ const c=call(S.callSel);
+ let h=head('Voice Agent & Calls','Calls that become next steps','Every call is answered, summarised and turned into a lead or a task.');
+ h+=`<div class="modes" style="margin-bottom:16px"><button class="mode ${S.voiceMode===1?'on':''}" onclick="S.voiceMode=1;render()"><b>Mode 1 · AI Receptionist</b><span>AI answers when you're busy or after hours, collects the details and books.</span></button><button class="mode ${S.voiceMode===2?'on':''}" onclick="S.voiceMode=2;render()"><b>Mode 2 · AI Call Assistant</b><span>You take the call. AI writes the summary, tasks and a quote draft.</span></button></div>`;
+ h+=`<div class="split"><div class="card"><div class="ch"><div><h2>Recent calls</h2><p>${S.calls.length} calls · ${S.off?'Day off: AI handles all':'AI receptionist on'}</p></div></div>${S.calls.map(x=>`<button class="citem ${x.id===S.callSel?'sel':''}" onclick="S.callSel='${x.id}';render()"><span class="ic ${x.urgent&&x.status==='new'?'red':'green'}">${svg('phone',16)}</span><div style="flex:1;min-width:0"><b>${esc(x.name)}</b><span>${esc(x.need)}</span><span>${esc(x.time)} · ${esc(x.mode)}</span></div>${x.status==='new'?(x.urgent?'<span class="pill red">Urgent</span>':'<span class="pill green">New</span>'):x.status==='quoted'?'<span class="pill apricot">Quote ready</span>':'<span class="pill ok">Booked</span>'}</button>`).join('')}</div>
+ <div class="card"><div class="ch"><div><h2>${esc(c.name)}</h2><p>${esc(c.time)} · ${esc(c.len)} · ${esc(c.mode)}</p></div><button class="btn line sm" onclick="speak('${esc(c.summary).replace(/'/g,"\\'")}','en-US')">${svg('speaker',14)}Listen to summary</button></div><div class="cb grid" style="gap:14px">
+  <div class="summary"><b style="color:var(--green);display:flex;gap:6px;align-items:center">${svg('spark',16)}AI summary</b>${esc(c.summary)}</div>
+  <div class="fields"><div class="fld"><small>Needs</small><b>${esc(c.need)}</b></div><div class="fld"><small>Address</small><b>${esc(c.address)}</b></div><div class="fld"><small>Phone</small><b>${esc(c.phone)}</b></div></div>
+  <div class="btns"><button class="btn primary" onclick="toast('Calling ${esc(c.name)}…')">${svg('phone',16)}Call back</button>${c.status==='new'?`<button class="btn soft" onclick="bookCall('${c.id}')">${svg('cal',16)}Book suggested slot</button><button class="btn line" onclick="newQuote('${c.id}')">${svg('doc',16)}Create quote</button>`:c.status==='quoted'?`<button class="btn apricot" onclick="openDoc('quote','q1')">${svg('doc',16)}Review quote</button>`:''}</div>
+  ${explain('<b>Owner stays in control.</b> The AI never commits to a price. Quotes and bookings it prepares wait for your approval.')}</div></div></div>`;
+ return h;
+}
+function bookCall(id){const c=call(id);c.status='booked';const urgent=c.urgent;S.jobs.push(J('b'+Date.now(),urgent?'12:00':'08:00',urgent?'Today':'Next Thu',c.name,c.address.split(',')[0],c.need,urgent?110:150,0,urgent?'arjun':'carlos'));sortJobs();render();toast(`Booked ${urgent?'today 12:00':'next Thursday 08:00'}. ${c.name.split(' ')[0]} got a text confirmation.`)}
+function newQuote(id){const c=call(id);const q={id:'q'+Date.now(),no:'Q-2026-0059',name:c.name,address:c.address.replace(', Ljubljana',', 1000 Ljubljana'),what:c.need,status:'draft',date:'22 Oct 2026',valid:'5 Nov 2026',lines:[['Call-out and diagnosis',1,'pc',25],['Repair work',1.5,'h',48],['Parts and materials',1,'set',45]]};S.quotes.push(q);c.status='quoted';openDoc('quote',q.id)}
+
+/* ---------- Jobs & week board ---------- */
+const DAYS=[...WEEK,...NEXT].map(d=>d[0]);
+const dayIx=d=>{const i=DAYS.indexOf(d);return i<0?99:i};
+function sortJobs(){S.jobs.sort((a,b)=>dayIx(a.day)-dayIx(b.day)||a.time.localeCompare(b.time))}
+function pJobs(){
+ const W=S.week?NEXT:WEEK, inW=S.jobs.filter(j=>W.some(w=>w[0]===j.day));
+ const done=inW.filter(j=>j.status>=3).length, val=inW.reduce((a,j)=>a+Math.round(j.price*1.22),0);
+ let h=head('Jobs & Calendar',S.week?'Next week · 26 Oct – 1 Nov':'This week · 19–25 October',`${inW.length} jobs · ${done} done · ${eur(val)} booked incl. VAT`,`<div class="btns"><button class="btn line" onclick="S.week=0;render()" ${!S.week?'disabled style="opacity:.5"':''}>This week</button><button class="btn line" onclick="S.week=1;render()" ${S.week?'disabled style="opacity:.5"':''}>Next week</button><button class="btn primary" onclick="openVoice(0)">${svg('plus',16)}New job</button></div>`);
+ h+=`<div class="weekhead"><div class="legend">${Object.values(CREW).map(c=>`<span><i style="background:${c.color}"></i>${c.name} · ${c.lang}</span>`).join('')}<span><i style="background:#8A938F"></i>You</span></div><span class="muted" style="font-size:12px">Click a job for details, status and the translator.</span></div>`;
+ h+=`<div class="tscroll"><div class="board">${W.map(([k,dn,n])=>{const js=S.jobs.filter(j=>j.day===k);const v=js.reduce((a,j)=>a+Math.round(j.price*1.22),0);
+  return `<div class="col ${k==='Today'?'today':''}"><div class="dh"><b>${k==='Today'?'Today · ':''}${dn} ${n}</b><span>${js.length?eur(v):''}</span></div>${js.map(j=>`<button class="jc ${j.status>=5?'done':''}" style="border-left-color:${j.crew?CREW[j.crew].color:'#8A938F'}" onclick="openJob('${j.id}')"><span class="t">${esc(j.time)} · ${STEP[j.status]}</span><b>${esc(j.what)}</b><span>${esc(j.name)}</span><span>${j.crew?esc(CREW[j.crew].name):'You'}${j.price?' · '+eur(Math.round(j.price*1.22)):''}</span></button>`).join('')||'<span class="muted" style="font-size:12px;padding:4px">No jobs</span>'}</div>`}).join('')}</div></div>`;
+ h+=`<div style="margin-top:16px">${explain('<b>The whole week at a glance.</b> Colours show who does each job. Faded cards are paid. Hours are recorded automatically from On my way / Start / Finish, so timesheets need no paperwork.')}</div>`;
+ return h;
+}
+function openJob(id){const j=job(id);
+ const nextBtn=[['I\'m on my way','truck'],['Start job','play'],['Finish and invoice','check'],['Create invoice','doc'],['Mark as paid','euro']][j.status];
+ layer(`<div class="scrim" onclick="if(event.target===this)closeLayer()"><div class="drawer" role="dialog" aria-label="Job details">
+  <div class="mh"><div><div class="eyebrow">${j.day==='Today'?'Today':esc(j.day)} · ${esc(j.time)}</div><h2>${esc(j.what)}</h2></div><button class="x" onclick="closeLayer()" aria-label="Close">${svg('x')}</button></div>
+  <div class="steps">${STEP.map((s,i)=>`<i class="${i<=j.status?'on':''}"></i>`).join('')}</div><b style="color:var(--green)">${STEP[j.status]}</b>
+  <div class="card cb grid" style="gap:10px"><div class="fld"><small>Customer</small><b>${esc(j.name)}</b></div><div class="fld"><small>Address</small><b>${esc(j.address)}, Ljubljana</b></div>${j.price?`<div class="fld"><small>Agreed price</small><b>${eur(j.price)} + 22% VAT = ${eur2(j.price*1.22)}</b></div>`:''}</div>
+  <div class="card cb grid" style="gap:10px"><div class="row"><span class="ic slate">${svg('team')}</span><div style="flex:1"><div class="eyebrow" style="margin:0;color:var(--muted)">Assigned to</div><b>${j.crew?esc(CREW[j.crew].full):'You (Janez)'}</b><div class="muted" style="font-size:12px">${j.crew?esc(CREW[j.crew].role)+' · speaks '+esc(CREW[j.crew].lang):'You do this job yourself'}</div></div><button class="btn line sm" onclick="S.reassign=S.reassign==='${j.id}'?null:'${j.id}';openJob('${j.id}')" aria-expanded="${S.reassign===j.id}">${S.reassign===j.id?'Close':'Change'}</button></div>
+   ${S.reassign===j.id?`<div class="who">${whoButtons(j.crew||'me',"assignJob('"+j.id+"',K)")}</div>`:''}
+   ${j.crew?(CREW[j.crew].demo?`<div class="btns"><button class="btn apricot" onclick="openTalk()">${svg('lang',16)}Live translator</button><button class="btn soft" onclick="openBrief()">${svg('list',16)}Briefing in Spanish</button></div>`:`<span class="muted" style="font-size:12px">Translator and briefing work the same in ${esc(CREW[j.crew].lang)}. The demo shows them with Carlos on the 10:30 job.</span>`):''}</div>
+  ${photoCard(j)}
+  ${nextBtn?`<button class="btn primary" style="min-height:48px" onclick="advance('${j.id}')">${svg(nextBtn[1],16)}${nextBtn[0]}</button>`:`<div class="explain" style="background:var(--ok-soft);color:var(--ok)"><span class="ei">✓</span><div><b style="color:var(--ok)">Paid. Job closed.</b> Review request sent.</div></div>`}
+  <div class="btns"><button class="btn line" onclick="toast('Opening maps to ${esc(j.address)}')">Navigate</button><button class="btn line" onclick="toast('Calling ${esc(j.name)}…')">Call customer</button></div></div></div>`)}
+/* ---------- assigning, photos, received invoices ---------- */
+const WHO=[['me','You','Keep it yourself'],['carlos','Carlos','Plumber · Spanish'],['arjun','Arjun','Plumber · Hindi'],['wei','Wei','Electrician · Chinese']];
+function whoButtons(cur,call){return WHO.map(([k,n,d])=>`<button class="${cur===k?'on':''}" aria-pressed="${cur===k}" onclick="${call.replace('K',"'"+k+"'")}"><b>${n}</b><span>${d}</span></button>`).join('')}
+function assignJob(id,k){const j=job(id);j.crew=k==='me'?null:k;S.reassign=null;render();openJob(id);toast(k==='me'?'You kept this job.':`Assigned to ${CREW[k].name}. He got it in ${CREW[k].lang}.`)}
+function thumbs(j){const ph=j.photos||[];return `<div class="thumbs">${ph.map((p,i)=>`<button class="thumb ${p.label==='invoice'?'inv':'job'} ${p.flag?'flag':''}" onclick="${p.rid?`openReceived('${p.rid}')`:p.flag?`toast('${esc(p.flag).replace(/'/g,"\\'")}')`:`toast('${p.label==='invoice'?'Invoice photo':'Job photo'}')`}" aria-label="${p.label==='invoice'?'Invoice':'Job photo'}${p.flag?', flagged by AI':''}">${p.src?`<img src="${p.src}" alt="">`:svg(p.label==='invoice'?'receipt':'cam',26)}${p.flag?'<span class="warn">!</span>':''}<span class="lbl">${p.label==='invoice'?'Invoice':'Job photo'}</span></button>`).join('')}</div>`}
+function photoCard(j){const ph=j.photos||[],ni=ph.filter(p=>p.label==='invoice').length,fl=ph.map((p,i)=>[p,i]).filter(x=>x[0].flag);
+ return `<div class="card cb grid" style="gap:10px"><div class="row" style="justify-content:space-between"><div><b>Photos</b><div class="muted" style="font-size:12px">${ph.length?`${ph.length-ni} job photo${ph.length-ni===1?'':'s'} · ${ni} invoice${ni===1?'':'s'}`:'Optional · none yet'}</div></div><button class="btn line sm" onclick="openPhoto('${j.id}')">${svg('plus',14)}Add photo</button></div>${ph.length?thumbs(j):''}
+ ${fl.map(([p,i])=>`<div class="flagbox"><span class="ei">!</span><div><b>AI check:</b> ${esc(p.flag)}<div class="btns" style="margin-top:8px">${p.label==='invoice'?`<button class="btn line sm" onclick="moveToJob('${j.id}',${i})">Move to job photos</button><button class="btn line sm" onclick="askPhoto('${j.id}')">Ask for the invoice photo</button>`:`<button class="btn line sm" onclick="moveToInvoice('${j.id}',${i})">Move to received invoices</button><button class="btn line sm" onclick="keepPhoto('${j.id}',${i})">It's correct</button>`}</div></div></div>`).join('')}</div>`}
+function moveToJob(id,i){const j=job(id),p=j.photos[i];if(p.rid)S.received=S.received.filter(r=>r.id!==p.rid);p.label='job';delete p.flag;delete p.rid;render();openJob(id);toast('Moved to job photos. Nothing was added to expenses.')}
+function moveToInvoice(id,i){const j=job(id),p=j.photos[i];p.label='invoice';delete p.flag;const r=RCV('r'+Date.now(),'Merkur d.o.o.','MER-2026-48390','22 Oct 2026','Valve and seals',id,'Janez',36.60,'ok');S.received.unshift(r);p.rid=r.id;render();openJob(id);toast('Moved to received invoices. AI read Merkur d.o.o., €36.60.')}
+function keepPhoto(id,i){delete job(id).photos[i].flag;render();openJob(id);toast('Kept as a job photo.')}
+function askPhoto(id){const j=job(id),w=j.crew?CREW[j.crew]:null;toast(w?`${w.name} got a message in ${w.lang}: please photograph the invoice.`:'Reminder added for you.')}
+function openPhoto(id){S.ph={id,label:null};drawPhoto()}
+function drawPhoto(){const L=S.ph.label,id=S.ph.id;
+ layer(`<div class="scrim center" onclick="if(event.target===this)openJob('${id}')"><div class="modal" style="width:min(620px,100%)" role="dialog" aria-label="Add a photo">
+  <div class="mh"><h2>Add a photo · ${esc(job(id).what)}</h2><button class="x" onclick="openJob('${id}')" aria-label="Close">${svg('x')}</button></div>
+  <div class="eyebrow" style="margin:0">1 · What is it? (required)</div>
+  <div class="lblpick"><button class="${L==='job'?'on':''}" aria-pressed="${L==='job'}" onclick="S.ph.label='job';drawPhoto()"><b>${svg('cam',18)}Job photo</b><span>The problem, before and after, finished work</span></button><button class="${L==='invoice'?'on':''}" aria-pressed="${L==='invoice'}" onclick="S.ph.label='invoice';drawPhoto()"><b>${svg('receipt',18)}Invoice</b><span>Supplier invoice or receipt for parts. Goes to Received invoices.</span></button></div>
+  <div class="eyebrow" style="margin:4px 0 0">2 · Add the photo</div>
+  <div class="btns"><label class="btn primary ${L?'':'off'}" for="phIn" aria-disabled="${!L}">${svg('dl',16)}Upload a photo</label><input id="phIn" type="file" accept="image/*" hidden onchange="gotPhoto(this)"><button class="btn line ${L?'':'off'}" onclick="addPhoto(null,false)">Use an example photo</button><button class="btn line ${L?'':'off'}" onclick="addPhoto(null,true)">Try a wrong photo (see the AI check)</button></div>
+  ${explain(L==='invoice'?'<b>The AI reads it.</b> Supplier, invoice number, date, items, VAT and total are filled in and the cost is linked to this job. If the photo is not an invoice, or is too blurry, it is flagged instead of being added to expenses.':L==='job'?'<b>Job photos stay with the job.</b> They protect you in disputes and can be attached to the customer’s invoice. If the AI sees a receipt instead, it suggests moving it.':'<b>Photos are optional.</b> Pick a label first, so job photos and invoices for parts never get mixed up.')}
+ </div></div>`)}
+function gotPhoto(inp){const f=inp.files&&inp.files[0];if(!f)return;addPhoto(URL.createObjectURL(f),false,true)}
+function addPhoto(src,wrong,real){const id=S.ph.id,j=job(id),L=S.ph.label;if(!L)return;const p={label:L,src};(j.photos=j.photos||[]).push(p);
+ if(L==='invoice'){const r=wrong?RCV('r'+Date.now(),'—','—','22 Oct 2026','No invoice found in the photo',id,'Janez',0,'wrong','This looks like a photo of the work, not an invoice. Nothing was added to expenses.')
+   :real?RCV('r'+Date.now(),'Check supplier','—','22 Oct 2026','Read from your photo',id,'Janez',0,'check','Demo: in the app the AI fills in supplier, number, VAT and total from your photo here. Please confirm.')
+   :RCV('r'+Date.now(),'Merkur d.o.o.','MER-2026-48390','22 Oct 2026','Valve and seals',id,'Janez',36.60,'ok');
+  S.received.unshift(r);p.rid=r.id;if(wrong)p.flag='Labelled as invoice, but it looks like a photo of the work.'}
+ else if(wrong)p.flag='Labelled as job photo, but it looks like a receipt from Merkur.';
+ render();openJob(id);toast(wrong?'AI check: this photo does not match its label.':L==='invoice'?(real?'Invoice photo added. Check the details in Received invoices.':'AI read Merkur d.o.o. €36.60 and added it to expenses.'):'Job photo saved to the job.')}
+function receiptHTML(r){const net=r.total/1.22;return `<div class="receipt ${r.status==='check'?'blur':''}"><b>${esc(r.supplier.toUpperCase())}</b><div>VAT ID SI 9xxxxxxx (example)</div><hr><div class="rr"><span>Invoice</span><span>${esc(r.no)}</span></div><div class="rr"><span>Date</span><span>${esc(r.date)}</span></div><hr><div>${esc(r.items)}</div><hr><div class="rr"><span>Net</span><span>${eur2(net)}</span></div><div class="rr"><span>VAT 22%</span><span>${eur2(r.total-net)}</span></div><div class="rr"><b>TOTAL</b><b>${eur2(r.total)}</b></div></div>`}
+function rStatus(r){return r.status==='ok'?'<span class="pill ok">Read by AI · in expenses</span>':r.status==='check'?'<span class="pill apricot">Please confirm</span>':'<span class="pill red">Wrong photo?</span>'}
+function openReceived(id){const r=rcv(id);if(!r)return;const net=r.total/1.22,j=job(r.job),w=j&&j.crew?CREW[j.crew]:null;
+ layer(`<div class="scrim" onclick="if(event.target===this)closeLayer()"><div class="drawer" role="dialog" aria-label="Received invoice">
+  <div class="mh"><div><div class="eyebrow">Received invoice · uploaded by ${esc(r.by)}</div><h2>${r.status==='wrong'?'Not an invoice?':esc(r.supplier)}</h2></div><button class="x" onclick="closeLayer()" aria-label="Close">${svg('x')}</button></div>
+  ${rStatus(r)}
+  ${r.status==='wrong'?`<div class="wrongpic">Photo from ${esc(r.by)} · ${esc(r.date)}</div>`:receiptHTML(r)}
+  ${r.status==='wrong'?`<div class="flagbox"><span class="ei">!</span><div><b>AI check:</b> ${esc(r.note)}</div></div>`:r.status==='check'?`<div class="explain"><span class="ei">!</span><div><b>AI check:</b> ${esc(r.note)}</div></div>`:`<div class="okbox">${svg('check',18)}<div><b>Read by AI.</b> Matches the label, VAT checked, linked to the job and added to October expenses.</div></div>`}
+  ${r.status!=='wrong'?`<div class="card cb grid" style="gap:8px"><div class="eyebrow" style="margin:0">What the AI read</div><div class="fields" style="grid-template-columns:1fr 1fr"><div class="fld"><small>Supplier</small><b>${esc(r.supplier)}</b></div><div class="fld"><small>Invoice no.</small><b>${esc(r.no)}</b></div><div class="fld"><small>Date</small><b>${esc(r.date)}</b></div><div class="fld"><small>Items</small><b>${esc(r.items)}</b></div><div class="fld"><small>Net + VAT 22%</small><b>${eur2(net)} + ${eur2(r.total-net)}</b></div><div class="fld"><small>Total</small><b>${eur2(r.total)}</b></div></div></div>`:''}
+  <div class="card cb"><div class="eyebrow" style="margin:0">Cost belongs to</div><b>${esc(rJob(r))}</b></div>
+  <div class="btns">${r.status==='wrong'?`${j?`<button class="btn primary" onclick="moveToJob('${r.job}',job('${r.job}').photos.findIndex(p=>p.rid==='${r.id}'))">Move to job photos</button>`:''}<button class="btn soft" onclick="toast('${w?`${w.name} got a message in ${w.lang}: please photograph the invoice.`:'Reminder added.'}')">${svg('send',16)}Ask ${w?esc(w.name):''} for the invoice</button>`:r.status==='check'?`<button class="btn primary" onclick="rcv('${r.id}').status='ok';render();openReceived('${r.id}');toast('Confirmed and added to expenses.')">${svg('check',16)}Confirm ${eur2(r.total)}</button><button class="btn soft" onclick="toast('${w?`${w.name} got a message in ${w.lang}: please take a sharper photo.`:'Retake the photo.'}')">Ask for a sharper photo</button>`:`<button class="btn line" onclick="toast('Opening the original photo.')">${svg('dl',16)}Original photo</button><button class="btn line" onclick="toast('Pick another job for this cost.')">Change job</button>`}</div>
+  ${explain('<b>Received invoices</b> collect every supplier invoice the team photographs. With QuickBooks, Xero or Zoho Books connected, they sync as bills; otherwise they stay in Unbusyness basic accounting.')}
+ </div></div>`)}
+function advance(id){const j=job(id);
+ if(j.status===2||j.status===3){j.status=4;const amt=Math.round(j.price*1.22);S.invoices.unshift({id:'i'+Date.now(),no:'INV-2026-0160',name:j.name,what:j.what,amount:amt,ago:0,status:'unpaid',issued:'22 Oct 2026',due:'30 Oct 2026',overdue:false,lines:linesFor(amt,j.what),viewed:false});closeLayer();render();toast(`Invoice INV-2026-0160 sent to ${j.name.split(' ')[0]}: ${eur(amt)}.`);return}
+ if(j.status===4){j.status=5;const i=S.invoices.find(x=>x.name===j.name&&x.status==='unpaid');if(i)i.status='paid';closeLayer();render();toast('Marked as paid. Review request sent.');return}
+ j.status++;openJob(id);render();toast(j.status===1?`${j.name.split(' ')[0]} got a text: you're on your way.`:'Job started. Timer running.')}
+
+/* ---------- translator & briefing (modal) ---------- */
+function openTalk(){S.talk={log:[],wi:0,ci:0};drawTalk()}
+function drawTalk(){const t=S.talk,wDone=t.wi>=TALK_W.length,cDone=t.ci>=TALK_C.length,cTurn=t.wi>t.ci&&!cDone;
+ layer(`<div class="scrim center" onclick="if(event.target===this)closeLayer()"><div class="modal" role="dialog" aria-label="Live translator">
+  <div class="mh"><h2>Live translator</h2><button class="x" onclick="closeLayer()" aria-label="Close">${svg('x')}</button></div>
+  <div class="langbar"><div><small>WORKER</small><b>Carlos · Español</b></div><span style="color:var(--apricot-light)">${svg('swap',20)}</span><div style="text-align:right"><small>CUSTOMER</small><b>Petra · Slovenščina</b></div></div>
+  ${!t.log.length?explain('<b>How it works:</b> Carlos speaks Spanish, Petra speaks Slovenian. Each presses their button and talks; the phone shows the translation in large text and reads it aloud. Grey lines show English for this demo.'):''}
+  <div class="convo">${t.log.map(m=>`<div class="bub ${m.who}"><span class="l">${m.who==='w'?'Carlos said · shown to customer':'Customer said · shown to Carlos'}</span><span class="o">${esc(m.o)}</span><span class="big">${esc(m.t)}</span><span class="gl">EN: ${esc(m.en)}</span></div>`).join('')}</div>
+  <div class="btns"><button class="btn ${!cTurn&&!wDone?'primary':'line'}" ${wDone||cTurn?'disabled style="opacity:.45"':''} onclick="talk('w')">${svg('mic',16)}Carlos speaks (Spanish)</button><button class="btn ${cTurn?'apricot':'line'}" ${!cTurn?'disabled style="opacity:.45"':''} onclick="talk('c')">${svg('mic',16)}Customer speaks (Slovenian)</button></div>
+  ${wDone&&cDone?explain('<b>Prices stay with the owner.</b> The price question went straight to you for approval.'):''}
+  <div class="eyebrow" style="margin:6px 0 0">Quick phrases · work offline</div><div class="phr">${PHR.map((p,i)=>`<button onclick="speak(PHR[${i}][1],'sl-SI');toast('Shown to customer: ${esc(p[1]).replace(/'/g,"\\'")}')">${svg('speaker',16)}<span>${esc(p[0])}</span></button>`).join('')}</div></div></div>`)}
+function talk(w){const t=S.talk;if(w==='w'&&t.wi<TALK_W.length){const m=TALK_W[t.wi++];t.log.push({who:'w',...m});speak(m.t,'sl-SI')}else if(w==='c'&&t.ci<TALK_C.length){const m=TALK_C[t.ci++];t.log.push({who:'c',...m});speak(m.t,'es-ES')}
+ drawTalk();if(t.wi>=TALK_W.length&&t.ci>=TALK_C.length)setTimeout(()=>toast('Janez got a question: price for a new valve?'),1300)}
+function openBrief(){layer(`<div class="scrim center" onclick="if(event.target===this)closeLayer()"><div class="modal" role="dialog" aria-label="Briefing">
+  <div class="mh"><h2>Briefing for Carlos · Boiler service 10:30</h2><button class="x" onclick="closeLayer()" aria-label="Close">${svg('x')}</button></div>
+  ${explain('You write in English. <b>Carlos reads and hears it in Spanish.</b> His voice notes come back translated for you.')}
+  <div class="grid g2"><div class="card cb"><div class="eyebrow">What you wrote · English</div><p style="margin:0;font-size:15px">${esc(BRIEF.en)}</p></div><div class="card cb"><div class="eyebrow">What Carlos sees · Español</div><p style="margin:0;font-size:15px">${esc(BRIEF.es)}</p><button class="btn line sm" style="margin-top:10px" onclick="speak(BRIEF.es,'es-ES')">${svg('speaker',14)}Listen in Spanish</button></div></div>
+  <div class="card cb row"><span class="ic green">${svg('mic')}</span><div style="flex:1"><b>Voice note from Carlos · 0:09</b><div class="muted">“La tubería está corroída, hay que cambiar 2 metros.”</div><div><b style="color:var(--green)">Translated:</b> The pipe is corroded, 2 metres need replacing.</div></div><button class="btn soft sm" onclick="toast('Added to job notes and the invoice draft.')">Add to job</button></div></div></div>`)}
+
+/* ---------- Customers ---------- */
+function pCustomers(){
+ const map={};S.jobs.forEach(j=>{const m=map[j.name]||(map[j.name]={name:j.name,address:j.address,jobs:0,last:'',spent:0,due:0});m.jobs++;m.last=j.what;if(j.status>=5)m.spent+=Math.round(j.price*1.22)});
+ S.invoices.forEach(i=>{const m=map[i.name]||(map[i.name]={name:i.name,address:'Ljubljana',jobs:1,last:i.what,spent:0,due:0});if(i.status==='unpaid')m.due+=i.amount;else m.spent+=0});
+ S.calls.forEach(c=>{if(!map[c.name])map[c.name]={name:c.name,address:c.address.split(',')[0],jobs:0,last:c.need,spent:0,due:0,lead:true}});
+ const rows=Object.values(map).sort((a,b)=>(b.lead?1:0)-(a.lead?1:0)||b.due-a.due).slice(0,18);
+ const care=new Set(['Petra Zupan','Maja Kralj','Luka Debeljak','Robert Zupančič','Tina Košir','Mojca Kolar']);
+ let h=head('Customers',`${Object.keys(map).length} customers`,'Every customer, property, call, job and invoice in one history.',`<button class="btn primary" onclick="toast('New customer form')">${svg('plus',16)}New customer</button>`);
+ h+=`<div class="card"><div class="tscroll"><table class="tbl"><thead><tr><th>Customer</th><th>Address</th><th>Last request</th><th>Plan</th><th class="num">Jobs</th><th class="num">Balance due</th><th></th></tr></thead><tbody>${rows.map(r=>`<tr><td><b>${esc(r.name)}</b>${r.lead?' <span class="pill green">New lead</span>':''}</td><td class="muted">${esc(r.address)}</td><td>${esc(r.last)}</td><td>${care.has(r.name)?'<span class="pill ok">Care plan</span>':'<span class="muted">—</span>'}</td><td class="num">${r.jobs}</td><td class="num">${r.due?`<b style="color:var(--apricot-ink)">${eur(r.due)}</b>`:'<span class="muted">€0</span>'}</td><td class="num"><button class="btn line sm" onclick="toast('Opening ${esc(r.name)}: calls, jobs, invoices, property and equipment.')">Open</button></td></tr>`).join('')}</tbody></table></div></div>`;
+ h+=`<div style="margin-top:16px">${explain('<b>Built around the property.</b> Each customer keeps their address, equipment (boiler, heat pump) and full service history. This is what later connects to <b>Unbusyness Home</b>.')}</div>`;
+ return h;
+}
+
+/* ---------- Quotes & invoices ---------- */
+function qTotal(d){const net=d.lines.reduce((a,l)=>a+l[1]*l[3],0);return {net,vat:net*0.22,gross:net*1.22}}
+function iTotal(i){const net=i.lines.reduce((a,l)=>a+l[1]*l[3],0);return {net,vat:i.amount-net,gross:i.amount}}
+function pDocs(){
+ if(S.doc) return docView();
+ const tab=S.docTab;
+ let h=head('Quotes & Invoices','Documents','AI drafts them from calls and finished jobs. You check, approve and send.',`<div class="btns"><button class="btn line" onclick="toast('New work order')">${svg('plus',16)}Work order</button><button class="btn line" onclick="newQuote('c2')">${svg('plus',16)}Quote</button><button class="btn primary" onclick="toast('Pick a finished job to invoice, or start blank.')">${svg('plus',16)}Invoice</button></div>`);
+ const unp=S.invoices.filter(i=>i.status==='unpaid'),od=unp.filter(i=>i.overdue);
+ h+=`<div class="grid g4" style="margin-bottom:16px">${stat('Waiting to be paid',eur(unpaidSum()),`${unp.length} invoices`,'clock','apricot')}${stat('Overdue',eur(od.reduce((a,i)=>a+i.amount,0)),`${od.length} invoices past due date`,'alert','red')}${stat('Paid this week',eur(paidSum()),`${S.invoices.filter(i=>i.status==='paid').length} invoices`,'check')}${stat('Quotes open',S.quotes.filter(q=>q.status!=='accepted').length,eur(S.quotes.reduce((a,q)=>a+qTotal(q).gross,0))+' total','doc','slate')}</div>`;
+ h+=`<div class="row" style="justify-content:space-between;margin-bottom:12px;flex-wrap:wrap"><div class="tabs" role="tablist">${[['invoices','Invoices · '+S.invoices.length],['quotes','Quotes · '+S.quotes.length],['received','Received invoices · '+S.received.length+(S.received.some(r=>r.status!=='ok')?' ⚠':'')],['orders','Work orders']].map(t=>`<button role="tab" aria-selected="${tab===t[0]}" class="${tab===t[0]?'on':''}" onclick="S.docTab='${t[0]}';render()">${t[1]}</button>`).join('')}</div>${tab==='invoices'?`<button class="btn soft" onclick="toast('${od.length} friendly reminders sent.')">${svg('send',16)}Remind all overdue (${od.length})</button>`:''}</div>`;
+ if(tab==='invoices') h+=`<div class="card"><div class="tscroll"><table class="tbl"><thead><tr><th>Number</th><th>Customer</th><th>Work</th><th>Issued</th><th>Due</th><th>Status</th><th class="num">Amount</th></tr></thead><tbody>${S.invoices.map(i=>`<tr class="click" onclick="openDoc('invoice','${i.id}')"><td><b>${i.no}</b></td><td>${esc(i.name)}</td><td class="muted">${esc(i.what)}</td><td>${i.issued}</td><td>${i.due}</td><td>${i.status==='paid'?'<span class="pill ok">Paid</span>':i.overdue?`<span class="pill red">Overdue ${i.daysLate} d</span>`:i.viewed?'<span class="pill slate">Viewed</span>':'<span class="pill apricot">Sent</span>'}</td><td class="num"><b>${eur2(i.amount)}</b></td></tr>`).join('')}</tbody></table></div></div>`;
+ else if(tab==='quotes') h+=`<div class="card"><div class="tscroll"><table class="tbl"><thead><tr><th>Number</th><th>Customer</th><th>Work</th><th>Date</th><th>Valid until</th><th>Status</th><th class="num">Amount</th></tr></thead><tbody>${S.quotes.map(q=>`<tr class="click" onclick="openDoc('quote','${q.id}')"><td><b>${q.no}</b></td><td>${esc(q.name)}</td><td class="muted">${esc(q.what)}</td><td>${q.date}</td><td>${q.valid}</td><td>${q.status==='draft'?'<span class="pill apricot">Draft by AI</span>':q.status==='sent'?'<span class="pill slate">Sent</span>':'<span class="pill ok">Accepted</span>'}</td><td class="num"><b>${eur2(qTotal(q).gross)}</b></td></tr>`).join('')}</tbody></table></div></div>`;
+ else if(tab==='received'){const flag=S.received.filter(r=>r.status!=='ok');
+  h+=(flag.length?`<div class="flagbox" style="margin-bottom:12px"><span class="ei">!</span><div><b>${flag.length} need${flag.length===1?'s':''} a look.</b> The AI flags photos that are not invoices, blurry totals and duplicates before anything reaches your expenses.</div></div>`:'')+`<div class="card"><div class="tscroll"><table class="tbl"><thead><tr><th>Supplier</th><th>Invoice no.</th><th>Date</th><th>Cost belongs to</th><th>Uploaded by</th><th>AI check</th><th class="num">Total</th></tr></thead><tbody>${S.received.map(r=>`<tr class="click" onclick="openReceived('${r.id}')"><td><b>${esc(r.supplier)}</b><div class="muted" style="font-size:12px">${esc(r.items)}</div></td><td>${esc(r.no)}</td><td>${esc(r.date)}</td><td class="muted">${esc(rJob(r))}</td><td>${esc(r.by)}</td><td>${rStatus(r)}</td><td class="num"><b>${r.total?eur2(r.total):'—'}</b></td></tr>`).join('')}</tbody></table></div></div>`}
+ else h+=`<div class="card cb">${explain('<b>Work orders</b> are created from jobs automatically: task list, materials, photos and the customer signature on the phone. They turn into the invoice in one click.')}</div>`;
+ h+=`<div style="margin-top:16px">${explain('<b>Professional documents in one click.</b> Your logo, company and VAT details, numbered automatically, VAT calculated, with a payment link and QR code. They sync to QuickBooks, Xero or Zoho Books, or stay in Unbusyness’s basic accounting.')}</div>`;
+ return h;
+}
+function openDoc(type,id){S.page='docs';S.doc={type,id};closeLayer();render();window.scrollTo({top:0})}
+function docView(){
+ const isQ=S.doc.type==='quote', d=isQ?quote(S.doc.id):invoice(S.doc.id);
+ const tot=isQ?qTotal(d):iTotal(d), addr=isQ?d.address:(job2addr(d.name)||'Ljubljana');
+ const status=isQ?(d.status==='draft'?'<span class="pill apricot">Draft by AI</span>':d.status==='sent'?'<span class="pill slate">Sent</span>':'<span class="pill ok">Accepted</span>'):(d.status==='paid'?'<span class="pill ok">Paid</span>':d.overdue?`<span class="pill red">Overdue ${d.daysLate} days</span>`:'<span class="pill apricot">Sent</span>');
+ const ref='SI00 '+(d.no||'').replace(/\D/g,'').slice(-8);
+ let h=`<div class="row" style="justify-content:space-between;margin-bottom:16px;flex-wrap:wrap"><button class="btn line" onclick="S.doc=null;render()">← All documents</button><div class="row">${status}</div></div>`;
+ h+=`<div class="docwrap"><div class="sheet" aria-label="${isQ?'Quote':'Invoice'} preview">
+  <div class="sh"><div class="co"><div class="row" style="gap:8px;margin-bottom:6px"><svg width="30" height="30" viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="24" fill="#1F4D45"/><path d="M14.5 19 V25.5 a9.5 9.5 0 0 0 19 0 V19" fill="none" stroke="#FBFAF7" stroke-width="4" stroke-linecap="round"/><circle cx="24" cy="15.5" r="3.4" fill="#F2A57A"/></svg><b>${CO.name}</b></div><div>${CO.addr}</div><div>VAT ID ${CO.vat} · ${CO.reg}</div><div>${CO.email} · ${CO.phone}</div></div>
+  <div class="meta"><span>${isQ?'Quote no.':'Invoice no.'}</span><b>${d.no}</b><span>${isQ?'Date':'Issue date'}</span><div>${isQ?d.date:d.issued}</div><span>${isQ?'Valid until':'Service date'}</span><div>${isQ?d.valid:d.issued}</div>${isQ?'':`<span>Due date</span><div>${d.due}</div>`}</div></div>
+  <h3>${isQ?'Quote':'Invoice'}${!isQ&&d.status==='paid'?' <span class="stamp">PAID</span>':''}</h3><div style="color:#7b8582">${esc(d.what)}</div>
+  <div class="bill"><div><small>${isQ?'Prepared for':'Bill to'}</small><b>${esc(d.name)}</b><div>${esc(addr)}</div></div><div><small>Job</small><div>${esc(d.what)}</div><div>${isQ?'Written from your call on 21 Oct 2026':'Work completed by Demo Plumbing Co.'}</div></div></div>
+  <table><thead><tr><th>Description</th><th class="r">Qty</th><th>Unit</th><th class="r">Unit price</th><th class="r">VAT</th><th class="r">Amount</th></tr></thead><tbody>${d.lines.map(l=>`<tr><td>${esc(l[0])}</td><td class="r">${l[1]}</td><td>${l[2]}</td><td class="r">${eur2(l[3])}</td><td class="r">22%</td><td class="r">${eur2(l[1]*l[3])}</td></tr>`).join('')}</tbody></table>
+  <div class="tot"><div><span>Subtotal (excl. VAT)</span><b>${eur2(tot.net)}</b></div><div><span>VAT 22%</span><b>${eur2(tot.vat)}</b></div><div class="grand"><span>Total${isQ?'':' due'}</span><span>${eur2(tot.gross)}</span></div></div>
+  <div class="pay"><div>${isQ?`<b>Terms.</b> Valid 14 days. Scope and materials confirmed at the site visit. 30% deposit on acceptance, the rest on completion. Accept online with one click.`:`<b>Payment.</b> Pay by card or bank transfer within 8 days.<br>IBAN ${CO.iban} · ${CO.bank}<br>Reference ${ref}<br>Pay online: pay.unbusyness.example/${d.no}`}<div style="margin-top:6px">Thank you for your business.</div></div>${isQ?'':'<div class="qr" role="img" aria-label="Payment QR code (example)"></div>'}</div></div>
+  <aside class="grid" style="gap:14px">
+   <div class="card cb grid" style="gap:8px"><b>Actions</b>
+    ${isQ?(d.status==='draft'?`<button class="btn primary" onclick="quote('${d.id}').status='sent';render();toast('Quote sent to ${esc(d.name)} by email and text, with an Accept button.')">${svg('send',16)}Approve and send</button>`:`<button class="btn primary" onclick="quote('${d.id}').status='accepted';render();toast('Accepted. Job created and deposit invoice drafted.')">${svg('check',16)}Mark as accepted</button>`):(d.status==='paid'?`<button class="btn soft" onclick="toast('Receipt sent to ${esc(d.name)}.')">${svg('send',16)}Send receipt</button>`:`<button class="btn primary" onclick="toast('Reminder sent to ${esc(d.name)} with the payment link.')">${svg('send',16)}Send reminder</button><button class="btn soft" onclick="invoice('${d.id}').status='paid';render();toast('Payment recorded. ${eur2(d.amount)} received.')">${svg('euro',16)}Record payment</button>`)}
+    <button class="btn line" onclick="toast('Editing ${d.no}')">${svg('edit',16)}Edit</button><button class="btn line" onclick="toast('PDF ready: ${d.no}.pdf')">${svg('dl',16)}Download PDF</button><button class="btn line" onclick="toast('Duplicated as a new draft.')">${svg('copy',16)}Duplicate</button></div>
+   <div class="card cb"><b>History</b><div class="timeline" style="margin-top:6px">${(isQ?[['Drafted by AI from your call','21 Oct',1],['Approved by you',d.status!=='draft'?'22 Oct':'Waiting',d.status!=='draft'],['Sent to customer',d.status!=='draft'?'22 Oct':'—',d.status!=='draft'],['Accepted',d.status==='accepted'?'Today':'—',d.status==='accepted']]:[['Created from finished job',d.issued,1],['Sent by email and text',d.issued,1],['Viewed by customer',d.viewed?'Yes':'Not yet',d.viewed],[d.overdue?'Overdue · reminder scheduled':'Due',d.due,d.overdue],['Paid',d.status==='paid'?'Yes':'—',d.status==='paid']]).map(t=>`<div class="tl ${t[2]?'on':''}"><i></i><div><b>${t[0]}</b><span>${t[1]}</span></div></div>`).join('')}</div></div>
+   <div class="card cb grid" style="gap:8px"><b>Accounting</b><div class="row" style="font-size:12.5px"><span class="ic sand" style="width:30px;height:30px">${svg('link',14)}</span><div>Syncs to <b>QuickBooks</b>, <b>Xero</b> or <b>Zoho Books</b> when connected. Otherwise kept in Unbusyness basic accounting.</div></div><button class="btn line sm" onclick="nav('settings')">Manage integrations</button></div>
+   ${explain(isQ?'<b>The AI wrote this from the call.</b> Check scope and price; nothing is sent without your approval.':'<b>Example company details.</b> In the real app your logo, VAT ID and bank account appear here, and local rules (e.g. fiscal verification for cash payments) are handled.')}
+  </aside></div>`;
+ return h;
+}
+function job2addr(n){const j=S.jobs.find(x=>x.name===n);return j?j.address+', 1000 Ljubljana':null}
+
+/* ---------- Money & accounting ---------- */
+function pMoney(){
+ const unp=S.invoices.filter(i=>i.status==='unpaid'),b=[[0,7],[8,14],[15,30],[31,999]].map(([a,z])=>unp.filter(i=>{const late=i.overdue?i.daysLate:-(14-i.ago)*0-0;const age=i.ago;return age>=a&&age<=z}));
+ const month=paidSum()+unpaidSum()+11840, exp=EXP.reduce((a,e)=>a+e[2],0)+2380, net=month/1.22;
+ let h=head('Money & Accounting','Money','Who owes you, what came in, and what to set aside. Basic accounting built in.',`<div class="btns"><button class="btn line" onclick="toast('Export ready: October 2026 for your accountant (CSV + PDF).')">${svg('dl',16)}Export for accountant</button><button class="btn primary" onclick="toast('Snap a receipt: AI reads the amount, VAT and assigns it to a job.')">${svg('receipt',16)}Add expense</button></div>`);
+ h+=`<div class="grid g4" style="margin-bottom:16px">${stat('Waiting to be paid',eur(unpaidSum()),`${unp.length} invoices`,'clock','apricot')}${stat('Paid this week',eur(paidSum()),'8 invoices','check')}${stat('Invoiced in October',eur(month),'incl. VAT','euro','slate')}${stat('VAT to set aside',eur(month-net),'22% of October sales','alert','red')}</div>`;
+ h+=`<div class="grid g2"><div class="card"><div class="ch"><div><h2>Who owes you</h2><p>Unpaid invoices by age</p></div><button class="btn soft sm" onclick="toast('Friendly reminders sent to all overdue customers.')">Remind overdue</button></div><div class="cb bars">${[['Up to 1 week',b[0],'var(--green)'],['1–2 weeks',b[1],'var(--apricot-light)'],['2–4 weeks',b[2],'var(--apricot)'],['Over a month',b[3],'var(--red)']].map(([l,a,c])=>{const s=a.reduce((x,i)=>x+i.amount,0);return `<div class="br"><span>${l} <span class="muted">(${a.length})</span></span><span class="bar"><i style="width:${Math.round(s/unpaidSum()*100)}%;background:${c}"></i></span><b>${eur(s)}</b></div>`}).join('')}</div></div>
+  <div class="card"><div class="ch"><div><h2>October at a glance</h2><p>Basic profit and loss, so far</p></div></div><div class="cb"><table class="tbl"><tbody><tr><td>Sales (excl. VAT)</td><td class="num"><b>${eur(net)}</b></td></tr><tr><td>Materials and supplies</td><td class="num">− ${eur(exp*0.7)}</td></tr><tr><td>Fuel, tools and other</td><td class="num">− ${eur(exp*0.3)}</td></tr><tr><td>Software (Unbusyness)</td><td class="num">− €150</td></tr><tr><td><b>Before wages and tax</b></td><td class="num"><b style="color:var(--ok)">${eur(net-exp-150)}</b></td></tr></tbody></table></div></div></div>`;
+ h+=`<div class="card" style="margin-top:16px"><div class="ch"><div><h2>Recent expenses</h2><p>From receipt photos · AI reads amount and VAT</p></div><button class="btn soft sm" onclick="S.page='docs';S.docTab='received';S.doc=null;render()">Received invoices${S.received.some(r=>r.status!=='ok')?' · '+S.received.filter(r=>r.status!=='ok').length+' to check':''}</button></div><div class="tscroll"><table class="tbl"><thead><tr><th>Supplier</th><th>What</th><th>Date</th><th>Assigned to</th><th class="num">Amount</th></tr></thead><tbody>${EXP.map((e,i)=>`<tr><td><b>${e[0]}</b></td><td class="muted">${e[1]}</td><td>${e[3]}</td><td>${['Boiler service · Petra Zupan','Jobs this week','Van','Light fittings · Simon Kastelic','Bathroom renovation'][i]}</td><td class="num">${eur2(e[2])}</td></tr>`).join('')}</tbody></table></div></div>`;
+ h+=`<div style="margin-top:16px">${explain('<b>Basic accounting, not a full bookkeeping system.</b> Unbusyness keeps invoices, payments, expenses and a VAT summary, and exports everything for your accountant. For full books it syncs with QuickBooks, Xero or Zoho Books. Example numbers.')}</div>`;
+ return h;
+}
+
+/* ---------- Team ---------- */
+function pTeam(){
+ let h=head('Team & Languages','Your team','Everyone works in their own language. You read everything in yours.',`<button class="btn primary" onclick="toast('Invite sent by text. The app opens in their language.')">${svg('plus',16)}Invite a worker</button>`);
+ h+=`<div class="grid g4">${`<div class="card cb grid" style="gap:8px"><div class="row"><span class="ic apricot">JD</span><div><b>Janez Demo</b><div class="muted" style="font-size:12px">Owner</div></div></div><span class="pill slate" style="width:max-content">English</span><span class="muted" style="font-size:12px">Approves prices, quotes and invoices</span></div>`}${Object.values(CREW).map(c=>{const js=S.jobs.filter(j=>j.crew&&CREW[j.crew]===c&&WEEK.some(w=>w[0]===j.day));const hrs=js.filter(j=>j.status>=3).length*1.8;return `<div class="card cb grid" style="gap:8px"><div class="row"><span class="ic" style="background:${c.color};color:#fff">${c.name[0]}</span><div><b>${c.full}</b><div class="muted" style="font-size:12px">${c.role} · ${c.since}</div></div></div><span class="pill slate" style="width:max-content">${c.native} · ${c.lang}</span><span class="muted" style="font-size:12px">${js.length} jobs this week · ${hrs.toFixed(1)} h logged</span>${c.demo?`<div class="btns"><button class="btn apricot sm" onclick="openTalk()">${svg('lang',14)}Translator</button><button class="btn soft sm" onclick="openBrief()">Briefing</button></div>`:''}</div>`}).join('')}</div>`;
+ h+=`<div class="grid g3" style="margin-top:16px"><div class="card cb">${explain('<b>Hire the crew you can find.</b> Each worker picks a language. Jobs, briefings and checklists are translated for them.')}</div><div class="card cb">${explain('<b>Talk to customers.</b> A live translator and pre-translated phrases (work offline) on every job.')}</div><div class="card cb">${explain('<b>Automatic timesheets.</b> On my way / Start / Finish logs hours; export for payroll monthly.')}</div></div>`;
+ return h;
+}
+
+/* ---------- Owner insights ---------- */
+function pOwner(){
+ let h=head('Owner insights','What Unbusyness earned you','October so far. Example numbers.',`<div class="row" style="gap:10px"><span class="muted" style="font-weight:600">Day off</span><button class="switch" role="switch" aria-checked="${S.off}" aria-label="Day off" onclick="S.off=!S.off;render();toast(S.off?'Day off on. Only emergencies reach Arjun.':'Welcome back. Calls ring you again.')"></button></div>`);
+ h+=`<div class="grid g3"><div class="card cb grid" style="gap:10px"><div class="eyebrow">From calls you couldn't answer</div><b style="font-size:40px;letter-spacing:-1.6px;color:var(--green)">€6,240</b><div class="bars">${[['Calls AI answered',47,100],['Became jobs',18,38],['Quotes chased',12,26]].map(r=>`<div class="br" style="grid-template-columns:130px 1fr 40px"><span>${r[0]}</span><span class="bar"><i style="width:${r[2]}%;background:var(--green)"></i></span><b>${r[1]}</b></div>`).join('')}</div><div class="row" style="background:var(--green-soft);border-radius:12px;padding:10px 12px"><span style="flex:1">Unbusyness cost <b>€150</b></span><b style="color:var(--green);font-size:18px">41× back</b></div></div>
+ <div class="card cb grid" style="gap:10px"><div class="eyebrow">What you earn per hour</div><div class="bars">${[['Bathroom renovation',61,'var(--ok)'],['Replace tap',48,'var(--green)'],['Blocked drain',39,'var(--green)'],['Boiler service',22,'var(--apricot)']].map(r=>`<div class="br" style="grid-template-columns:150px 1fr 60px"><span>${r[0]}</span><span class="bar"><i style="width:${Math.round(r[1]/61*100)}%;background:${r[2]}"></i></span><b>€${r[1]}/h</b></div>`).join('')}</div><div class="explain"><span class="ei">!</span><div><b>Boiler services earn the least.</b> €120 for 2.5 h incl. travel. €160 is typical nearby.</div></div><button class="btn apricot" onclick="toast('Price list updated: boiler service €160.')">Raise boiler service to €160</button></div>
+ <div class="card cb grid" style="gap:10px"><div class="eyebrow">Repeat work · Care plan</div><div class="row"><span class="ic green">${svg('repeat')}</span><div><b>38 customers due a yearly service</b><div class="muted" style="font-size:12px">Boilers and heat pumps, next 60 days</div></div></div><div class="row" style="justify-content:space-between"><span class="muted">On the Care plan (€19/month)</span><b>23 · €437/month</b></div><button class="btn ${S.reminded?'line':'primary'}" onclick="S.reminded=true;render();toast('38 reminders sent with the Care plan offer.')">${S.reminded?'Reminders sent':'Send reminders and offer the plan'}</button>${explain('<b>Care plan €19/month:</b> yearly service included, priority visit within 24 h, no call-out fee, 10% off repairs.')}</div></div>`;
+ h+=`<div style="margin-top:16px">${explain('<b>Day off</b> (top right): the AI answers, books and replies. Only real emergencies reach the colleague on call. The morning briefing is on the Task Node Tree page.')}</div>`;
+ return h;
+}
+
+/* ---------- Settings & integrations ---------- */
+function pSettings(){
+ const INT=[['QuickBooks Online','QB','#2CA01C','Most used by US trade businesses. Customers, invoices and payments sync automatically.','Coming first'],['Xero','X','#13B5EA','Popular in the UK, Australia and with many accountants.','Planned'],['Zoho Books','Z','#E42527','Good fit for small teams already using Zoho.','Planned'],['Basic accounting','u','#1F4D45','Built into Unbusyness: invoices, payments, expenses, VAT summary, export.','Active']];
+ let h=head('Settings & Integrations','Settings','Voice agent, business profile, documents and accounting.');
+ h+=`<div class="card"><div class="ch"><div><h2>Accounting</h2><p>Use Unbusyness on its own, or connect the books your accountant already uses</p></div></div><div class="cb"><div class="integ">${INT.map(x=>`<div class="card"><div class="row"><span class="logo" style="background:${x[2]}">${x[1]}</span><div><b>${x[0]}</b><div><span class="pill ${x[4]==='Active'?'ok':x[4]==='Coming first'?'apricot':'slate'}">${x[4]}</span></div></div></div><span class="muted" style="font-size:12.5px">${x[3]}</span><button class="btn ${x[4]==='Active'?'soft':'line'} sm" onclick="toast('${x[4]==='Active'?'Basic accounting is on.':x[0]+': we will notify you when the connection is ready.'}')">${x[4]==='Active'?'Settings':'Connect'}</button></div>`).join('')}</div></div></div>`;
+ h+=`<div class="grid g2" style="margin-top:16px"><div class="card"><div class="ch"><div><h2>Voice agent</h2><p>How calls are handled</p></div></div><div class="cb grid" style="gap:10px"><label class="muted" for="m">Default mode</label><select id="m" class="btn line" style="justify-content:flex-start" onchange="S.voiceMode=+this.value"><option value="1" ${S.voiceMode===1?'selected':''}>Mode 1 — AI answers calls</option><option value="2" ${S.voiceMode===2?'selected':''}>Mode 2 — AI processes my calls</option></select><label class="muted" for="g">Greeting language</label><select id="g" class="btn line" style="justify-content:flex-start"><option>Slovenian + English</option><option>English</option><option>English + Spanish</option></select><span class="muted" style="font-size:12px">The agent always says it is an AI assistant and that the call may be recorded.</span></div></div>
+ <div class="card"><div class="ch"><div><h2>Documents</h2><p>What appears on quotes and invoices</p></div></div><div class="cb grid" style="gap:6px;font-size:13px"><div><b>${CO.name}</b></div><div class="muted">${CO.addr}</div><div class="muted">VAT ID ${CO.vat}</div><div class="muted">IBAN ${CO.iban}</div><div class="muted">Payment terms: 8 days · Numbering: INV-2026-0001</div><button class="btn line sm" style="width:max-content;margin-top:6px" onclick="toast('Upload your logo and edit details.')">Edit profile and logo</button></div></div></div>`;
+ return h;
+}
+
+/* ---------- voice commands ---------- */
+const VOICE=[{say:'Pipe repair at Toplarniška 7 next Tuesday at 16:00, work order 150 euros plus VAT.',plan:[['Create job','Pipe repair'],['Where','Toplarniška ulica 7'],['When','Next Tuesday, 16:00'],['Work order','€150 + VAT']],done:'job'},{say:'Remind Luka to pay the radiator invoice.',plan:[['Send reminder','Luka Perko'],['Invoice','Radiator valve · €140']],done:'remind'},{say:'Invoice Bojan for the drain cleaning.',plan:[['Create invoice','Bojan Sušnik'],['Work','Drain cleaning'],['Amount','€110 + VAT = €134.20']],done:'inv'}];
+let vs=null,vt=null;
+function openVoice(idx){clearInterval(vt);hush();
+ if(idx===undefined){vs={phase:'pick'};drawVoice();return}
+ const v=VOICE[idx];vs={v,phase:'listen',shown:'',assign:'carlos'};drawVoice();let i=0;const w=v.say.split(' ');
+ vt=setInterval(()=>{vs.shown=w.slice(0,++i).join(' ');drawVoice();if(i>=w.length){clearInterval(vt);setTimeout(()=>{if(!vs)return;vs.phase='plan';drawVoice();speak('Got it. Please check and confirm.','en-US')},400)}},150)}
+function drawVoice(){const box=document.querySelector('#layer .voice');const inner=`<div class="mh"><b>Voice command</b><button class="x" style="background:rgba(255,255,255,.14);border:0;color:var(--linen)" onclick="closeVoice()" aria-label="Close">${svg('x')}</button></div>
+ <div class="orb ${vs.phase==='listen'?'live':''}">${svg(vs.phase==='plan'?'check':'mic',40)}</div>
+ ${vs.phase==='pick'?`<div style="text-align:center;color:var(--on-green)">Say what needs to happen. Try one:</div><div class="ex">${VOICE.map((x,i)=>`<button onclick="openVoice(${i})">“${esc(x.say)}”</button>`).join('')}</div>`:`<div style="text-align:center;color:var(--on-green)">${vs.phase==='listen'?'Listening…':'Got it. Check and confirm.'}</div><div class="said">“${esc(vs.shown)}”</div>`}
+ ${vs.phase==='plan'?`<div class="plan">${vs.v.plan.map(p=>`<div class="pr"><span class="muted">${p[0]}</span><b>${esc(p[1])}</b></div>`).join('')}${vs.v.done==='job'?`<div style="padding-top:8px"><span class="muted" style="font-size:13px">Who does it?</span><div class="who">${whoButtons(vs.assign,'pickAssign(K)')}</div><div class="muted" style="font-size:12px;margin-top:6px">${vs.assign==='carlos'?'Suggested: Carlos is free on Tuesday afternoon.':vs.assign==='me'?'You keep the job.':CREW[vs.assign].name+' gets it in '+CREW[vs.assign].lang+'.'}</div></div>`:''}<div class="btns" style="margin-top:10px"><button class="btn line" onclick="openVoice()">Try again</button><button class="btn primary" onclick="confirmVoice()">${svg('check',16)}Confirm</button></div></div>`:''}`;
+ if(box)box.innerHTML=inner;else layer(`<div class="scrim center" onclick="if(event.target===this)closeVoice()"><div class="voice" role="dialog" aria-label="Voice command">${inner}</div></div>`)}
+function pickAssign(k){if(vs){vs.assign=k;drawVoice()}}
+function closeVoice(){clearInterval(vt);hush();vs=null;closeLayer()}
+function confirmVoice(){const d=vs.v.done,who=vs.assign;closeVoice();
+ if(d==='job'){S.jobs.push(J('v'+Date.now(),'16:00','Next Tue','New customer','Toplarniška ulica 7','Pipe repair',150,0,who==='me'?null:who));sortJobs();S.page='jobs';S.week=1;render();toast(`Job added for next Tuesday 16:00 · ${who==='me'?'kept by you':'assigned to '+CREW[who].name}.`)}
+ else if(d==='remind')toast('Reminder sent to Luka with the payment link.');
+ else{const j=job('j0');j.status=4;S.invoices.unshift({id:'iv',no:'INV-2026-0161',name:'Bojan Sušnik',what:'Drain cleaning',amount:134.2,ago:0,status:'unpaid',issued:'22 Oct 2026',due:'30 Oct 2026',overdue:false,lines:[['Drain cleaning',1,'job',110]],viewed:false});openDoc('invoice','iv');toast('Invoice INV-2026-0161 created. Check it and send.')}}
+
+/* ---------- layer + render ---------- */
+function layer(html){document.getElementById('layer').innerHTML=html}
+function closeLayer(){document.getElementById('layer').innerHTML=''}
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&document.getElementById('layer').innerHTML){closeVoice()}});
+function render(){drawNav();const P={today:pToday,calls:pCalls,jobs:pJobs,customers:pCustomers,docs:pDocs,money:pMoney,team:pTeam,owner:pOwner,settings:pSettings};document.getElementById('content').innerHTML=P[S.page]()}
+document.getElementById('fab').innerHTML=svg('mic',28);document.getElementById('fab').addEventListener('click',()=>openVoice());
+sortJobs();render();
+</script>
+
+
+<!-- Link back to the waitlist page and SL/EN switch (added for the website) -->
+<style>
+.ub-demo-bar{position:fixed;left:16px;bottom:16px;z-index:35;display:flex;align-items:center;gap:2px;padding:3px;border-radius:999px;background:rgba(20,32,30,.9);box-shadow:0 6px 18px rgba(0,0,0,.18);font:700 13px "Plus Jakarta Sans",system-ui,sans-serif}
+.ub-demo-bar a{color:#FBFAF7;text-decoration:none;padding:7px 12px;border-radius:999px;white-space:nowrap}
+.ub-demo-bar a:hover{background:rgba(255,255,255,.12)}
+.ub-demo-bar .on{background:#FBFAF7;color:#14201E}
+.ub-demo-bar .sep{width:1px;height:18px;background:rgba(255,255,255,.25);margin:0 4px}
+.ub-demo-bar a:focus-visible{outline:2px solid #E8915F;outline-offset:2px}
+.ub-demo-bar{left:50%;bottom:auto;top:12px;transform:translateX(-50%)}
+@media (max-width:760px){.ub-demo-bar{top:auto;bottom:96px;left:12px;transform:none}}
+</style>
+<nav class="ub-demo-bar" aria-label="Demo">
+<a href="/contractor/#join" aria-label="Back to the page and join the waitlist">← Join the waitlist</a>
+
+</nav>
+</body></html>

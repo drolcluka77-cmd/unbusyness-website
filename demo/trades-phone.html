@@ -1,0 +1,826 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Unbusyness Mobile</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<style>
+/* Layout: phone-first app; on wide screens it sits in a device frame. One primary action per card, 56px+ targets, bottom tab bar with a raised voice button. */
+:root{
+  --green:#1F4D45; --green-dark:#173D37; --green-soft:#E6EEEB; --green-line:#3D6C62; --on-green:#CFE0DA;
+  --apricot:#E8915F; --apricot-light:#F2A57A; --apricot-ink:#A84E22; --apricot-soft:#FBE8DC;
+  --slate:#4F5F80; --slate-soft:#E9ECF3;
+  --sand:#F4EFE6; --linen:#FBFAF7; --white:#FFFFFF;
+  --ink:#14201E; --muted:#56615F; --line:#E7E3DA;
+  --red:#B23A32; --red-soft:#FBEAE8; --ok:#2F7A55; --ok-soft:#E4F1E8;
+  --font:'Plus Jakarta Sans','Segoe UI',system-ui,-apple-system,sans-serif;
+  color-scheme:light;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{margin:0;background:var(--sand);color:var(--ink);font-family:var(--font);font-size:17px;line-height:1.45;-webkit-font-smoothing:antialiased}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none;padding:0}
+input,textarea{font:inherit;color:inherit}
+@media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
+
+/* stage + device */
+.stage{min-height:100%;display:flex;align-items:center;justify-content:center;gap:56px;padding-block:32px;padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px))}
+.side{max-width:330px;display:flex;flex-direction:column;gap:16px}
+.side h1{margin:0;font-size:40px;line-height:1.05;letter-spacing:-1.5px;font-weight:700;text-wrap:balance}
+.side h1 span{color:var(--green)}
+.side p{margin:0;color:var(--muted);font-size:16px}
+.side ul{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:10px;font-size:15px}
+.side li{display:flex;gap:10px;align-items:flex-start}
+.side li:before{content:"";width:8px;height:8px;border-radius:50%;background:var(--apricot);margin-top:8px;flex-shrink:0}
+.brandrow{display:flex;align-items:center;gap:10px;font-size:20px;font-weight:700;letter-spacing:-.5px}
+.phone{position:relative;width:390px;height:844px;max-height:calc(100vh - 64px);border-radius:48px;background:var(--linen);box-shadow:0 0 0 10px #14201E,0 30px 80px rgba(20,32,30,.28);overflow:hidden;display:flex;flex-direction:column}
+@media (max-width:820px){.side{display:none}.stage{padding:0;gap:0;align-items:stretch}.phone{width:100%;height:100vh;height:100dvh;max-height:none;border-radius:0;box-shadow:none}}
+
+/* app chrome */
+.screen{flex:1;overflow-y:auto;overflow-x:hidden;padding:18px 18px 130px;scroll-behavior:smooth}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:20px 18px 6px;background:var(--linen)}
+@media (max-width:820px){.topbar{padding-top:calc(14px + env(safe-area-inset-top, 0px))}}
+.hello small{display:block;font-size:13px;font-weight:600;letter-spacing:1.2px;text-transform:uppercase;color:var(--muted)}
+.hello strong{font-size:26px;font-weight:700;letter-spacing:-.8px}
+.avatar{width:44px;height:44px;border-radius:50%;background:var(--apricot-soft);color:var(--apricot-ink);display:grid;place-items:center;font-weight:700;font-size:15px}
+.back{display:flex;align-items:center;gap:6px;min-height:48px;padding:0 14px 0 8px;margin-left:-8px;border-radius:99px;font-weight:700;font-size:16px;color:var(--green)}
+.back:active{background:var(--green-soft)}
+.title{font-size:20px;font-weight:700;letter-spacing:-.4px}
+
+/* tab bar */
+.tabs{position:absolute;left:0;right:0;bottom:0;background:var(--white);border-top:1px solid var(--line);display:grid;grid-template-columns:1fr 1fr 96px 1fr 1fr;align-items:end;padding:8px 6px calc(10px + env(safe-area-inset-bottom, 0px));z-index:5}
+.tab{display:flex;flex-direction:column;align-items:center;gap:3px;min-height:56px;justify-content:center;font-size:12px;font-weight:600;color:var(--muted);border-radius:14px;position:relative}
+.tab.on{color:var(--green)}
+.tab.on:after{content:"";position:absolute;top:2px;width:22px;height:3px;border-radius:3px;background:var(--green)}
+.tab .badge{position:absolute;top:4px;left:calc(50% + 6px);min-width:18px;height:18px;padding:0 5px;border-radius:9px;background:var(--red);color:#fff;font-size:11px;font-weight:700;display:grid;place-items:center}
+.mic{justify-self:center;width:76px;height:76px;margin-top:-34px;border-radius:50%;background:var(--green);color:var(--linen);display:grid;place-items:center;box-shadow:0 0 0 6px var(--white),0 10px 26px rgba(31,77,69,.38);position:relative}
+.mic:after{content:"";position:absolute;inset:-12px;border-radius:50%;border:2px solid var(--apricot-light);opacity:.0;animation:ring 2.6s ease-out infinite}
+@keyframes ring{0%{transform:scale(.85);opacity:.7}100%{transform:scale(1.15);opacity:0}}
+.mic:active{transform:scale(.96)}
+.miclabel{grid-column:3;justify-self:center;font-size:12px;font-weight:700;color:var(--green);margin-top:4px}
+
+/* building blocks */
+.eyebrow{font-size:13px;font-weight:700;letter-spacing:1.3px;text-transform:uppercase;color:var(--muted);margin:26px 2px 10px;display:flex;justify-content:space-between;align-items:center}
+.eyebrow .count{background:var(--red);color:#fff;border-radius:99px;padding:2px 9px;font-size:12px;letter-spacing:0}
+.ailine{display:flex;gap:12px;align-items:center;background:var(--sand);border-radius:20px;padding:14px 16px;font-size:15px;margin-top:10px}
+.ailine .dot{width:36px;height:36px;border-radius:50%;background:var(--green);color:var(--apricot-light);display:grid;place-items:center;flex-shrink:0}
+.card{background:var(--white);border:1px solid var(--line);border-radius:22px;padding:16px;display:flex;flex-direction:column;gap:12px}
+.card+.card{margin-top:12px}
+.need{padding:12px 12px 12px 14px}
+.need .main strong{font-size:16px}.need .main span{font-size:14px}
+.pbtn{min-height:48px;min-width:84px;padding:0 16px;border-radius:14px;background:var(--green-soft);color:var(--green);font-weight:700;font-size:15px;flex-shrink:0}
+.pbtn.hot{background:var(--green);color:var(--linen)}
+.pbtn:active{transform:scale(.97)}
+.row{display:flex;align-items:center;gap:12px}
+.ic{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;flex-shrink:0}
+.ic.green{background:var(--green-soft);color:var(--green)} .ic.red{background:var(--red-soft);color:var(--red)} .ic.apricot{background:var(--apricot-soft);color:var(--apricot-ink)} .ic.slate{background:var(--slate-soft);color:var(--slate)}
+.main{flex:1;min-width:0}
+.main strong{display:block;font-size:17px;font-weight:700;line-height:1.3}
+.main span{display:block;font-size:15px;color:var(--muted);overflow:hidden;text-overflow:ellipsis}
+.tag{display:inline-flex;align-items:center;border-radius:99px;padding:3px 10px;font-size:12px;font-weight:700;white-space:nowrap}
+.tag.red{background:var(--red-soft);color:var(--red)} .tag.green{background:var(--green-soft);color:var(--green)} .tag.apricot{background:var(--apricot-soft);color:var(--apricot-ink)} .tag.ok{background:var(--ok-soft);color:var(--ok)} .tag.slate{background:var(--slate-soft);color:var(--slate)}
+.btn{min-height:56px;border-radius:16px;padding:0 18px;font-weight:700;font-size:17px;display:inline-flex;align-items:center;justify-content:center;gap:10px;width:100%;transition:transform .1s}
+.btn:active{transform:scale(.98)}
+.btn.primary{background:var(--green);color:var(--linen)}
+.btn.primary:active{background:var(--green-dark)}
+.btn.apricot{background:var(--apricot);color:var(--ink)}
+.btn.soft{background:var(--green-soft);color:var(--green)}
+.btn.line{background:var(--white);border:1.5px solid var(--line);color:var(--ink)}
+.btn.danger{background:var(--red);color:#fff}
+.btns{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.btns.three{grid-template-columns:1fr 1fr 1fr}
+.btns.three .btn{flex-direction:column;gap:4px;min-height:72px;font-size:14px;padding:0 6px}
+:focus-visible{outline:3px solid var(--apricot);outline-offset:2px}
+
+/* next job hero */
+.next{background:var(--green);color:var(--linen);border-radius:26px;padding:20px;display:flex;flex-direction:column;gap:14px}
+.next .when{display:flex;justify-content:space-between;align-items:center;font-size:14px;font-weight:700;color:var(--on-green);letter-spacing:.4px}
+.next h2{margin:0;font-size:24px;letter-spacing:-.6px;line-height:1.2}
+.next p{margin:0;color:var(--on-green);font-size:16px}
+.next .btn.primary{background:var(--apricot);color:var(--ink)}
+.next .btn.soft{background:rgba(255,255,255,.12);color:var(--linen)}
+.next .btns.three .btn{background:rgba(255,255,255,.12);color:var(--linen)}
+
+/* lists */
+.list .item{display:flex;align-items:center;gap:12px;padding:14px 4px;border-bottom:1px solid var(--line);width:100%;text-align:left;min-height:72px}
+.list .item:last-child{border-bottom:0}
+.time{width:56px;font-weight:800;font-size:17px;flex-shrink:0}
+.chev{color:#8A938F;flex-shrink:0}
+
+/* detail */
+.field{display:flex;flex-direction:column;gap:2px;padding:12px 0;border-bottom:1px solid var(--line)}
+.field:last-child{border-bottom:0}
+.field small{font-size:13px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:1px}
+.field b{font-size:18px;font-weight:700}
+.summary{background:var(--sand);border-radius:18px;padding:16px;font-size:16px}
+.steps{display:flex;gap:6px;margin:4px 0 2px}
+.steps i{flex:1;height:6px;border-radius:6px;background:var(--line)}
+.steps i.on{background:var(--green)}
+.stepname{font-size:14px;font-weight:700;color:var(--green)}
+.slot{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:64px;padding:0 16px;border-radius:16px;border:1.5px solid var(--line);background:var(--white);font-weight:700;width:100%;text-align:left}
+.slot.sel{border-color:var(--green);background:var(--green-soft);color:var(--green)}
+.slot span{font-weight:500;color:var(--muted);font-size:14px}
+.stack{display:flex;flex-direction:column;gap:10px}
+.price{display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--sand);border-radius:20px;padding:10px}
+.price button{width:56px;height:56px;border-radius:16px;background:var(--white);font-size:26px;font-weight:700;color:var(--green)}
+.price output{font-size:34px;font-weight:800;letter-spacing:-1px}
+.lines .ln{display:flex;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid var(--line);font-size:16px}
+.lines .ln:last-child{border-bottom:0}
+.photo{height:96px;border-radius:16px;border:2px dashed #CFC8BA;display:flex;align-items:center;justify-content:center;gap:8px;font-weight:700;color:var(--muted);width:100%}
+.who{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.who button{min-height:58px;border-radius:14px;border:1.5px solid var(--line);background:var(--white);color:var(--ink);text-align:left;padding:8px 12px;display:flex;flex-direction:column;justify-content:center;gap:1px}
+.who button b{font-size:16px}.who button span{font-size:12.5px;color:var(--muted)}
+.who button.on{border-color:var(--green);background:var(--green-soft);box-shadow:inset 0 0 0 1px var(--green)}
+.thumbs{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0}
+.thumb{position:relative;aspect-ratio:1;border-radius:14px;overflow:hidden;background:var(--sand);display:grid;place-items:center;color:var(--green)}
+.thumb img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0}
+.thumb.inv{background:#fff;border:1px solid var(--line);color:var(--apricot-ink)}
+.thumb.job{background:linear-gradient(135deg,#C9D9D3,#8FB0A6);color:#fff}
+.thumb .lbl{position:absolute;left:6px;bottom:6px;right:6px;border-radius:8px;padding:2px 6px;font-size:11px;font-weight:800;text-align:center;background:var(--green);color:#fff}
+.thumb.inv .lbl{background:var(--apricot);color:var(--ink)}
+.scrim{position:absolute;inset:0;z-index:25;background:rgba(20,32,30,.42);display:flex;align-items:flex-end}
+.psheet{background:var(--linen);width:100%;max-height:92%;overflow-y:auto;border-radius:26px 26px 0 0;padding:18px 18px calc(22px + env(safe-area-inset-bottom, 0px));display:flex;flex-direction:column;gap:12px;animation:up .25s ease}
+.orb{flex-shrink:0}.orb.small{width:84px;height:84px;margin:4px auto 10px;box-shadow:0 0 0 10px rgba(242,165,122,.16)}
+.voice{overflow-y:auto}.voice .close{flex-shrink:0}
+.psheet h2{margin:0;font-size:22px;letter-spacing:-.4px}
+.lblpick{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.lblpick button{border:2px solid var(--line);background:var(--white);border-radius:18px;padding:14px 12px;text-align:left;display:flex;flex-direction:column;gap:4px;color:var(--ink)}
+.lblpick button b{font-size:17px}.lblpick button span{font-size:13px;color:var(--muted);line-height:1.35}
+.lblpick button.on{border-color:var(--green);background:var(--green-soft)}
+.btn.off{opacity:.4;pointer-events:none}
+.photo.done{border-style:solid;border-color:var(--green);background:var(--green-soft);color:var(--green)}
+textarea{width:100%;min-height:90px;border:1.5px solid var(--line);border-radius:16px;padding:14px;font-size:16px;resize:vertical;background:var(--white)}
+textarea:focus{outline:none;border-color:var(--green)}
+.bigok{display:flex;flex-direction:column;align-items:center;text-align:center;gap:10px;padding:36px 10px 10px}
+.bigok .ic{width:84px;height:84px;background:var(--ok-soft);color:var(--ok)}
+.bigok h2{margin:0;font-size:26px;letter-spacing:-.6px}
+.bigok p{margin:0;color:var(--muted)}
+.money{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.money .card{gap:4px;margin-top:0}
+.money b{font-size:26px;letter-spacing:-.6px}
+.money small{color:var(--muted);font-size:14px;font-weight:600}
+
+/* voice sheet */
+.voice{position:absolute;inset:0;background:var(--green);color:var(--linen);z-index:20;display:flex;flex-direction:column;padding:20px 20px calc(24px + env(safe-area-inset-bottom, 0px));animation:up .25s ease}
+@media (max-width:820px){.voice{padding-top:calc(16px + env(safe-area-inset-top, 0px))}}
+@keyframes up{from{transform:translateY(30px);opacity:0}to{transform:none;opacity:1}}
+.voice .close{align-self:flex-end;width:48px;height:48px;border-radius:50%;background:rgba(255,255,255,.12);display:grid;place-items:center}
+.voice .hint{color:var(--on-green);font-size:15px;text-align:center}
+.orb{width:150px;height:150px;border-radius:50%;margin:28px auto 18px;background:radial-gradient(circle at 50% 45%,var(--apricot-light),var(--apricot) 60%);display:grid;place-items:center;color:var(--ink);box-shadow:0 0 0 18px rgba(242,165,122,.16),0 0 0 36px rgba(242,165,122,.08)}
+.orb.live{animation:pulse 1.4s ease-in-out infinite}
+@keyframes pulse{50%{box-shadow:0 0 0 26px rgba(242,165,122,.2),0 0 0 50px rgba(242,165,122,.07)}}
+.said{font-size:22px;line-height:1.4;font-weight:600;min-height:96px;text-align:center;letter-spacing:-.3px}
+.said .caret{display:inline-block;width:2px;height:22px;background:var(--apricot-light);vertical-align:-3px;margin-left:2px;animation:blink 1s step-end infinite}
+@keyframes blink{50%{opacity:0}}
+.plan{background:var(--linen);color:var(--ink);border-radius:24px;padding:18px;display:flex;flex-direction:column;gap:6px;margin-top:auto}
+.plan .field b{font-size:17px}
+.examples{display:flex;flex-direction:column;gap:8px;margin-top:auto}
+.examples button{min-height:52px;border-radius:16px;background:rgba(255,255,255,.1);color:var(--linen);font-size:15px;font-weight:600;text-align:left;padding:10px 16px}
+
+/* translator + crew */
+.explain{display:flex;gap:10px;align-items:flex-start;background:var(--apricot-soft);border-radius:16px;padding:12px 14px;font-size:14px;line-height:1.45;color:#5A3A26;margin:14px 0 4px}
+.explain b{color:var(--apricot-ink)}
+.explain .ei{width:26px;height:26px;border-radius:50%;background:var(--white);color:var(--apricot-ink);display:grid;place-items:center;flex-shrink:0;font-weight:800;font-size:14px}
+.langbar{display:flex;align-items:center;justify-content:space-between;gap:8px;background:var(--green);color:var(--linen);border-radius:20px;padding:12px 14px}
+.langbar .who{display:flex;flex-direction:column;font-size:13px;color:var(--on-green);font-weight:600}
+.langbar .who b{font-size:17px;color:var(--linen)}
+.langbar .swap{width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.14);display:grid;place-items:center;color:var(--apricot-light);flex-shrink:0}
+.convo{display:flex;flex-direction:column;gap:10px;margin-top:14px}
+.bub{border-radius:20px;padding:12px 14px;max-width:92%;display:flex;flex-direction:column;gap:4px;animation:up .2s ease}
+.bub.w{align-self:flex-end;background:var(--green-soft)}
+.bub.c{align-self:flex-start;background:var(--white);border:1px solid var(--line)}
+.bub .lbl{font-size:12px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--muted)}
+.bub .orig{font-size:15px;color:var(--muted)}
+.bub .big{font-size:21px;font-weight:700;line-height:1.3;color:var(--ink)}
+.bub .gloss{font-size:13px;color:#7A8481;font-style:italic}
+.speak2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+.speak2 .btn{flex-direction:column;gap:4px;min-height:84px;font-size:15px}
+.phr{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.phr button{min-height:76px;border-radius:16px;background:var(--white);border:1.5px solid var(--line);text-align:left;padding:10px 12px;font-weight:700;font-size:14px;line-height:1.3;display:flex;flex-direction:column;gap:6px}
+.phr button span{color:var(--green)}
+.showcard{position:absolute;inset:0;z-index:25;background:var(--white);display:flex;flex-direction:column;padding:22px 22px calc(24px + env(safe-area-inset-bottom, 0px));animation:up .2s ease}
+@media (max-width:820px){.showcard{padding-top:calc(18px + env(safe-area-inset-top, 0px))}}
+.showcard .for{font-size:13px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--muted)}
+.showcard .huge{font-size:38px;line-height:1.15;font-weight:800;letter-spacing:-1px;margin:18px 0 14px;color:var(--ink)}
+.showcard .sub{font-size:17px;color:var(--muted)}
+.brief .seg{display:grid;grid-template-columns:1fr 1fr;background:var(--sand);border-radius:14px;padding:4px;gap:4px}
+.brief .seg button{min-height:44px;border-radius:11px;font-weight:700;font-size:14px;color:var(--muted)}
+.brief .seg button.on{background:var(--white);color:var(--green)}
+.brief .txt{font-size:19px;line-height:1.5}
+.check{display:flex;gap:12px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--line);font-size:16px}
+.check:last-child{border-bottom:0}
+.check i{width:24px;height:24px;border-radius:8px;border:2px solid var(--green);flex-shrink:0;margin-top:1px}
+.crewline{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--on-green);font-weight:600}
+.crewline .flag{background:rgba(255,255,255,.14);color:var(--linen);border-radius:99px;padding:3px 10px;font-size:12px}
+.lang{display:inline-flex;align-items:center;gap:6px;border-radius:99px;padding:4px 10px;font-size:13px;font-weight:700;background:var(--slate-soft);color:var(--slate)}
+
+/* owner view */
+.brief-card{background:var(--green);color:var(--linen);border-radius:24px;padding:18px;display:flex;flex-direction:column;gap:12px}
+.brief-card .top{display:flex;align-items:center;gap:12px}
+.playbtn{width:56px;height:56px;border-radius:50%;background:var(--apricot);color:var(--ink);display:grid;place-items:center;flex-shrink:0}
+.brief-card .lines{display:flex;flex-direction:column;gap:6px;font-size:16px;line-height:1.4}
+.brief-card .lines p{margin:0;color:rgba(251,250,247,.45);transition:color .3s}
+.brief-card .lines p.on{color:var(--linen)}
+.brief-card .lines p.done{color:var(--on-green)}
+.value{background:var(--white);border:1px solid var(--line);border-radius:24px;padding:18px;display:flex;flex-direction:column;gap:12px}
+.value .roi{display:flex;align-items:baseline;gap:8px}
+.value .roi b{font-size:40px;letter-spacing:-1.5px;color:var(--green);line-height:1}
+.funnel{display:flex;flex-direction:column;gap:8px}
+.funnel .fr{display:grid;grid-template-columns:136px 1fr 40px;align-items:center;gap:10px;font-size:14px}
+.funnel .bar{height:14px;border-radius:7px;background:var(--green-soft);overflow:hidden}
+.funnel .bar i{display:block;height:100%;border-radius:7px;background:var(--green)}
+.funnel .fr b{text-align:right;font-variant-numeric:tabular-nums}
+.prof .pr{display:grid;grid-template-columns:1fr 70px;gap:6px 10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}
+.prof .pr:last-child{border-bottom:0}
+.prof .pr .bar{grid-column:1 / -1;height:10px;border-radius:5px;background:var(--sand);overflow:hidden}
+.prof .pr .bar i{display:block;height:100%;border-radius:5px}
+.prof .pr b{text-align:right;font-variant-numeric:tabular-nums}
+.switch{width:58px;height:34px;border-radius:17px;background:#CFC8BA;position:relative;flex-shrink:0;transition:background .2s}
+.switch:after{content:"";position:absolute;top:3px;left:3px;width:28px;height:28px;border-radius:50%;background:#fff;transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+.switch[aria-checked="true"]{background:var(--green)}
+.switch[aria-checked="true"]:after{transform:translateX(24px)}
+.offbanner{display:flex;gap:12px;align-items:center;background:var(--slate);color:#fff;border-radius:18px;padding:12px 14px;font-size:15px;margin-top:14px}
+.offbanner b{display:block}
+.mrow{display:flex;align-items:center;gap:12px;width:100%;text-align:left;min-height:64px}
+
+/* week view */
+.week{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-top:8px}
+.week button{min-height:64px;border-radius:14px;background:var(--white);border:1.5px solid var(--line);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:12px;font-weight:700;color:var(--muted)}
+.week button b{font-size:17px;color:var(--ink)}
+.week button.today{border-color:var(--green)}
+.week button.sel{background:var(--green);border-color:var(--green);color:var(--on-green)}
+.week button.sel b{color:var(--linen)}
+.week .dots{display:flex;gap:2px;height:6px}
+.week .dots i{width:5px;height:5px;border-radius:50%;background:var(--apricot)}
+.week button.past .dots i{background:#B9C7C2}
+.week button.sel .dots i{background:var(--apricot-light)}
+.wsum{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
+.wsum div{background:var(--sand);border-radius:16px;padding:10px 12px;display:flex;flex-direction:column}
+.wsum b{font-size:20px;letter-spacing:-.4px}
+.wsum span{font-size:12px;font-weight:600;color:var(--muted)}
+
+/* toast */
+.toast{position:absolute;left:16px;right:16px;bottom:118px;background:var(--ink);color:var(--linen);border-radius:18px;padding:14px 16px;font-weight:600;font-size:15px;display:flex;gap:10px;align-items:center;z-index:30;animation:up .2s ease}
+</style>
+
+<div class="stage">
+  <div class="side">
+    <div class="brandrow">
+      <svg width="36" height="36" viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="24" fill="#1F4D45"/><path d="M14.5 19 V25.5 a9.5 9.5 0 0 0 19 0 V19" fill="none" stroke="#FBFAF7" stroke-width="4" stroke-linecap="round"/><circle cx="24" cy="15.5" r="3.4" fill="#F2A57A"/></svg>
+      unbusyness
+    </div>
+    <h1>Your office, <span>in your pocket.</span></h1>
+    <p>Unbusyness Business on the phone, built for people who work with their hands. Big buttons, one next step at a time.</p>
+    <ul>
+      <li>Today: what needs you and your next job</li>
+      <li>Call back, book or quote from any AI call</li>
+      <li>On my way → start → finish → invoice</li>
+      <li>Hold the mic and just say what to do</li>
+      <li><b>New:</b> foreign workers use the app in their own language and talk to customers through a live translator</li>
+      <li><b>New:</b> Owner view (tap JD): morning briefing, what the app earned you, profit per job, day-off mode</li>
+      <li><b>New:</b> add photos to any job, labelled as job photo or invoice, and assign each job to a worker or keep it</li>
+    </ul>
+    <p style="font-size:13px">Interactive demo with example data. Tap around. Try the translator: Today → next job → <b>Translate</b>, or tap <b>JD</b> for the Owner view.</p>
+  </div>
+
+  <div class="phone" id="phone">
+    <div class="topbar" id="topbar"></div>
+    <main class="screen" id="screen"></main>
+    <nav class="tabs" aria-label="Main">
+      <button class="tab" data-tab="today"><span data-i="home"></span>Today</button>
+      <button class="tab" data-tab="calls"><span data-i="phone"></span>Calls<span class="badge" id="callBadge"></span></button>
+      <button class="mic" id="micBtn" aria-label="Voice command: say what to do"><span data-i="mic" data-s="32"></span></button>
+      <button class="tab" data-tab="jobs"><span data-i="cal"></span>Jobs</button>
+      <button class="tab" data-tab="money"><span data-i="euro"></span>Money</button>
+    </nav>
+    <div id="overlay"></div>
+    <div id="toastHost"></div>
+  </div>
+</div>
+
+<script>
+/* ---------- icons ---------- */
+const I={
+ home:'<path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/>',
+ phone:'<path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"/>',
+ cal:'<rect x="3.5" y="5" width="17" height="15" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/>',
+ euro:'<path d="M17 6.5A7 7 0 1 0 17 17.5M4 10h10M4 14h10"/>',
+ mic:'<rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/>',
+ nav:'<path d="M12 2l7 19-7-4-7 4z"/>',
+ play:'<path d="M7 4l13 8-13 8z"/>',
+ check:'<path d="M5 12l4 4 10-10"/>',
+ doc:'<path d="M7 3h7l5 5v13H7z"/><path d="M14 3v5h5M10 13h6M10 17h4"/>',
+ spark:'<path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/>',
+ back:'<path d="M15 5l-7 7 7 7"/>',
+ chev:'<path d="M9 5l7 7-7 7"/>',
+ x:'<path d="M6 6l12 12M18 6L6 18"/>',
+ truck:'<path d="M3 6h11v10H3zM14 10h4l3 3v3h-7"/><circle cx="7" cy="18" r="2"/><circle cx="17" cy="18" r="2"/>',
+ plus:'<path d="M12 5v14M5 12h14"/>',
+ cam:'<path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/>',
+ send:'<path d="M4 12l16-8-6 16-3-7z"/>',
+ clock:'<circle cx="12" cy="12" r="8.5"/><path d="M12 7v5l3 2"/>',
+ user:'<circle cx="12" cy="8" r="3.5"/><path d="M5 20a7 7 0 0 1 14 0"/>',
+ alert:'<path d="M12 3l9 16H3z"/><path d="M12 10v4M12 17v.5"/>',
+ lang:'<path d="M3 5h10M8 3v2M5 5c.5 3.5 3 6.5 7 8M11 5c-.8 3.6-3.4 6.6-7 8"/><path d="M13 21l4-9 4 9M14.6 17.5h4.8"/>',
+ speaker:'<path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M16 9a4 4 0 0 1 0 6M18.5 6.5a7.5 7.5 0 0 1 0 11"/>',
+ team:'<circle cx="9" cy="8" r="3.2"/><path d="M3 19a6 6 0 0 1 12 0"/><circle cx="17" cy="9" r="2.5"/><path d="M15.5 14.2A5 5 0 0 1 21 19"/>',
+ swap:'<path d="M7 4L3 8l4 4M3 8h14M17 20l4-4-4-4M21 16H7"/>',
+ list:'<path d="M9 6h11M9 12h11M9 18h11"/><path d="M4 6l1 1 2-2M4 12l1 1 2-2M4 18l1 1 2-2"/>',
+ chart:'<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>',
+ repeat:'<path d="M17 2l4 4-4 4"/><path d="M3 11V9a3 3 0 0 1 3-3h15M7 22l-4-4 4-4"/><path d="M21 13v2a3 3 0 0 1-3 3H3"/>',
+ moon:'<path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/>',
+ pause:'<path d="M8 5v14M16 5v14"/>'
+};
+const svg=(n,s=24,w=2)=>`<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${I[n]}</svg>`;
+const esc=t=>String(t).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+const eur=n=>'€'+n.toLocaleString('en-US');
+
+/* ---------- example data ---------- */
+const S={
+ tab:'today', stack:[],
+ calls:[
+  {id:'c1',name:'Marko Kranjc',phone:'+386 40 555 018',time:'09:42',len:'2 min',address:'Tržaška cesta 18, Ljubljana',need:'Water leaking under the kitchen sink',urgent:true,mode:'AI answered',status:'new',
+   summary:'Marko has water leaking under his kitchen sink and turned off the valve. He wants someone today. He is home until 18:00.'},
+  {id:'c2',name:'Nina Horvat',phone:'+386 41 890 112',time:'08:58',len:'1 min',address:'Rožna dolina 4, Ljubljana',need:'Yearly heat-pump service',urgent:false,mode:'AI answered',status:'new',
+   summary:'Nina wants the regular yearly service of her heat pump. She is free on Thursday morning.'},
+  {id:'c3',name:'Janez Novak',phone:'+386 31 222 640',time:'Yesterday',len:'8 min',address:'Vojkova cesta 5, Ljubljana',need:'Bathroom renovation',urgent:false,mode:'Your call, AI notes',status:'quoted',
+   summary:'You agreed on a site visit today at 14:00. Janez expects a rough price of €2,000–2,500. The AI drafted a quote for you to check.'}
+ ],
+ jobs:[
+  /* earlier this week: done and paid (match the paid invoices) */
+  {id:'m1',time:'08:00',day:'Mon',name:'Eva Oblak',phone:'+386 40 210 334',address:'Kersnikova 8',what:'Leak repair',price:98,status:5,crew:'carlos'},
+  {id:'m2',time:'10:30',day:'Mon',name:'Jure Pirc',phone:'+386 41 552 019',address:'Trubarjeva 41',what:'Radiator bleed and valve',price:148,status:5,crew:'arjun'},
+  {id:'m3',time:'13:00',day:'Mon',name:'Sara Mlakar',phone:'+386 31 870 455',address:'Šmartinska 15',what:'Shower drain',price:164,status:5,crew:'carlos'},
+  {id:'m4',time:'15:30',day:'Mon',name:'Gregor Kovač',phone:'+386 40 931 207',address:'Dunajska 160',what:'Water heater check',price:139,status:5,crew:'wei'},
+  {id:'t1',time:'09:00',day:'Tue',name:'Maja Kralj',phone:'+386 51 404 118',address:'Rakovniška 3',what:'Boiler service',price:131,status:5,crew:'arjun'},
+  {id:'t2',time:'13:30',day:'Tue',name:'Rok Vidmar',phone:'+386 40 666 802',address:'Cesta v Mestni log 22',what:'New sink tap',price:160,status:5,crew:'carlos'},
+  {id:'t3',time:'15:00',day:'Tue',name:'Klemen Žagar',phone:'+386 41 203 477',address:'Viška 12',what:'Outdoor socket install',price:119,status:4,crew:'wei'},
+  {id:'w1',time:'08:30',day:'Wed',name:'Ana Kos',phone:'+386 31 115 960',address:'Pražakova 9',what:'Blocked drain',price:143,status:5,crew:'carlos'},
+  {id:'w2',time:'11:00',day:'Wed',name:'Tomaž Golob',phone:'+386 40 742 135',address:'Ilirska 27',what:'Toilet repair',price:115,status:5,crew:'arjun'},
+  {id:'w3',time:'14:30',day:'Wed',name:'Irena Hočevar',phone:'+386 51 880 264',address:'Vegova 6',what:'Light fittings',price:164,status:4,crew:'wei'},
+  /* today */
+  {id:'j0',time:'08:00',day:'Today',name:'Bojan Sušnik',phone:'+386 41 390 551',address:'Tomšičeva 14',what:'Drain cleaning',price:110,status:3,crew:'arjun',photos:[{label:'job'},{label:'job'},{label:'invoice'}]},
+  {id:'j1',time:'10:30',day:'Today',name:'Petra Zupan',phone:'+386 40 111 234',address:'Celovška cesta 112',what:'Boiler service',price:120,status:0,crew:'carlos'},
+  {id:'j4',time:'12:30',day:'Today',name:'Simon Kastelic',phone:'+386 31 507 882',address:'Poljanska 30',what:'Replace light fittings',price:140,status:0,crew:'wei'},
+  {id:'j2',time:'14:00',day:'Today',name:'Janez Novak',phone:'+386 31 222 640',address:'Vojkova cesta 5',what:'Bathroom site visit',price:0,status:0},
+  {id:'j3',time:'16:30',day:'Today',name:'Mojca Bizjak',phone:'+386 51 765 090',address:'Linhartova 22',what:'Replace bathroom tap',price:95,status:0,crew:'arjun'},
+  /* tomorrow and Saturday */
+  {id:'f1',time:'08:00',day:'Tomorrow',name:'Luka Debeljak',phone:'+386 40 228 913',address:'Celovška 260',what:'Heat pump service',price:165,status:0,crew:'carlos'},
+  {id:'f2',time:'09:30',day:'Tomorrow',name:'Vesna Majcen',phone:'+386 41 615 307',address:'Zaloška 54',what:'Kitchen sink unblock',price:95,status:0,crew:'arjun'},
+  {id:'f3',time:'11:00',day:'Tomorrow',name:'Peter Ambrožič',phone:'+386 51 773 640',address:'Jamova 18',what:'Fuse box check',price:120,status:0,crew:'wei'},
+  {id:'f4',time:'13:30',day:'Tomorrow',name:'Alenka Strnad',phone:'+386 31 442 196',address:'Gerbičeva 44',what:'Toilet cistern',price:110,status:0,crew:'carlos'},
+  {id:'f5',time:'15:00',day:'Tomorrow',name:'Damjan Lah',phone:'+386 40 980 552',address:'Litijska 81',what:'Radiator valve',price:125,status:0,crew:'arjun'},
+  {id:'s1',time:'09:00',day:'Sat',name:'Helena Rupnik',phone:'+386 41 334 875',address:'Rožna dolina 12',what:'Emergency leak (on call)',price:180,status:0,crew:'carlos'},
+  /* next week */
+  {id:'n1',time:'08:00',day:'Next Mon',name:'Robert Zupančič',phone:'+386 40 556 120',address:'Bravničarjeva 7',what:'Boiler service',price:160,status:0,crew:'arjun'},
+  {id:'n2',time:'10:00',day:'Next Mon',name:'Tanja Bergant',phone:'+386 51 228 743',address:'Ob Ljubljanici 34',what:'Bathroom tap and shower head',price:150,status:0,crew:'carlos'},
+  {id:'n3',time:'09:00',day:'Next Tue',name:'Uroš Pavlin',phone:'+386 31 864 509',address:'Celovška 180',what:'Socket and switch repair',price:115,status:0,crew:'wei'},
+  {id:'n4',time:'13:00',day:'Next Wed',name:'Mateja Gorjup',phone:'+386 40 119 682',address:'Cesta na Rožnik 5',what:'Water heater replacement',price:195,status:0,crew:'carlos'}
+ ],
+ quotes:[
+  {id:'q1',name:'Janez Novak',what:'Bathroom renovation',total:2400,status:'draft',
+   lines:[['Remove old tiles and fittings',350],['Plumbing for shower and sink',780],['New tiles, laid (12 m²)',890],['Fit toilet, sink and shower',380]]}
+ ],
+ invoices:(()=>{
+  /* example invoices for a 3-person crew, jobs €80–200 incl. VAT */
+  const paid=[['Ana Kos','Blocked drain',175,'Yesterday'],['Tomaž Golob','Toilet repair',140,'Yesterday'],['Maja Kralj','Boiler service',160,'Tuesday'],['Rok Vidmar','New sink tap',195,'Tuesday'],['Eva Oblak','Leak repair',120,'Monday'],['Jure Pirc','Radiator bleed and valve',180,'Monday'],['Sara Mlakar','Shower drain',200,'Monday'],['Gregor Kovač','Water heater check',170,'Monday']];
+  const unpaid=[['Irena Hočevar','Light fittings',200,'Yesterday'],['Klemen Žagar','Outdoor socket install',145,'2 days ago'],['Luka Perko','Radiator valve',140,'3 days ago'],['Nika Zajc','Bathroom tap',190,'3 days ago'],['Matej Hribar','Blocked drain',165,'4 days ago'],['Tina Košir','Boiler service',200,'4 days ago'],['Blaž Turk','Toilet cistern',145,'5 days ago'],['Ana Bizjak','Pipe repair',180,'6 days ago'],['Primož Kos','Heat pump check',195,'1 week ago'],['Urška Zupan','Kitchen sink',160,'1 week ago'],['Aleš Novak','Leak repair',175,'1 week ago'],['Mojca Kolar','Boiler service',200,'8 days ago'],['Žiga Rozman','Radiator valve',185,'9 days ago'],['Petra Leban','Shower mixer',150,'10 days ago'],['Andrej Kern','Drain cleaning',170,'11 days ago'],['Katja Medved','Water heater',190,'12 days ago'],['Boštjan Erjavec','Boiler service',200,'2 weeks ago'],['Lara Furlan','Toilet repair',165,'2 weeks ago'],['Miha Jereb','Pipe insulation',180,'2 weeks ago'],['Nina Sever','Tap replacement',155,'2 weeks ago'],['David Pečnik','Heating check',195,'3 weeks ago'],['Špela Breznik','Leak repair',175,'3 weeks ago']];
+  return [...paid.map((x,i)=>({id:'p'+i,name:x[0],what:x[1],amount:x[2],status:'paid',when:x[3]})),...unpaid.map((x,i)=>({id:x[0]==='Luka Perko'?'i2':'u'+i,name:x[0],what:x[1],amount:x[2],status:'unpaid',when:x[3]}))];
+ })(),
+ draft:{photo:false,note:''}, book:{slot:null}, allInv:false, jobDay:null,
+ talk:{log:[],wi:0,ci:0}, brief:{orig:false,added:false},
+ owner:{line:-1,playing:false,off:false,reminded:false}
+};
+/* crew and languages (example people) */
+const CREW={
+ carlos:{name:'Carlos',full:'Carlos Méndez',role:'Plumber',lang:'Spanish',native:'Español',since:'8 months',demo:true},
+ arjun:{name:'Arjun',full:'Arjun Sharma',role:'Plumber',lang:'Hindi',native:'हिन्दी',since:'4 months'},
+ wei:{name:'Wei',full:'Wei Zhang',role:'Electrician',lang:'Chinese',native:'中文',since:'5 months'}
+};
+const CUSTOMER_LANG={lang:'Slovenian',native:'Slovenščina'};
+/* scripted live conversation (worker ⇄ customer) */
+const TALK_W=[
+ {orig:'Tengo que cortar el agua durante 30 minutos.',trans:'Za 30 minut moram zapreti vodo.',en:'I need to turn off the water for 30 minutes.'},
+ {orig:'Sí, pero primero mi jefe confirmará el precio.',trans:'Da, vendar bo ceno najprej potrdil moj šef.',en:'Yes, but my boss will confirm the price first.'}
+];
+const TALK_C=[
+ {orig:'V redu. Ali boste zamenjali tudi ventil?',trans:'De acuerdo. ¿También va a cambiar la válvula?',en:'Okay. Will you also replace the valve?'}
+];
+/* ready phrases: worker taps, customer sees it big in their language */
+const PHRASES=[
+ {en:'I need to turn off the water for 30 minutes.',sl:'Za 30 minut moram zapreti vodo.',es:'Tengo que cortar el agua durante 30 minutos.'},
+ {en:'Where is the main water valve?',sl:'Kje je glavni ventil za vodo?',es:'¿Dónde está la llave de paso principal?'},
+ {en:'I need access to the basement.',sl:'Potrebujem dostop do kleti.',es:'Necesito acceder al sótano.'},
+ {en:'This part must be replaced.',sl:'Ta del je treba zamenjati.',es:'Hay que cambiar esta pieza.'},
+ {en:'The job is finished. Please check.',sl:'Delo je končano. Prosim, preverite.',es:'El trabajo está terminado. Por favor, revíselo.'},
+ {en:'Please sign here.',sl:'Prosim, podpišite tukaj.',es:'Por favor, firme aquí.'}
+];
+/* owner's briefing, auto-translated for the worker */
+const BRIEF={
+ en:'Petra is home until 12:00. The boiler is in the basement, take the stairs on the left. Bring a new pressure valve. Do not park in front of the garage.',
+ es:'Petra está en casa hasta las 12:00. La caldera está en el sótano, baje por la escalera de la izquierda. Traiga una válvula de presión nueva. No aparque delante del garaje.',
+ checks:[['Check boiler pressure','Comprobar la presión de la caldera'],['Replace pressure valve','Cambiar la válvula de presión'],['Take 2 photos when finished','Hacer 2 fotos al terminar']],
+ note:{es:'La tubería está corroída, hay que cambiar 2 metros.',en:'The pipe is corroded, 2 metres of pipe need replacing.'}
+};
+const STEP=['Scheduled','On the way','Working','Done','Invoiced','Paid'];
+/* demo week: today is Thursday 22 October */
+const WEEK=[['Mon',19],['Tue',20],['Wed',21],['Today',22],['Tomorrow',23],['Sat',24],['Sun',25]];
+const WEEKLBL={Mon:'Mon',Tue:'Tue',Wed:'Wed',Today:'Thu',Tomorrow:'Fri',Sat:'Sat',Sun:'Sun'};
+const DAYS=['Mon','Tue','Wed','Today','Tomorrow','Sat','Sun','Next Mon','Next Tue','Next Wed','Next Thu','Next Fri'];
+const DAYTITLE={Mon:'Monday 19',Tue:'Tuesday 20',Wed:'Wednesday 21',Today:'Today · Thursday 22',Tomorrow:'Tomorrow · Friday 23',Sat:'Saturday 24',Sun:'Sunday 25','Next Mon':'Next Monday 26','Next Tue':'Next Tuesday 27','Next Wed':'Next Wednesday 28','Next Thu':'Next Thursday 29','Next Fri':'Next Friday 30'};
+const dayIx=d=>{const i=DAYS.indexOf(d);return i<0?99:i};
+function sortJobs(){S.jobs.sort((a,b)=>dayIx(a.day)-dayIx(b.day)||a.time.localeCompare(b.time))}
+const call=id=>S.calls.find(c=>c.id===id), job=id=>S.jobs.find(j=>j.id===id), quote=id=>S.quotes.find(q=>q.id===id);
+
+/* ---------- real speech output (browser voices) ---------- */
+const TTS=('speechSynthesis' in window)?window.speechSynthesis:null;
+let VOICES=[];
+function loadVoices(){try{VOICES=TTS?TTS.getVoices():[]}catch(e){VOICES=[]}}
+if(TTS){loadVoices();try{TTS.addEventListener('voiceschanged',loadVoices)}catch(e){}}
+const LANGNAME={'sl':'Slovenian','hi':'Hindi','en':'English','es':'Spanish','zh':'Chinese'};
+function pickVoice(lang){const base=lang.slice(0,2).toLowerCase();return VOICES.find(v=>v.lang&&v.lang.toLowerCase()===lang.toLowerCase())||VOICES.find(v=>v.lang&&v.lang.toLowerCase().startsWith(base))||null}
+/* speak text; returns false if this device can't speak that language */
+function speak(text,lang,onend){
+  if(!TTS){toast('This browser cannot play speech.');onend&&onend();return false}
+  try{TTS.cancel()}catch(e){}
+  if(!VOICES.length)loadVoices();
+  const v=pickVoice(lang);
+  if(!v&&VOICES.length&&!lang.startsWith('en')){toast(`No ${LANGNAME[lang.slice(0,2)]||lang} voice on this device. Showing text only.`);onend&&setTimeout(onend,1500);return false}
+  const u=new SpeechSynthesisUtterance(text); u.lang=lang; if(v)u.voice=v; u.rate=lang.startsWith('en')?1:.95;
+  let done=false; const fin=()=>{if(!done){done=true;onend&&onend()}};
+  u.onend=fin; u.onerror=fin;
+  TTS.speak(u);
+  setTimeout(fin, 1200+text.length*110); // safety if onend never fires
+  return true;
+}
+function hush(){try{TTS&&TTS.cancel()}catch(e){}}
+
+/* ---------- navigation ---------- */
+const screen=document.getElementById('screen'), topbar=document.getElementById('topbar');
+function stopBrief(){clearInterval(window._bt);hush();if(S.owner){S.owner.playing=false}}
+function go(view){stopBrief();S.stack.push(view);render(true)}
+function back(){stopBrief();S.stack.pop();render(true)}
+function tab(t){stopBrief();S.tab=t;S.stack=[];render(true)}
+function toast(msg){const h=document.getElementById('toastHost');h.innerHTML=`<div class="toast" role="status">${svg('check',20)}<span>${esc(msg)}</span></div>`;clearTimeout(window._t);window._t=setTimeout(()=>h.innerHTML='',2600)}
+
+/* ---------- screens ---------- */
+function needsYou(){
+  const items=[];
+  S.calls.filter(c=>c.status==='new').forEach(c=>items.push(c.urgent
+   ?{ic:'alert',tone:'red',title:'Call back '+c.name.split(' ')[0],sub:c.need+' · urgent',btn:'Call back',act:`go({v:'call',id:'${c.id}'})`}
+   :{ic:'cal',tone:'green',title:'Book '+c.name.split(' ')[0],sub:c.need,btn:'Book',act:`go({v:'book',id:'${c.id}'})`}));
+  S.quotes.filter(q=>q.status==='draft').forEach(q=>items.push({ic:'doc',tone:'apricot',title:'Approve quote · '+eur(q.total),sub:q.name+' · '+q.what,btn:'Review',act:`go({v:'quote',id:'${q.id}'})`}));
+  return items;
+}
+function vToday(){
+  const n=needsYou(); const next=S.jobs.find(j=>j.status<3&&j.day==='Today');
+  topbar.innerHTML=`<div class="hello"><small>Thursday, 22 October</small><strong>Morning, Janez</strong></div><button class="avatar" onclick="go({v:'owner'})" aria-label="Owner view">JD</button>`;
+  let h=`<div class="ailine" style="margin-top:22px"><span class="dot">${svg('spark',18)}</span><span><b>While you worked:</b> AI answered ${S.calls.filter(c=>c.mode==='AI answered').length} calls and drafted 1 quote.</span></div>`;
+  h+=`<div class="eyebrow">Needs you ${n.length?`<span class="count">${n.length}</span>`:''}</div>`;
+  if(!n.length) h+=`<div class="card"><div class="row"><span class="ic green">${svg('check')}</span><div class="main"><strong>All clear</strong><span>Nothing waiting for you.</span></div></div></div>`;
+  n.forEach(x=>h+=`<div class="card need"><div class="row"><span class="ic ${x.tone}">${svg(x.ic)}</span><div class="main"><strong>${esc(x.title)}</strong><span>${esc(x.sub)}</span></div><button class="pbtn ${x.tone==='red'?'hot':''}" onclick="${x.act}">${esc(x.btn)}</button></div></div>`);
+  const off=S.owner.off?`<div class="offbanner"><span class="ic" style="background:rgba(255,255,255,.16);color:#fff">${svg('moon')}</span><div><b>Day off is on</b>AI handles calls and bookings. Only emergencies go to Arjun.</div></div>`:'';
+  return off+(next?`<div class="eyebrow" style="margin-top:14px">Next job</div>`+nextCard(next):'')+h;
+}
+function nextCard(j){
+  const st=j.status; const primary=[['I\'m on my way','truck'],['Start job','play'],['Finish job','check']][st];
+  return `<div class="next"><div class="when"><span>${j.time} · ${esc(j.day.toUpperCase())}</span><span class="tag" style="background:rgba(255,255,255,.14);color:var(--linen)">${STEP[st]}</span></div>
+   <div><h2>${esc(j.what)}</h2><p>${esc(j.name)} · ${esc(j.address)}</p></div>
+   ${j.crew?`<div class="crewline">${svg('team',18)}Crew: ${esc(CREW[j.crew].name)} <span class="flag">speaks ${esc(CREW[j.crew].lang)}</span></div>`:''}
+   <button class="btn primary" onclick="advance('${j.id}')">${svg(primary[1],22)}${primary[0]}</button>
+   <div class="btns three" style="grid-template-columns:repeat(${j.crew&&CREW[j.crew].demo?4:3},1fr)"><button class="btn" onclick="toast('Opening maps to ${esc(j.address)}')">${svg('nav',22)}Navigate</button><button class="btn" onclick="toast('Calling ${esc(j.name)}…')">${svg('phone',22)}Call</button>${j.crew&&CREW[j.crew].demo?`<button class="btn" onclick="openTalk('${j.id}')">${svg('lang',22)}Translate</button>`:''}<button class="btn" onclick="go({v:'job',id:'${j.id}'})">${svg('doc',22)}Details</button></div></div>`;
+}
+function vCalls(){
+  topbar.innerHTML=`<div class="title">Calls</div><span class="tag ${S.owner.off?'slate':'green'}">${S.owner.off?'Day off · AI handles all':'AI receptionist on'}</span>`;
+  let h=`<p style="margin:4px 2px 0;color:var(--muted);font-size:15px">Every call becomes a summary and a next step.</p><div class="card list" style="margin-top:14px;padding:4px 14px">`;
+  S.calls.forEach(c=>{const t=c.status==='new'?(c.urgent?'<span class="tag red">Urgent</span>':'<span class="tag green">New</span>'):c.status==='quoted'?'<span class="tag apricot">Quote ready</span>':'<span class="tag ok">Booked</span>';
+   h+=`<button class="item" onclick="go({v:'call',id:'${c.id}'})"><span class="ic ${c.urgent&&c.status==='new'?'red':'green'}">${svg('phone',20)}</span><div class="main"><strong>${esc(c.name)}</strong><span>${esc(c.need)}</span><span style="font-size:13px">${esc(c.time)} · ${esc(c.mode)}</span></div>${t}</button>`});
+  return h+`</div>`;
+}
+function vCall(id){
+  const c=call(id);
+  topbar.innerHTML=`<button class="back" onclick="back()">${svg('back',22)}Calls</button>${c.urgent&&c.status==='new'?'<span class="tag red">Urgent</span>':''}`;
+  let h=`<div style="display:flex;flex-direction:column;gap:4px;margin:6px 2px 14px"><div class="title" style="font-size:26px">${esc(c.name)}</div><span style="color:var(--muted);font-size:15px">${esc(c.time)} · ${esc(c.len)} · ${esc(c.mode)}</span></div>
+  <div class="summary"><b style="display:flex;gap:8px;align-items:center;margin-bottom:6px;color:var(--green)">${svg('spark',18)}AI summary</b>${esc(c.summary)}</div>
+  <div class="card" style="margin-top:12px;padding:4px 16px"><div class="field"><small>Needs</small><b>${esc(c.need)}</b></div><div class="field"><small>Address</small><b>${esc(c.address)}</b></div><div class="field"><small>Phone</small><b>${esc(c.phone)}</b></div></div>
+  <div class="stack" style="margin-top:16px">`;
+  h+=`<button class="btn primary" onclick="toast('Calling ${esc(c.name)}…')">${svg('phone',22)}Call back</button>`;
+  if(c.status==='quoted') h+=`<button class="btn apricot" onclick="go({v:'quote',id:'q1'})">${svg('doc',22)}Review quote · ${eur(quote('q1').total)}</button>`;
+  else if(c.status==='new') h+=`<div class="btns"><button class="btn soft" onclick="go({v:'book',id:'${c.id}'})">${svg('cal',22)}Book job</button><button class="btn line" onclick="newQuote('${c.id}')">${svg('doc',22)}Quote</button></div>`;
+  return h+`</div>`;
+}
+function vBook(id){
+  const c=call(id);
+  topbar.innerHTML=`<button class="back" onclick="back()">${svg('back',22)}Back</button>`;
+  const slots=c.id==='c1'?[['Today 12:00','Fits between your jobs · 15 min away'],['Today 17:30','After your last job'],['Tomorrow 08:00','First thing']]:[['Next Thu 08:00','Nina is free Thursday morning'],['Next Thu 10:00','Nina is free Thursday morning'],['Next Fri 09:00','Backup option']];
+  let h=`<div class="title" style="font-size:26px;margin:6px 2px 4px">Book ${esc(c.name.split(' ')[0])}</div><p style="margin:0 2px 16px;color:var(--muted)">${esc(c.need)} · AI picked times that fit your day.</p><div class="stack">`;
+  slots.forEach((s,i)=>h+=`<button class="slot ${S.book.slot===i?'sel':''}" onclick="S.book.slot=${i};render()" aria-pressed="${S.book.slot===i}"><div>${s[0]}<br><span>${s[1]}</span></div>${S.book.slot===i?svg('check',22):''}</button>`);
+  h+=`</div><div style="margin-top:18px"><button class="btn primary" ${S.book.slot===null?'disabled style="opacity:.45"':''} onclick="confirmBook('${c.id}','${slots[S.book.slot??0][0]}')">${svg('check',22)}Book and text ${esc(c.name.split(' ')[0])}</button></div>`;
+  return h;
+}
+function confirmBook(id,slot){
+  const c=call(id); c.status='booked'; S.book.slot=null;
+  const cut=slot.lastIndexOf(' '), day=slot.slice(0,cut), time=slot.slice(cut+1); S.jobs.push({id:'j'+Date.now(),time,day,name:c.name,phone:c.phone,address:c.address.split(',')[0],what:c.need,price:c.id==='c1'?110:150,status:0});
+  sortJobs();
+  S.stack=[]; S.tab='jobs'; render(true); toast(`Booked ${slot}. ${c.name.split(' ')[0]} got a text confirmation.`);
+}
+function newQuote(id){const c=call(id);const q={id:'q'+Date.now(),name:c.name,what:c.need,total:180,status:'draft',lines:[['Call-out and diagnosis',45],['Repair work (1.5 h)',90],['Parts',45]]};S.quotes.push(q);c.status='quoted';go({v:'quote',id:q.id})}
+function vQuote(id){
+  const q=quote(id);
+  topbar.innerHTML=`<button class="back" onclick="back()">${svg('back',22)}Back</button><span class="tag ${q.status==='sent'?'ok':'apricot'}">${q.status==='sent'?'Sent':'Draft by AI'}</span>`;
+  if(q.status==='sent') return `<div class="bigok"><span class="ic">${svg('send',38)}</span><h2>Quote sent</h2><p>${esc(q.name)} got ${eur(q.total)} by email and text. We'll remind them in 3 days if they don't answer.</p></div><div style="margin-top:20px"><button class="btn soft" onclick="tab('today')">Back to Today</button></div>`;
+  let h=`<div class="title" style="font-size:26px;margin:6px 2px 2px">${esc(q.what)}</div><p style="margin:0 2px 14px;color:var(--muted)">For ${esc(q.name)} · written from your call</p>
+  <div class="card lines" style="padding:6px 16px">${q.lines.map(l=>`<div class="ln"><span>${esc(l[0])}</span><b>${eur(l[1])}</b></div>`).join('')}</div>
+  <div class="eyebrow">Total price (excl. VAT)</div>
+  <div class="price"><button onclick="adj('${q.id}',-50)" aria-label="Lower price by 50">−</button><output>${eur(q.total)}</output><button onclick="adj('${q.id}',50)" aria-label="Raise price by 50">+</button></div>
+  <div class="stack" style="margin-top:18px"><button class="btn primary" onclick="quote('${q.id}').status='sent';render(true)">${svg('send',22)}Approve and send</button><button class="btn line" onclick="toast('Opening the full editor')">Edit lines</button></div>`;
+  return h;
+}
+function adj(id,d){const q=quote(id);q.total=Math.max(0,q.total+d);render()}
+function vJobs(){
+  const sel=S.jobDay, inWeek=j=>WEEKLBL[j.day]!==undefined;
+  const wk=S.jobs.filter(inWeek), done=wk.filter(j=>j.status>=3).length, value=wk.reduce((a,j)=>a+Math.round(j.price*1.22),0);
+  topbar.innerHTML=`<div class="title">Jobs</div><button class="tag green" style="min-height:40px;padding:0 14px;font-size:14px" onclick="openVoice(0)">${svg('plus',16)} New job</button>`;
+  let h=`<div class="eyebrow" style="margin-top:6px">This week · 19–25 October</div>
+  <div class="week" role="group" aria-label="Pick a day">${WEEK.map(([d,n])=>{const c=S.jobs.filter(j=>j.day===d).length;const past=dayIx(d)<dayIx('Today');
+    return `<button class="${d==='Today'?'today':''} ${sel===d?'sel':''} ${past?'past':''}" onclick="S.jobDay=S.jobDay==='${d}'?null:'${d}';render()" aria-pressed="${sel===d}">${WEEKLBL[d]}<b>${n}</b><span class="dots">${'<i></i>'.repeat(Math.min(c,5))}</span></button>`}).join('')}</div>
+  <div class="wsum"><div><b>${wk.length}</b><span>jobs this week</span></div><div><b>${done}</b><span>done</span></div><div><b>${eur(value)}</b><span>booked incl. VAT</span></div></div>`;
+  if(sel) h+=`<div style="margin-top:10px"><button class="btn line" style="min-height:44px;font-size:15px" onclick="S.jobDay=null;render()">Show the whole week</button></div>`;
+  const days=sel?[sel]:[...DAYS.filter(d=>dayIx(d)>=dayIx('Today')),...DAYS.filter(d=>dayIx(d)<dayIx('Today'))];
+  days.forEach(d=>{const js=S.jobs.filter(j=>j.day===d);if(!js.length){if(sel)h+=`<div class="card" style="margin-top:14px"><div class="row"><span class="ic green">${svg('check')}</span><div class="main"><strong>No jobs</strong><span>A free day. The AI can fill it with service reminders.</span></div></div></div>`;return}
+   const val=js.reduce((a,j)=>a+Math.round(j.price*1.22),0);
+   h+=`<div class="eyebrow">${!sel&&dayIx(d)<dayIx('Today')?'Earlier · ':''}${DAYTITLE[d]||d}<span style="letter-spacing:0;text-transform:none;font-weight:600">${js.length} job${js.length===1?'':'s'} · ${eur(val)}</span></div><div class="card list" style="padding:4px 14px">`;
+   js.forEach(j=>h+=`<button class="item" onclick="go({v:'job',id:'${j.id}'})"><span class="time">${esc(j.time)}</span><div class="main"><strong>${esc(j.what)}</strong><span>${esc(j.name)} · ${esc(j.address)}</span>${j.crew?`<span style="font-size:13px">${esc(CREW[j.crew].name)} · ${esc(CREW[j.crew].lang)}</span>`:`<span style="font-size:13px">You</span>`}</div><span class="tag ${j.status>=5?'ok':j.status>=3?'apricot':j.status>0?'green':'slate'}">${STEP[j.status]}</span></button>`);
+   h+=`</div>`});
+  if(!sel) h+=explain(`<b>The whole week at a glance.</b> Tap a day to see only its jobs. Dots show how busy each day is, and each job shows who does it and in which language they get their briefing.`);
+  return h;
+}
+function vJob(id){
+  const j=job(id);
+  topbar.innerHTML=`<button class="back" onclick="back()">${svg('back',22)}Jobs</button><span class="tag green">${esc((DAYTITLE[j.day]||j.day).replace(/ · .*/,''))} ${esc(j.time)}</span>`;
+  let h=`<div class="title" style="font-size:26px;margin:6px 2px 2px">${esc(j.what)}</div><p style="margin:0 2px 12px;color:var(--muted)">${esc(j.name)}</p>
+  <div class="steps" aria-hidden="true">${STEP.map((s,i)=>`<i class="${i<=j.status?'on':''}"></i>`).join('')}</div><div class="stepname">${STEP[j.status]}</div>
+  <div class="card" style="margin-top:14px;padding:4px 16px"><div class="field"><small>Address</small><b>${esc(j.address)}</b></div><div class="field"><small>Phone</small><b>${esc(j.phone)}</b></div>${j.price?`<div class="field"><small>Agreed price</small><b>${eur(j.price)} + VAT</b></div>`:''}</div>
+  <div class="btns" style="margin-top:12px"><button class="btn line" onclick="toast('Opening maps to ${esc(j.address)}')">${svg('nav',22)}Navigate</button><button class="btn line" onclick="toast('Calling ${esc(j.name)}…')">${svg('phone',22)}Call</button></div>
+  <div class="card" style="margin-top:12px"><div class="row"><span class="ic slate">${svg('team')}</span><div class="main"><small style="font-size:12px;font-weight:700;letter-spacing:1px;color:var(--muted)">ASSIGNED TO</small><strong>${j.crew?esc(CREW[j.crew].full):'You'}</strong><span>${j.crew?esc(CREW[j.crew].role)+' · speaks '+esc(CREW[j.crew].lang):'You do this job yourself'}</span></div><button class="tag green" style="min-height:40px;padding:0 14px" onclick="S.reassign=S.reassign==='${j.id}'?null:'${j.id}';render()" aria-expanded="${S.reassign===j.id}">${S.reassign===j.id?'Close':'Change'}</button></div>
+   ${S.reassign===j.id?`<div class="who">${whoButtons(j.crew||'me',"assignJob('"+j.id+"',K)")}</div>`:''}
+   ${j.crew?(CREW[j.crew].demo?`<div class="btns"><button class="btn apricot" onclick="openTalk('${j.id}')">${svg('lang',22)}Talk to customer</button><button class="btn soft" onclick="go({v:'brief',id:'${j.id}'})">${svg('list',22)}Briefing</button></div>`:`<p style="margin:0;font-size:14px;color:var(--muted)">Translator and briefing work the same in ${esc(CREW[j.crew].lang)}. This demo shows them with Carlos (Spanish) on the 10:30 job.</p>`):''}</div>
+  ${photoCard(j)}
+  <div style="margin-top:12px">`;
+  const st=j.status;
+  if(st===0) h+=`<button class="btn primary" onclick="advance('${j.id}')">${svg('truck',22)}I'm on my way</button><p style="text-align:center;color:var(--muted);font-size:14px;margin:8px 0 0">${esc(j.name.split(' ')[0])} gets a text with your arrival time.</p>`;
+  if(st===1) h+=`<button class="btn primary" onclick="advance('${j.id}')">${svg('play',22)}Start job</button>`;
+  if(st===2) h+=`<button class="btn primary" onclick="advance('${j.id}')">${svg('check',22)}Finish job</button>`;
+  if(st===4) h+=`<button class="btn soft" onclick="advance('${j.id}')">${svg('euro',22)}Mark as paid</button><p style="text-align:center;color:var(--muted);font-size:14px;margin:8px 0 0">Invoice sent with a payment link. We'll update this when it's paid.</p>`;
+  if(st===5) h+=`<div class="card" style="background:var(--ok-soft);border:0"><div class="row"><span class="ic" style="background:var(--white);color:var(--ok)">${svg('check')}</span><div class="main"><strong>Paid. Job closed.</strong><span>Review request sent to ${esc(j.name.split(' ')[0])}.</span></div></div></div>`;
+  return h+`</div>`;
+}
+/* ---------- assigning + photos ---------- */
+const WHO=[['me','You','Keep it yourself'],['carlos','Carlos','Plumber · Spanish'],['arjun','Arjun','Plumber · Hindi'],['wei','Wei','Electrician · Chinese']];
+function whoButtons(cur,call){return WHO.map(([k,n,d])=>`<button class="${cur===k?'on':''}" aria-pressed="${cur===k}" onclick="${call.replace('K',"'"+k+"'")}"><b>${n}</b><span>${d}</span></button>`).join('')}
+function assignJob(id,k){const j=job(id);j.crew=k==='me'?null:k;S.reassign=null;render();toast(k==='me'?'You kept this job.':`Assigned to ${CREW[k].name}. He got it in ${CREW[k].lang}.`)}
+function thumbs(j){const ph=j.photos||[];if(!ph.length)return '';return `<div class="thumbs">${ph.map(p=>`<div class="thumb ${p.label==='invoice'?'inv':'job'}">${p.src?`<img src="${p.src}" alt="">`:svg(p.label==='invoice'?'doc':'cam',30)}<span class="lbl">${p.label==='invoice'?'Invoice':'Job photo'}</span></div>`).join('')}</div>`}
+function photoCard(j){const ph=j.photos||[],ni=ph.filter(p=>p.label==='invoice').length;
+  return `<div class="card" style="margin-top:12px"><div class="row"><span class="ic green">${svg('cam')}</span><div class="main"><strong>Photos</strong><span>${ph.length?`${ph.length-ni} job photo${ph.length-ni===1?'':'s'} · ${ni} invoice${ni===1?'':'s'}`:'Optional · none yet'}</span></div></div>${thumbs(j)}<button class="btn line" onclick="openPhoto('${j.id}')">${svg('plus',22)}Add photo</button></div>`}
+function openPhoto(id){S.ph={id,label:null};drawPhoto()}
+function drawPhoto(){const L=S.ph.label;
+  document.getElementById('overlay').innerHTML=`<div class="scrim" onclick="if(event.target===this)closeSheet()"><div class="psheet" role="dialog" aria-label="Add a photo">
+  <div class="row" style="justify-content:space-between"><h2>Add a photo</h2><button class="back" onclick="closeSheet()" aria-label="Close">${svg('x',22)}</button></div>
+  <div class="eyebrow" style="margin:0">1 · What is it? (required)</div>
+  <div class="lblpick"><button class="${L==='job'?'on':''}" aria-pressed="${L==='job'}" onclick="S.ph.label='job';drawPhoto()"><b>${svg('cam',20)} Job photo</b><span>The problem, before and after, finished work</span></button><button class="${L==='invoice'?'on':''}" aria-pressed="${L==='invoice'}" onclick="S.ph.label='invoice';drawPhoto()"><b>${svg('doc',20)} Invoice</b><span>Supplier invoice or receipt for parts</span></button></div>
+  <div class="eyebrow" style="margin:4px 0 0">2 · Add the photo</div>
+  <label class="btn primary ${L?'':'off'}" for="phIn" aria-disabled="${!L}">${svg('cam',22)}Take or choose photo</label><input id="phIn" type="file" accept="image/*" hidden onchange="gotPhoto(this)">
+  <button class="btn line ${L?'':'off'}" onclick="addPhoto(null)">Use an example photo</button>
+  ${explain(L==='invoice'?'<b>Invoices go to expenses.</b> The AI reads the supplier, amount and VAT, and links the cost to this job.':L==='job'?'<b>Job photos stay with the job.</b> They protect you in disputes and can be attached to the customer’s invoice.':'<b>Photos are optional.</b> Pick a label first, so job photos and invoices for parts never get mixed up.')}
+  </div></div>`}
+function gotPhoto(inp){const f=inp.files&&inp.files[0];if(!f)return;addPhoto(URL.createObjectURL(f))}
+function addPhoto(src){const j=job(S.ph.id),L=S.ph.label;if(!L)return;(j.photos=j.photos||[]).push({label:L,src});closeSheet();render();toast(L==='invoice'?'Invoice saved. Added to expenses for this job.':'Job photo saved to the job.')}
+function closeSheet(){document.getElementById('overlay').innerHTML=''}
+function vFinish(id){
+  const j=job(id), d=S.draft;
+  topbar.innerHTML=`<button class="back" onclick="back()">${svg('back',22)}Back</button>`;
+  return `<div class="title" style="font-size:26px;margin:6px 2px 4px">Finish job</div><p style="margin:0 2px 16px;color:var(--muted)">${esc(j.what)} · ${esc(j.name)}</p>
+  <div class="stack">${(j.photos||[]).length?`<div class="card" style="padding:4px 14px 2px">${thumbs(j)}</div>`:''}<button class="photo ${(j.photos||[]).length?'done':''}" onclick="openPhoto('${j.id}')">${svg('cam',24)}${(j.photos||[]).length?'Add another photo (optional)':'Add photos (optional)'}</button>
+  <label for="note" class="eyebrow" style="margin:10px 2px 0">Note for the invoice (optional)</label>
+  <textarea id="note" placeholder="Or tap the mic and say it" oninput="S.draft.note=this.value">${esc(d.note)}</textarea>
+  <div class="eyebrow" style="margin:10px 2px 0">Price (excl. VAT)</div>
+  <div class="price"><button onclick="job('${j.id}').price=Math.max(0,job('${j.id}').price-10);render()" aria-label="Lower price">−</button><output>${eur(j.price)}</output><button onclick="job('${j.id}').price+=10;render()" aria-label="Raise price">+</button></div>
+  <button class="btn primary" style="margin-top:8px" onclick="sendInvoice('${j.id}')">${svg('send',22)}Send invoice · ${eur(Math.round(j.price*1.22))}</button>
+  <p style="text-align:center;color:var(--muted);font-size:14px;margin:0">Incl. 22% VAT · sent by email and text with a payment link</p></div>`;
+}
+function advance(id){
+  const j=job(id);
+  if(j.status===2){go({v:'finish',id});return}
+  j.status++; render();
+  toast(j.status===1?`${j.name.split(' ')[0]} got a text: you're on your way.`:j.status===2?'Job started. Timer running.':j.status===5?`${eur(Math.round(j.price*1.22))} received. Nice work.`:'Updated');
+  if(j.status===5) S.invoices.unshift({id:'i'+Date.now(),name:j.name,what:j.what,amount:Math.round(j.price*1.22),status:'paid',when:'Just now'});
+}
+function sendInvoice(id){const j=job(id);j.status=4;S.draft={photo:false,note:''};S.stack.pop();render(true);toast(`Invoice sent to ${j.name.split(' ')[0]}.`)}
+function vMoney(){
+  topbar.innerHTML=`<div class="title">Money</div>`;
+  const unpaid=S.invoices.filter(i=>i.status==='unpaid'), paid=S.invoices.filter(i=>i.status==='paid');
+  const sum=a=>a.reduce((s,i)=>s+i.amount,0);
+  const quoted=S.quotes.filter(q=>q.status!=='sent');
+  let h=`<div class="money" style="margin-top:6px"><div class="card"><small>Waiting to be paid</small><b>${eur(sum(unpaid))}</b><small>${unpaid.length} invoice${unpaid.length===1?'':'s'}</small></div><div class="card"><small>Paid this week</small><b style="color:var(--ok)">${eur(sum(paid))}</b><small>${paid.length} invoice${paid.length===1?'':'s'}</small></div></div>`;
+  if(quoted.length){h+=`<div class="eyebrow">Quotes to approve</div>`;quoted.forEach(q=>h+=`<div class="card"><div class="row"><span class="ic apricot">${svg('doc')}</span><div class="main"><strong>${esc(q.name)} · ${eur(q.total)}</strong><span>${esc(q.what)}</span></div></div><button class="btn soft" onclick="go({v:'quote',id:'${q.id}'})">Review</button></div>`)}
+  const old=unpaid.filter(i=>/week|\b([89]|1\d) days/.test(i.when)).length;
+  h+=`<div class="card" style="margin-top:10px"><div class="row"><span class="ic apricot">${svg('clock')}</span><div class="main"><strong>${old} invoices are over a week old</strong><span>Friendly reminders usually get most of these paid within days.</span></div></div><button class="btn soft" onclick="toast('${old} friendly reminders sent.')">Remind all ${old}</button></div>`;
+  const shown=S.allInv?S.invoices:[...unpaid.slice(0,4),...paid.slice(0,3)];
+  h+=`<div class="eyebrow">Invoices <span style="letter-spacing:0;text-transform:none;font-weight:600">${S.invoices.length} this month</span></div><div class="card list" style="padding:4px 14px">`;
+  shown.forEach(i=>h+=`<div class="item"><span class="ic ${i.status==='paid'?'green':'apricot'}">${svg(i.status==='paid'?'check':'clock',20)}</span><div class="main"><strong>${esc(i.name)} · ${eur(i.amount)}</strong><span>${esc(i.what)} · ${esc(i.when)}</span></div>${i.status==='paid'?'<span class="tag ok">Paid</span>':`<button class="tag apricot" style="min-height:40px;padding:0 14px" onclick="remind('${i.id}')">Remind</button>`}</div>`);
+  h+=`</div><div style="margin-top:10px"><button class="btn line" onclick="S.allInv=!S.allInv;render()">${S.allInv?'Show fewer':'Show all '+S.invoices.length+' invoices'}</button></div>`;
+  return h;
+}
+function remind(id){const i=S.invoices.find(x=>x.id===id);toast(`Friendly reminder sent to ${i.name.split(' ')[0]}.`)}
+
+/* ---------- translator & crew ---------- */
+const explain=(t)=>`<div class="explain"><span class="ei">i</span><div>${t}</div></div>`;
+function openTalk(id){S.talk={log:[],wi:0,ci:0};go({v:'talk',id})}
+function vTalk(id){
+  const j=job(id), w=CREW[j.crew||'carlos'], t=S.talk;
+  topbar.innerHTML=`<button class="back" onclick="back()">${svg('back',22)}Back</button><span class="tag green">Live translator</span>`;
+  let h=`<div class="langbar"><div class="who">Worker<b>${esc(w.name)} · ${esc(w.native)}</b></div><span class="swap">${svg('swap',20)}</span><div class="who" style="text-align:right">Customer<b>${esc(j.name.split(' ')[0])} · ${CUSTOMER_LANG.native}</b></div></div>`;
+  if(!t.log.length) h+=explain(`<b>How it works:</b> ${esc(w.name)} speaks ${esc(w.lang)}, ${esc(j.name.split(' ')[0])} speaks ${CUSTOMER_LANG.lang}. Each taps their button and talks. The phone shows the translation in large text and reads it aloud. <i>Grey italic lines show English for this demo only. Sound uses your device's built-in voices; the real app uses natural AI voices.</i>`);
+  h+=`<div class="convo">`;
+  t.log.forEach(m=>{h+= m.who==='w'
+    ?`<div class="bub w"><span class="lbl">${esc(w.name)} said · shown to customer</span><span class="orig">${esc(m.orig)}</span><span class="big">${esc(m.trans)}</span><span class="gloss">EN: ${esc(m.en)}</span></div>`
+    :`<div class="bub c"><span class="lbl">Customer said · shown to ${esc(w.name)}</span><span class="orig">${esc(m.orig)}</span><span class="big">${esc(m.trans)}</span><span class="gloss">EN: ${esc(m.en)}</span></div>`});
+  h+=`</div>`;
+  const wDone=t.wi>=TALK_W.length, cDone=t.ci>=TALK_C.length, cTurn=t.wi>t.ci&&!cDone;
+  h+=`<div class="speak2"><button class="btn ${!cTurn&&!wDone?'primary':'line'}" ${wDone||cTurn?'disabled style="opacity:.45"':''} onclick="talkStep('w')">${svg('mic',26)}${esc(w.name)} speaks<br><small style="font-weight:600;opacity:.8">${esc(w.lang)}</small></button>
+   <button class="btn ${cTurn?'apricot':'line'}" ${!cTurn?'disabled style="opacity:.45"':''} onclick="talkStep('c')">${svg('mic',26)}Customer speaks<br><small style="font-weight:600;opacity:.8">${CUSTOMER_LANG.lang}</small></button></div>`;
+  if(wDone&&cDone) h+=explain(`<b>Prices stay with the owner.</b> When the customer asks about price, ${esc(w.name)} doesn't have to answer. The question goes straight to you to approve.`);
+  h+=`<div class="eyebrow">Quick phrases · work offline</div><div class="phr">${PHRASES.map((p,i)=>`<button onclick="showPhrase(${i})"><span>${svg('speaker',18)}</span>${esc(p.en)}</button>`).join('')}</div>`;
+  h+=explain(`<b>Quick phrases</b> are pre-translated, so they work even in a basement with no signal. Tap one and turn the phone to the customer.`);
+  return h;
+}
+function talkStep(who){
+  const t=S.talk;
+  if(who==='w'&&t.wi<TALK_W.length){const m=TALK_W[t.wi++];t.log.push({who:'w',...m});render();speak(m.trans,'sl-SI')}
+  else if(who==='c'&&t.ci<TALK_C.length){const m=TALK_C[t.ci++];t.log.push({who:'c',...m});render();speak(m.trans,'es-ES')}
+  if(t.wi>=TALK_W.length&&t.ci>=TALK_C.length) setTimeout(()=>{const v=S.stack[S.stack.length-1];if(v&&v.v==='talk')toast('Janez got a question: price for a new valve?')},1400);
+  screen.scrollTop=screen.scrollHeight;
+}
+function showPhrase(i){
+  const p=PHRASES[i]; const ov=document.getElementById('overlay');
+  ov.innerHTML=`<div class="showcard" role="dialog" aria-label="Phrase for the customer"><span class="for">Show to customer · ${CUSTOMER_LANG.lang}</span>
+   <div class="huge">${esc(p.sl)}</div><div class="sub">${esc(p.es)}</div><div class="sub" style="font-style:italic;font-size:15px;margin-top:6px">EN: ${esc(p.en)}</div>
+   <div class="stack" style="margin-top:auto"><button class="btn apricot" onclick="speak(PHRASES[${i}].sl,'sl-SI')">${svg('speaker',22)}Play aloud</button><button class="btn primary" onclick="hush();document.getElementById('overlay').innerHTML=''">Done</button></div></div>`;
+}
+function vBrief(id){
+  const j=job(id), w=CREW[j.crew||'carlos'], b=S.brief;
+  topbar.innerHTML=`<button class="back" onclick="back()">${svg('back',22)}Job</button><span class="lang">${svg('lang',16)}${esc(w.lang)}</span>`;
+  let h=`<div class="brief"><div class="title" style="font-size:26px;margin:6px 2px 2px">Briefing for ${esc(w.name)}</div><p style="margin:0 2px 14px;color:var(--muted)">${esc(j.what)} · ${esc(j.time)}</p>
+  ${explain(`You wrote this in English. <b>${esc(w.name)} sees it in ${esc(w.lang)}</b> automatically. Tap “Original” to check what you wrote.`)}
+  <div class="seg" style="margin-top:10px"><button class="${!b.orig?'on':''}" onclick="S.brief.orig=false;render()">${esc(w.lang)} (what ${esc(w.name)} sees)</button><button class="${b.orig?'on':''}" onclick="S.brief.orig=true;render()">Original</button></div>
+  <div class="card" style="margin-top:12px"><div class="txt">${esc(b.orig?BRIEF.en:BRIEF.es)}</div><button class="btn line" onclick="speak(S.brief.orig?BRIEF.en:BRIEF.es,S.brief.orig?'en-US':'es-ES')">${svg('speaker',22)}Listen</button></div>
+  <div class="eyebrow">Checklist</div><div class="card" style="padding:4px 16px">${BRIEF.checks.map(c=>`<div class="check"><i></i><div>${esc(b.orig?c[0]:c[1])}${b.orig?'':`<div style="font-size:13px;color:#7A8481;font-style:italic">EN: ${esc(c[0])}</div>`}</div></div>`).join('')}</div>
+  <div class="eyebrow">Voice note from ${esc(w.name)}</div>
+  <div class="card"><div class="row"><span class="ic green">${svg('mic')}</span><div class="main"><strong>0:09 · said in ${esc(w.lang)}</strong><span>${esc(BRIEF.note.es)}</span></div></div>
+   <div class="summary" style="padding:12px 14px"><b style="color:var(--green);font-size:14px">Translated for you</b><br>${esc(BRIEF.note.en)}</div>
+   <button class="btn ${b.added?'line':'soft'}" onclick="S.brief.added=true;render();toast('Added to the job notes and the invoice draft.')">${svg(b.added?'check':'doc',22)}${b.added?'Added to job notes':'Add to job notes'}</button></div>
+  ${explain(`Workers talk in their own language. You read everything in yours. <b>Safety instructions</b> should still be checked by a person before you rely on the translation.`)}</div>`;
+  return h;
+}
+function vTeam(){
+  topbar.innerHTML=`<button class="back" onclick="back()">${svg('back',22)}Owner</button><span class="tag green">4 people</span>`;
+  let h=`<div class="title" style="font-size:26px;margin:6px 2px 4px">Your team</div><p style="margin:0 2px 4px;color:var(--muted)">Everyone uses Unbusyness in their own language.</p>
+  ${explain(`<b>Hire the crew you can find.</b> Each worker picks a language. Jobs, briefings and checklists are translated for them, and their voice notes are translated for you.`)}
+  <div class="card list" style="padding:4px 14px;margin-top:10px">
+   <div class="item"><span class="ic apricot">JD</span><div class="main"><strong>Janez Demo · you</strong><span>Owner</span></div><span class="lang">English</span></div>`;
+  Object.values(CREW).forEach(c=>h+=`<div class="item"><span class="ic slate">${esc(c.name[0])}</span><div class="main"><strong>${esc(c.full)}</strong><span>${esc(c.role)} · with you ${esc(c.since)}</span></div><span class="lang">${esc(c.native)}</span></div>`);
+  h+=`</div><div style="margin-top:14px"><button class="btn primary" onclick="toast('Invite sent by text. The app opens in their language.')">${svg('team',22)}Invite a worker</button></div>
+  <div class="eyebrow">Customers see</div><div class="card"><div class="row"><span class="ic green">${svg('doc')}</span><div class="main"><strong>Quotes and invoices in the customer's language</strong><span>Prices are always set and approved by you.</span></div></div></div>`;
+  return h;
+}
+
+/* ---------- owner view ---------- */
+function briefLines(){
+  const today=S.jobs.filter(j=>j.day==='Today'&&j.status<3), urgent=S.calls.filter(c=>c.status==='new'&&c.urgent).length;
+  const unpaid=S.invoices.filter(i=>i.status==='unpaid').reduce((a,i)=>a+i.amount,0), drafts=S.quotes.filter(q=>q.status==='draft').length;
+  const first=today[0];
+  return [
+   `Good morning, Janez. You have ${today.length} job${today.length===1?'':'s'} today.`,
+   first?`First: ${first.what} for ${first.name.split(' ')[0]} at ${first.time}${first.crew?', '+CREW[first.crew].name+' is on it':''}.`:'No jobs left today.',
+   urgent?`${urgent} urgent lead is waiting: ${S.calls.find(c=>c.status==='new'&&c.urgent).need.toLowerCase()}.`:'No urgent leads.',
+   `${drafts} quote${drafts===1?'':'s'} to approve, and ${eur(unpaid)} still to be paid.`,
+   `Weather is dry, about 25 minutes of driving today.`
+  ];
+}
+function playBrief(){
+  const o=S.owner; if(o.playing){o.playing=false;hush();clearInterval(window._bt);render();return}
+  const L=briefLines(); o.playing=true; o.line=0; render();
+  const finish=()=>{clearInterval(window._bt);o.playing=false;o.line=99;render()};
+  const timed=()=>{clearInterval(window._bt);window._bt=setInterval(()=>{if(!o.playing){clearInterval(window._bt);return}o.line++;if(o.line>=L.length)finish();else render()},1800)};
+  if(!TTS){timed();return}
+  /* queue every line inside the tap, so phones (iOS too) keep playing; highlight follows the voice */
+  hush(); let started=false; const v=pickVoice('en-US');
+  L.forEach((line,i)=>{const u=new SpeechSynthesisUtterance(line);u.lang='en-US';if(v)u.voice=v;
+    u.onstart=()=>{started=true;if(o.playing){o.line=i;render()}};
+    if(i===L.length-1){u.onend=()=>{if(o.playing)finish()}}
+    TTS.speak(u)});
+  setTimeout(()=>{if(o.playing&&!started){hush();timed();toast('No voice available on this device. Showing text only.')}},2000);
+}
+function vOwner(){
+  const o=S.owner, L=briefLines();
+  topbar.innerHTML=`<button class="back" onclick="back()">${svg('back',22)}Today</button><span class="tag green">Owner</span>`;
+  let h=`<div class="title" style="font-size:26px;margin:6px 2px 12px">Your business</div>`;
+  // briefing
+  h+=`<div class="brief-card"><div class="top"><button class="playbtn" onclick="playBrief()" aria-label="${o.playing?'Pause':'Play'} morning briefing">${svg(o.playing?'pause':'play',24)}</button><div><b style="font-size:18px">Morning briefing</b><div style="color:var(--on-green);font-size:14px">30 seconds · also at 18:00 for the day's summary</div></div></div>
+   <div class="lines">${L.map((l,i)=>`<p class="${o.line===i?'on':(o.line>i?'done':'')}">${esc(l)}</p>`).join('')}</div></div>`;
+  h+=explain(`<b>Your whole business in 30 seconds,</b> hands-free in the van. It's read aloud at 7:00, and at 18:00 you get a summary of the day. <i>Press play to hear it (turn your sound on).</i>`);
+  // value report
+  h+=`<div class="eyebrow">What Unbusyness earned you · October</div>
+  <div class="value"><div class="roi"><b>€6,240</b><span style="color:var(--muted);font-weight:600">from calls you couldn't answer</span></div>
+   <div class="funnel">
+    <div class="fr"><span>Calls AI answered</span><span class="bar"><i style="width:100%"></i></span><b>47</b></div>
+    <div class="fr"><span>Became jobs</span><span class="bar"><i style="width:38%"></i></span><b>18</b></div>
+    <div class="fr"><span>Quotes chased</span><span class="bar"><i style="width:26%"></i></span><b>12</b></div>
+   </div>
+   <div class="row" style="background:var(--green-soft);border-radius:14px;padding:12px 14px"><span style="flex:1;font-size:15px">Unbusyness cost you <b>€150</b>.</span><b style="color:var(--green);font-size:20px">41× back</b></div></div>`;
+  h+=explain(`<b>Proof every month.</b> These are jobs that came from calls you missed or quotes you'd have forgotten. Example numbers.`);
+  // profit per job
+  const P=[['Bathroom renovation',61,'var(--ok)'],['Replace tap',48,'var(--green)'],['Blocked drain',39,'var(--green)'],['Boiler service',22,'var(--apricot)']];
+  h+=`<div class="eyebrow">What you earn per hour, by job type</div><div class="card prof" style="padding:6px 16px">${P.map(x=>`<div class="pr"><span style="font-weight:700">${x[0]}</span><b>€${x[1]}/h</b><span class="bar"><i style="width:${Math.round(x[1]/61*100)}%;background:${x[2]}"></i></span></div>`).join('')}</div>
+  <div class="card" style="margin-top:10px;background:var(--apricot-soft);border:0"><div class="row"><span class="ic" style="background:var(--white);color:var(--apricot-ink)">${svg('spark')}</span><div class="main"><strong style="font-size:16px">Boiler services earn you the least</strong><span style="color:#5A3A26">You charge €120 but spend 2.5 h with travel. €160 is typical nearby.</span></div></div><button class="btn apricot" onclick="toast('Price list updated: boiler service €160.')">Raise to €160</button></div>`;
+  h+=explain(`<b>Profit, not just revenue.</b> Hours come from On my way / Start / Finish, and materials from receipt photos. The AI spots where you're underpriced.`);
+  // service plans
+  h+=`<div class="eyebrow">Repeat work</div><div class="card"><div class="row"><span class="ic green">${svg('repeat')}</span><div class="main"><strong>38 customers are due a yearly service</strong><span>Boilers and heat pumps, next 60 days</span></div></div>
+   <div class="row" style="font-size:15px;color:var(--muted)"><span style="flex:1">On the Care plan (€19/month)</span><b style="color:var(--ink)">23 · €437/month</b></div>
+   <button class="btn ${o.reminded?'line':'primary'}" onclick="S.owner.reminded=true;render();toast('38 reminders sent. Bookings will appear in Jobs.')">${svg(o.reminded?'check':'send',22)}${o.reminded?'Reminders sent':'Send reminders and offer a plan'}</button></div>`;
+  h+=explain(`<b>Steady income in quiet months.</b> Past customers are reminded automatically and can join a <b>Care plan for €19/month</b> (€228/year): yearly service included (worth about €160), priority visits within 24 hours, no call-out fee and 10% off repairs.`);
+  // day off + team
+  h+=`<div class="eyebrow">Control</div><div class="card" style="padding:6px 16px">
+   <div class="mrow" style="border-bottom:1px solid var(--line)"><span class="ic slate">${svg('moon')}</span><div class="main"><strong>Day off</strong><span>${o.off?'On · emergencies go to Arjun':'AI handles everything, you rest'}</span></div><button class="switch" role="switch" aria-checked="${o.off}" aria-label="Day off" onclick="S.owner.off=!S.owner.off;render();toast(S.owner.off?'Day off on. Only emergencies will reach Arjun.':'Welcome back. Calls ring you again.')"></button></div>
+   <button class="mrow" onclick="go({v:'team'})"><span class="ic slate">${svg('team')}</span><div class="main"><strong>Team and languages</strong><span>You, Carlos, Arjun, Wei</span></div><span class="chev">${svg('chev',20)}</span></button></div>`;
+  h+=explain(`<b>Switch off for real.</b> On a day off the AI answers, books and replies. Only true emergencies reach the colleague on call.`);
+  return h;
+}
+
+/* ---------- voice ---------- */
+const VOICE=[
+ {say:'Pipe repair at Toplarniška 7 on Tuesday at 16:00, work order 150 euros plus VAT.',plan:[['Create job','Pipe repair'],['Where','Toplarniška ulica 7'],['When','Tuesday, 16:00'],['Work order','€150 + VAT']],done:'job'},
+ {say:'Remind Luka to pay the radiator invoice.',plan:[['Send reminder','Luka Perko'],['Invoice','Radiator valve · €140']],done:'remind'},
+ {say:'Tell Petra I\'m 15 minutes late.',plan:[['Text','Petra Zupan'],['Message','“Running about 15 minutes late, sorry. See you soon.”']],done:'text'}
+];
+let vs=null,vt=null;
+function openVoice(idx){
+  const v=VOICE[idx??0]; vs={v,shown:'',phase:'listen',assign:'carlos'};
+  const ov=document.getElementById('overlay');
+  const draw=()=>{const inner=`
+   <button class="close" onclick="closeVoice()" aria-label="Close">${svg('x',22)}</button>
+   ${vs.phase==='pick'?`<div class="hint" style="margin-top:8px">Hold the mic and say what to do</div>`:''}
+   <div class="orb ${vs.phase==='listen'?'live':''} ${vs.phase==='plan'?'small':''}">${svg(vs.phase==='plan'?'check':'mic',vs.phase==='plan'?34:54,2.2)}</div>
+   ${vs.phase==='pick'?`<div class="said" style="font-size:18px;min-height:0">Try one of these</div><div class="examples">${VOICE.map((x,i)=>`<button onclick="openVoice(${i})">“${esc(x.say)}”</button>`).join('')}</div>`
+   :`<div class="hint">${vs.phase==='listen'?'Listening…':'Got it. Check and confirm.'}</div><div class="said">“${esc(vs.shown)}${vs.phase==='listen'?'<span class="caret"></span>':''}”</div>`}
+   ${vs.phase==='plan'?`<div class="plan">${vs.v.plan.map(p=>`<div class="field"><small>${esc(p[0])}</small><b>${esc(p[1])}</b></div>`).join('')}${vs.v.done==='job'?`<div class="field" style="border-bottom:0;gap:8px"><small>Who does it?</small><div class="who">${whoButtons(vs.assign,'pickAssign(K)')}</div><span style="font-size:13px;color:var(--muted)">${vs.assign==='carlos'?'Suggested: Carlos is free on Tuesday afternoon.':vs.assign==='me'?'You keep the job.':CREW[vs.assign].name+' gets it in '+CREW[vs.assign].lang+'.'}</span></div>`:''}
+     <div class="btns" style="margin-top:8px"><button class="btn line" onclick="openVoice(null,true)">Try again</button><button class="btn primary" onclick="confirmVoice()">${svg('check',22)}Confirm</button></div></div>`:''}`;
+   const box=ov.querySelector('.voice'); if(box) box.innerHTML=inner; else ov.innerHTML=`<div class="voice" role="dialog" aria-label="Voice command">${inner}</div>`};
+  vs.draw=draw; clearInterval(vt);
+  if(arguments[1]){vs.phase='pick';draw();return}
+  draw(); let i=0; const words=v.say.split(' ');
+  vt=setInterval(()=>{vs.shown=words.slice(0,++i).join(' ');draw();if(i>=words.length){clearInterval(vt);setTimeout(()=>{if(!vs)return;vs.phase='plan';draw();speak('Got it. Please check and confirm.','en-US')},450)}},170);
+}
+function pickAssign(k){if(!vs)return;vs.assign=k;vs.draw()}
+function closeVoice(){clearInterval(vt);hush();vs=null;document.getElementById('overlay').innerHTML=''}
+function confirmVoice(){
+  const d=vs.v.done, who=vs.assign; closeVoice();
+  if(d==='job'){S.jobs.push({id:'j'+Date.now(),time:'16:00',day:'Next Tue',name:'New customer',crew:who==='me'?null:who,phone:'—',address:'Toplarniška ulica 7',what:'Pipe repair',price:150,status:0});S.stack=[];S.tab='jobs';sortJobs();render(true);toast(`Job added for next Tuesday 16:00 · ${who==='me'?'kept by you':'assigned to '+CREW[who].name}.`)}
+  else if(d==='remind') toast('Reminder sent to Luka.');
+  else toast('Text sent to Petra.');
+}
+document.getElementById('micBtn').addEventListener('click',()=>openVoice(null,true));
+
+/* ---------- render ---------- */
+function render(top){
+  const v=S.stack[S.stack.length-1];
+  let h;
+  if(!v) h=({today:vToday,calls:vCalls,jobs:vJobs,money:vMoney})[S.tab]();
+  else h=({call:vCall,book:vBook,quote:vQuote,job:vJob,finish:vFinish,talk:vTalk,brief:vBrief,team:vTeam,owner:vOwner})[v.v](v.id);
+  screen.innerHTML=h;
+  if(top) screen.scrollTop=0;
+  document.querySelectorAll('.tab').forEach(b=>{b.classList.toggle('on',b.dataset.tab===S.tab);b.setAttribute('aria-current',b.dataset.tab===S.tab?'page':'false')});
+  const nNew=S.calls.filter(c=>c.status==='new').length, badge=document.getElementById('callBadge');
+  badge.textContent=nNew; badge.hidden=!nNew;
+}
+document.querySelectorAll('[data-i]').forEach(el=>el.innerHTML=svg(el.dataset.i,+(el.dataset.s||24)));
+document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>tab(b.dataset.tab)));
+render(true);
+</script>
+
+
+<!-- Link back to the waitlist page and SL/EN switch (added for the website) -->
+<style>
+.ub-demo-bar{position:fixed;left:16px;bottom:16px;z-index:35;display:flex;align-items:center;gap:2px;padding:3px;border-radius:999px;background:rgba(20,32,30,.9);box-shadow:0 6px 18px rgba(0,0,0,.18);font:700 13px "Plus Jakarta Sans",system-ui,sans-serif}
+.ub-demo-bar a{color:#FBFAF7;text-decoration:none;padding:7px 12px;border-radius:999px;white-space:nowrap}
+.ub-demo-bar a:hover{background:rgba(255,255,255,.12)}
+.ub-demo-bar .on{background:#FBFAF7;color:#14201E}
+.ub-demo-bar .sep{width:1px;height:18px;background:rgba(255,255,255,.25);margin:0 4px}
+.ub-demo-bar a:focus-visible{outline:2px solid #E8915F;outline-offset:2px}
+@media (max-width:820px){.ub-demo-bar{bottom:calc(92px + env(safe-area-inset-bottom));left:12px}.ub-demo-bar a{padding:7px 10px;font-size:12px}}
+</style>
+<nav class="ub-demo-bar" aria-label="Demo">
+<a href="/contractor/#join" aria-label="Back to the page and join the waitlist">← Join the waitlist</a>
+
+</nav>
+</body></html>

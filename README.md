@@ -6,13 +6,18 @@ Static site, no build step. Every page is one self-contained HTML file (styles a
 
 | Path | What it is |
 |---|---|
-| `/` | Welcome page: greeting with the cortisol meter, language choice (SL/EN), then "who are you" (resident, building manager, tradesperson with trade choice, hotel). Each choice shows a short sign-up form and links to the full page. |
+| `/` | Welcome page: greeting with the cortisol meter and an SL/EN switch in the header, then "who are you". Each choice opens its own page (resident → `/home/`, building manager → `/building-managers/`, tradesperson → `/contractor/`, hotel → `/hotels/`). |
 | `/building-managers/` | Waitlist for building managers (upravniki), SL/EN |
 | `/hotels/` | Waitlist for "Unbusyness for Hotels", SL/EN |
+| `/contractor/` | Waitlist for tradespeople (plumbers, HVAC, electricians, other trades): Unbusyness Business, 30-second videos, building managers and Home teasers, investor request, SL/EN. `/contractor/sl/` redirects to the Slovenian version. |
 | `/home/` | Waitlist for Unbusyness Home (residents and homeowners): digital passport, reminders, reliable tradespeople, property passport, recommend-to-your-manager, SL/EN |
-| `/demo/building-managers-desktop.html`, `-phone.html` | Interactive demo for building managers (SL, made-up data) |
-| `/demo/hotels-desktop.html`, `-phone.html` | Interactive hotel demo (SL, made-up data) |
-| `/demo/home-phone.html` | Interactive Unbusyness Home phone app demo, including the property passport (SL, made-up data) |
+| `/demo/building-managers-desktop.html`, `-phone.html` | Interactive demo for building managers (made-up data) |
+| `/demo/hotels-desktop.html`, `-phone.html` | Interactive hotel demo (made-up data) |
+| `/demo/home-phone.html` | Interactive Unbusyness Home phone app demo, including the property passport (made-up data) |
+| `/demo/trades-desktop.html`, `trades-phone.html` | Unbusyness Business demos for tradespeople (English only, made-up data). The old addresses `/unbusyness-demo.html` and `/unbusyness-mobile-demo.html` redirect here. |
+| `/media/` | The five 30-second preview videos and their poster images used on `/contractor/` |
+
+Every demo except the trades demos has a Slovenian file and an English `-en.html` file; a small bar in each demo links back to its waitlist and switches language.
 
 The welcome page links to the full pages in the `PAGES` object near the top of its script.
 
@@ -20,10 +25,11 @@ The welcome page links to the full pages in the `PAGES` object near the top of i
 
 Every form posts JSON to `WAITLIST_ENDPOINT` (a constant at the top of each page's script). It is empty, so the pages run in preview mode and say that nothing was sent. To go live, set it to a real endpoint, for example `/api/waitlist` on the Unbusyness app, which should store the sign-up and email info@unbusyness.com.
 
-Each sign-up includes `segment` (`resident`, `manager`, `trade`, `hotel`, `residents`), the contact fields, `language` and `consent: true`.
+Each sign-up includes `segment` (`residents`, `building_managers`, `tradespeople`, `hotels`; the welcome page sends `resident`, `manager`, `trade`, `hotel`), the contact fields, `language` and `consent: true`. The investor request on `/contractor/` sends `segment: "investors"` with email and phone; the endpoint has to accept that list too.
 
 ## Design
 
+- Contractor page: same colours, Plus Jakarta Sans for everything (as on the original unbusyness.com/contractor).
 - Building managers, hotels and the welcome page: evergreen `#1F4D45`, sand, apricot `#E8915F`; Fraunces headings and Plus Jakarta Sans body text.
 - Unbusyness Home: blush background `#F8E8DE`, terracotta `#B0582F`, white rounded cards, Plus Jakarta Sans for everything.
 - Every page has light and dark mode and works at phone width.

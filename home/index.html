@@ -194,6 +194,17 @@ footer{padding-block:36px;color:var(--muted);font-size:14px;display:flex;flex-wr
 .ladder .when{font-family:var(--mono);font-size:12.5px;color:var(--apricot-ink)}
 .ladder b{display:block}
 .ladder span{color:var(--muted);font-size:14.5px}
+/* 26-second film */
+.film{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,.8fr);gap:56px;align-items:center}
+.film .sec-head{margin-bottom:0}
+.phonevid{width:min(300px,100%);margin-inline:auto;border-radius:36px;background:#1B2220;padding:10px;box-shadow:0 24px 60px rgba(122,58,33,.22)}
+.phonevid video{display:block;width:100%;aspect-ratio:480/854;border-radius:28px;background:#120e0c;object-fit:cover}
+.vcap{display:flex;align-items:center;justify-content:center;gap:8px;font-size:14px;font-weight:600;color:var(--muted);margin-top:14px}
+.dur{font-size:12px;font-weight:700;color:var(--muted);background:var(--sand);border:1px solid var(--line);border-radius:999px;padding:2px 9px}
+.peek{display:inline-flex;align-items:center;gap:10px;font-size:15px;font-weight:700;color:var(--green);text-decoration:none;margin-top:14px}
+.peek .pl{width:32px;height:32px;border-radius:50%;background:var(--green);color:#fff;display:grid;place-items:center}
+.peek:hover{text-decoration:underline}
+@media (max-width:900px){.film{grid-template-columns:minmax(0,1fr);gap:32px}}
 .split2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:40px;align-items:start}
 .ovw{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:20px;display:grid;gap:16px;min-width:0}
 .tiles{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
@@ -263,6 +274,7 @@ footer{padding-block:36px;color:var(--muted);font-size:14px;display:flex;flex-wr
         <a class="btn primary" href="#join" data-t="cta">Join the waitlist</a>
         <a class="btn ghost" href="#building" data-t="cta2">My building manager should use it</a>
       </div>
+      <a class="peek" href="#film"><span class="pl"><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 4l13 8-13 8z"/></svg></span><span data-t="peek">Watch the 26-second preview</span></a>
       <div class="demos" aria-label="Demo">
         <span class="lab" data-t="demoLab">See how it works: a clickable demo with made-up data.</span>
         <a class="btn ghost" data-demo="home-phone" href="/demo/home-phone.html"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="7" y="2.5" width="10" height="19" rx="2.5"/><path d="M11 18.5h2"/></svg><span data-t="demo0">Open the app demo</span></a>
@@ -285,6 +297,20 @@ footer{padding-block:36px;color:var(--muted);font-size:14px;display:flex;flex-wr
     </article>
   </div>
 </div>
+
+<section id="film">
+  <div class="wrap film">
+    <div class="sec-head">
+      <div class="eyebrow" data-t="fl0">A calmer home, in 26 seconds</div>
+      <h2 data-t="fl1">Less to remember. More evenings that are yours.</h2>
+      <p data-t="fl2">See how Home keeps the important details in one calm place: the reminder before something is due, everything about your home and car in one app, and a tradesperson booked in one tap.</p>
+    </div>
+    <div>
+      <div class="phonevid"><video controls playsinline preload="none" poster="/media/unbusyness-home-preview-poster.jpg" aria-label="26-second Unbusyness Home preview" data-t-aria="flAria"><source src="/media/unbusyness-home-preview.mp4" type="video/mp4"></video></div>
+      <p class="vcap"><span data-t="flCap">Watch the Home preview</span><span class="dur" data-t="flDur">26 sec</span></p>
+    </div>
+  </div>
+</section>
 
 <section>
   <div class="wrap">
@@ -514,6 +540,7 @@ const SL = {
   s1:"Matej je na poti", s1d:"Vidite, kdaj je krenil in približno kdaj pride.",
   s2:"Prišel je pravočasno", s2d:"V dogovorjenem terminu, kot obljubljeno.",
   s3:"Popravljeno in shranjeno", s3d:"Nova kartuša. Račun, fotografije in nova garancija gredo v vaš potni list.",
+  peek:"Oglejte si 26-sekundni video", fl0:"Mirnejši dom v 26 sekundah", fl1:"Manj stvari na pamet. Več večerov zase.", fl2:"Poglejte, kako Home hrani pomembne podatke na enem preglednem mestu: opomnik, preden kaj poteče, vse o domu in avtu v eni aplikaciji in mojster, naročen z enim dotikom.", flCap:"Oglejte si predstavitev Home", flDur:"26 s", flAria:"26-sekundna predstavitev Unbusyness Home",
   p0:"Vam je znano?", p1:"Skrb za dom je druga služba.", p2:"Nihče nima časa slediti servisom, garancijam in telefonskim številkam. Potem se nekaj pokvari v petek zvečer.",
   pk1:"»Kje je račun?«", ph1:"Garancije, ki jih ne najdete", pp1:"Pralni stroj se pokvari mesec pred koncem garancije, račun pa je nekje v predalu ali starem e-poštnem nabiralniku.",
   pk2:"»Rekel je, da v torek.«", ph2:"Mojstri, ki ne pridejo", pp2:"Vzamete si dopoldne prosto, čakate doma, in nihče ne pride. Potem spet začnete klicati naokoli.",
@@ -613,6 +640,7 @@ function setLang(l) {
     const v = t(el.dataset.t); if (!v) return;
     if (el.hasAttribute("data-html") || /<\w/.test(v)) el.innerHTML = v; else el.textContent = v;
   });
+  document.querySelectorAll("[data-t-aria]").forEach((el) => el.setAttribute("aria-label", lang === "sl" ? (SL[el.dataset.tAria] || el.getAttribute("aria-label")) : "26-second Unbusyness Home preview"));
   document.querySelectorAll(".lang button").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.lang === lang)));
   recEdited = false; recOk.textContent = ""; fillRec();
   try { localStorage.setItem("ub-lang", lang); } catch {}

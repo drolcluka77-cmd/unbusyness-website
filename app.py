@@ -16,6 +16,16 @@ from email.message import EmailMessage
 from pathlib import Path
 from urllib.parse import unquote, urlsplit
 
+import psycopg
+
+from waitlist_db import (
+    DatabaseConfigurationError,
+    begin_notification_attempt,
+    check_database,
+    record_notification_result,
+    save_signup,
+)
+
 
 ROOT = Path(__file__).resolve().parent
 RECIPIENT = "info@unbusyness.com"
@@ -258,6 +268,15 @@ def _send_email(data: dict):
             server.send_message(message)
 
 
+def _smtp_error_summary(exc: Exception) -> str:
+    if isinstance(exc, smtplib.SMTPResponseException):
+        return f"{type(exc).__name__} ({exc.smtp_code})"
+    if isinstance(exc, smtplib.SMTPRecipientsRefused):
+        codes = sorted({str(response[0]) for response in exc.recipients.values()})
+        return f"SMTPRecipientsRefused ({', '.join(codes)})"
+    return type(exc).__name__
+
+
 def _serve_static(path_info: str, start_response):
     decoded = unquote(path_info or "/")
     if "\x00" in decoded or decoded.startswith("//"):
@@ -284,6 +303,11 @@ def application(environ, start_response):
     method = environ.get("REQUEST_METHOD", "GET").upper()
 
     if path == "/health":
+        try:
+            check_database()
+        except (DatabaseConfigurationError, psycopg.Error, OSError) as exc:
+            logging.error("Database health check failed (%s)", type(exc).__name__)
+            return _response(start_response, "503 Service Unavailable", b"database unavailable")
         return _response(start_response, "200 OK", b"ok")
 
     if path == "/api/waitlist":
@@ -304,28 +328,39 @@ def application(environ, start_response):
         if data.get("website"):
             return _json_response(start_response, "200 OK", {"ok": True})
         try:
+            signup_id = save_signup(data)
+        except (DatabaseConfigurationError, psycopg.Error, OSError) as exc:
+            logging.error("Waitlist signup could not be stored (%s)", type(exc).__name__)
+            return _json_response(start_response, "503 Service Unavailable", {"error": "We couldn't save your sign-up. Please try again."})
+        email_enabled = os.environ.get("WAITLIST_EMAIL_ENABLED", "false").strip().lower() in {"1", "true", "yes", "on"}
+        if not email_enabled:
+            logging.info("Waitlist signup %s stored; notification pending; SMTP remains paused.", signup_id)
+            return _json_response(start_response, "201 Created", {"ok": True})
+
+        try:
+            claimed = begin_notification_attempt(signup_id)
+        except (DatabaseConfigurationError, psycopg.Error, OSError) as exc:
+            logging.error("Notification attempt for signup %s could not be recorded (%s).", signup_id, type(exc).__name__)
+            return _json_response(start_response, "201 Created", {"ok": True})
+        if not claimed:
+            logging.error("Waitlist signup %s was stored but its notification could not be claimed.", signup_id)
+            return _json_response(start_response, "201 Created", {"ok": True})
+        try:
             _send_email(data)
-        except MissingSmtpConfiguration:
-            return _json_response(start_response, "503 Service Unavailable", {"error": "Waitlist email is not configured."})
-        except (smtplib.SMTPException, OSError, ssl.SSLError) as exc:
-            logging.warning("Waitlist SMTP delivery failed (%s)", type(exc).__name__)
-            if isinstance(exc, smtplib.SMTPResponseException):
-                logging.warning("SMTP response code: %s", exc.smtp_code)
-            elif isinstance(exc, smtplib.SMTPRecipientsRefused):
-                codes = sorted({str(response[0]) for response in exc.recipients.values()})
-                logging.warning("SMTP recipient response codes: %s", ", ".join(codes))
-                details = []
-                for response in exc.recipients.values():
-                    detail = response[1]
-                    if isinstance(detail, bytes):
-                        detail = detail.decode("utf-8", "replace")
-                    detail = re.sub(r"(?i)[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}", "[address]", str(detail))
-                    details.append(detail[:180])
-                logging.warning("SMTP recipient rejection detail: %s", " | ".join(details)[:360])
-            elif isinstance(exc, OSError):
-                logging.warning("SMTP network error code: %s", exc.errno)
-            return _json_response(start_response, "502 Bad Gateway", {"error": "The sign-up email could not be sent."})
-        return _json_response(start_response, "200 OK", {"ok": True})
+        except Exception as exc:
+            summary = _smtp_error_summary(exc)
+            try:
+                record_notification_result(signup_id, "failed", summary)
+            except (DatabaseConfigurationError, psycopg.Error, OSError) as db_exc:
+                logging.error("Notification status for signup %s could not be saved (%s).", signup_id, type(db_exc).__name__)
+            logging.error("Waitlist notification for signup %s failed: %s", signup_id, summary)
+        else:
+            try:
+                record_notification_result(signup_id, "sent")
+            except (DatabaseConfigurationError, psycopg.Error, OSError) as db_exc:
+                logging.error("Sent notification status for signup %s could not be saved (%s).", signup_id, type(db_exc).__name__)
+        logging.info("Waitlist signup %s stored; visitor confirmation can be shown.", signup_id)
+        return _json_response(start_response, "201 Created", {"ok": True})
 
     if method not in {"GET", "HEAD"}:
         return _response(start_response, "405 Method Not Allowed", b"Method not allowed")

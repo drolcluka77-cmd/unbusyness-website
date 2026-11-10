@@ -14,13 +14,14 @@ Open `/` for the welcome page, `/building-managers/`, `/hotels/`, `/home/`, or `
 
 Publishing uses an autoscale deployment running `gunicorn --bind 0.0.0.0:5000 --workers 2 app:application`.
 
-## SMTP secrets
+## Waitlist data and email
 
-Configure these Replit Secrets for the environment where the app runs:
+Valid waitlist submissions are saved in the Replit PostgreSQL database first. Visitors see confirmation after the database write succeeds. The schema is documented in `db/schema.sql`; the `public.waitlist_signups` table contains the submitted fields, consent, and notification status. Use the Replit database pane to review pending submissions; do not expose this personal data through an unauthenticated public route.
 
-- `SMTP_HOST`
-- `SMTP_PORT` (`465` for SSL or `587` for STARTTLS)
-- `SMTP_USERNAME`
-- `SMTP_PASSWORD`
+Publish after schema changes so Replit applies the development table to the production database. Development and production records are separate.
 
-Waitlist sign-ups are emailed to `info@unbusyness.com`; they are not saved in a database. Keep all SMTP credentials in Replit Secrets, never in source files. Fonts load from Google Fonts. See `README.md` for the page inventory and claims that need confirmation before going public.
+SMTP is explicitly paused until NEOSERV responds. Keep the shared environment variable `WAITLIST_EMAIL_ENABLED` set to `false`; do not attempt SMTP logins or retry notifications automatically before then. The four SMTP credentials remain in Replit Secrets and must never be written to source files.
+
+After NEOSERV confirms the SMTP settings and the user authorizes resuming delivery, notifications may be enabled for new sign-ups. Older pending records remain visible in the Replit database pane for follow-up. Email failures are recorded on the signup and in logs, but never prevent the visitor's confirmation after a successful database save.
+
+See `README.md` for the page inventory and claims that need confirmation before going public. Fonts load from Google Fonts.

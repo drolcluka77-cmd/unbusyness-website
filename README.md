@@ -21,11 +21,13 @@ Every demo except the trades demos has a Slovenian file and an English `-en.html
 
 The welcome page links to the full pages in the `PAGES` object near the top of its script.
 
-## Waitlist email
+## Waitlist submissions
 
-Waitlist forms post JSON to the app's `/api/waitlist` endpoint. The server sends each consented sign-up to `info@unbusyness.com` through authenticated SMTP. It does not save sign-ups to a database. SMTP host, port, username and password must be configured as Replit Secrets (`SMTP_HOST`, `SMTP_PORT`, `SMTP_USERNAME`, `SMTP_PASSWORD`) in both development and production as needed. Never put credentials in source control.
+Every valid form submission is saved in the Replit PostgreSQL database before the visitor sees confirmation. The schema is documented in `db/schema.sql`; the full form payload, consent, and email-notification status are stored in `public.waitlist_signups`. SMTP notifications are currently paused (`WAITLIST_EMAIL_ENABLED=false`) until NEOSERV responds; no SMTP login is attempted while paused. New submissions stay `pending` and can be reviewed in the Replit database pane.
 
-The endpoint accepts `residents`, `building_managers`, `tradespeople`, `hotels`, and `investors`, plus the welcome page's `resident`, `manager`, `trade`, and `hotel` segments. The sender address is the authenticated SMTP username; replies go to the person who submitted the form.
+After NEOSERV confirms the SMTP setup and the user authorizes resuming delivery, notifications can be enabled for new submissions. Older pending submissions remain visible in the database list for follow-up. SMTP host, port, username, and password stay in Replit Secrets (`SMTP_HOST`, `SMTP_PORT`, `SMTP_USERNAME`, `SMTP_PASSWORD`).
+
+The endpoint accepts `residents`, `building_managers`, `tradespeople`, `hotels`, and `investors`, plus the welcome page's `resident`, `manager`, `trade`, and `hotel` segments. Replies to notifications go to the person who submitted the form.
 
 ## Design
 

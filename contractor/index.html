@@ -70,7 +70,8 @@ section{scroll-margin-top:84px}
 .lede{font-size:clamp(18px,1.8vw,21px);color:var(--muted);margin-top:22px;max-width:30em}
 
 /* sign-up form */
-.wl{margin-top:28px;display:grid;gap:10px;max-width:520px}
+.wl{margin-top:28px;display:grid;gap:10px;max-width:560px}
+.wl .btn.primary{justify-self:start}
 .row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px}
 .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .field{display:flex;flex-direction:column;gap:4px}
@@ -89,10 +90,6 @@ input:focus,select:focus{outline:none;border-color:var(--green);box-shadow:0 0 0
 .hp{position:absolute;left:-9999px;width:1px;height:1px;opacity:0}
 
 .demos{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}
-.peek{display:inline-flex;align-items:center;gap:12px;margin-top:18px;text-decoration:none}
-.peek .pl{width:40px;height:40px;border-radius:50%;background:var(--apricot);color:#14201E;display:grid;place-items:center;flex-shrink:0}
-.peek b{display:block;font-size:15px}
-.peek span{display:block;font-size:13px;color:var(--muted)}
 .dur{font-size:12px;font-weight:700;color:var(--muted);background:var(--sand);border-radius:999px;padding:2px 9px;margin-left:4px}
 
 /* "today, while you worked" card */
@@ -115,7 +112,6 @@ input:focus,select:focus{outline:none;border-color:var(--green);box-shadow:0 0 0
 .sand{background:var(--sand)}
 
 /* video */
-.vgrid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,.8fr);gap:56px;align-items:center}
 .phonevid{position:relative;width:min(300px,100%);margin-inline:auto;border-radius:36px;background:#14201E;padding:10px;box-shadow:0 24px 60px rgba(20,32,30,.22)}
 .phonevid video{display:block;width:100%;aspect-ratio:480/854;border-radius:28px;background:#0d1513;object-fit:cover}
 .vcap{display:flex;align-items:center;justify-content:center;gap:8px;font-size:14px;font-weight:600;color:var(--muted);margin-top:14px}
@@ -125,10 +121,6 @@ input:focus,select:focus{outline:none;border-color:var(--green);box-shadow:0 0 0
 .why .eyebrow{color:var(--on-green-quiet)}
 .why h2{color:#FBFAF7}
 .why .sub{color:var(--on-green)}
-.why .ans{margin-top:40px;padding-top:28px;border-top:1px solid color-mix(in srgb,var(--on-green) 30%,transparent);display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:24px 48px}
-.why .ans .eyebrow{color:var(--apricot-light)}
-.why .ans h3{font-size:clamp(24px,2.6vw,32px);line-height:1.2;margin-top:10px;color:#FBFAF7}
-.why .ans p{color:var(--on-green);font-size:18px;align-self:end}
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .why{background:var(--green-deep)}}
 :root[data-theme="dark"] .why{background:var(--green-deep)}
 
@@ -152,44 +144,39 @@ input:focus,select:focus{outline:none;border-color:var(--green);box-shadow:0 0 0
 .feat .phonevid video{border-radius:23px}
 .feat .vcap{margin-top:6px;font-size:13px}
 
-/* building managers band */
-.band{display:grid;grid-template-columns:minmax(0,1.3fr) auto;gap:24px 40px;align-items:center;background:var(--surface);border:1px solid var(--line);border-left:5px solid var(--apricot);border-radius:24px;padding:30px}
-.band h2{font-size:clamp(28px,3.4vw,40px);margin-top:8px;line-height:1.1}
-.band p{color:var(--muted);margin-top:10px}
-.band .side{display:flex;flex-direction:column;gap:12px;align-items:flex-start}
-.pill{display:inline-flex;align-items:center;gap:8px;background:var(--green-soft);color:var(--green);border-radius:999px;padding:7px 14px;font-size:14px;font-weight:700}
-
-/* home teaser */
-.homes{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,.8fr);gap:56px;align-items:center}
-.homes .eyebrow{color:#B0582F}
-.chips{display:flex;flex-direction:column;gap:10px;margin-top:26px;max-width:440px}
-.chip{display:flex;align-items:center;gap:12px;background:#F8E8DE;color:#4A2A1B;border-radius:16px;padding:12px 16px;font-size:15px;font-weight:600}
-.chip i{width:9px;height:9px;border-radius:50%;background:#B0582F;flex-shrink:0}
-@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .chip{background:#3A2A20;color:#F6DCCB}}
-:root[data-theme="dark"] .chip{background:#3A2A20;color:#F6DCCB}
-.homes .vtitle{font-size:13px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);text-align:center;margin-bottom:14px}
-.homes .vnote{text-align:center;color:var(--muted);font-size:14.5px;margin-top:10px}
-
-/* join + investors */
+/* join */
 .join{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:48px;align-items:start}
 .join h2 span{display:block;color:var(--green)}
-.inv{background:var(--sand);border-radius:24px;padding:28px;margin-top:24px}
-.inv h2{font-size:clamp(24px,2.6vw,32px);margin-top:8px}
-.inv p{color:var(--muted);margin-top:8px}
-.inv .wl{max-width:none}
 
+/* audience switcher (same on every waitlist page) */
+.aud{display:flex;gap:8px;overflow-x:auto;padding:10px 0 6px;scrollbar-width:none}
+.aud::-webkit-scrollbar{display:none}
+.aud a{display:inline-flex;align-items:center;gap:8px;white-space:nowrap;min-height:44px;padding:0 16px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--ink);font:600 15px var(--body);text-decoration:none}
+.aud a:hover{border-color:var(--green)}
+.aud a[aria-current="page"]{border:2px solid var(--green);color:var(--green);font-weight:800}
+.aud svg{flex-shrink:0}
+@media (max-width:620px){.aud{display:grid;grid-template-columns:1fr 1fr;overflow:visible}.aud a{white-space:normal;line-height:1.2;padding:8px 12px;font-size:14px;justify-content:flex-start}}
+.whygrid{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.8fr);gap:56px;align-items:center}
+.why .ans{margin-top:36px;padding-top:24px;border-top:1px solid color-mix(in srgb,var(--on-green) 30%,transparent)}
+.why .ans .eyebrow{color:var(--apricot-light)}
+.why .ans h3{font-size:clamp(22px,2.4vw,28px);line-height:1.25;margin-top:10px;color:#FBFAF7}
+.why .ans p{color:var(--on-green);font-size:17px;margin-top:10px}
+.why .vcap{color:var(--on-green)}
+.why .dur{background:rgba(255,255,255,.12);color:#FBFAF7}
+.demos{align-items:center}
+.demos .note{flex-basis:100%}
+footer a{color:inherit;font-weight:700}
 footer{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px 24px;padding-block:28px 40px;border-top:1px solid var(--line);font-size:14px;color:var(--muted)}
 
 @media (max-width:900px){
-  .hero,.vgrid,.homes,.join{grid-template-columns:1fr;gap:36px}
+  .hero,.whygrid,.join{grid-template-columns:1fr;gap:36px}
   .hero{padding-top:28px}
   .steps,.feats{grid-template-columns:1fr}
-  .why .ans{grid-template-columns:1fr}
-  .band{grid-template-columns:1fr}
   .sec{padding-block:64px}
 }
 @media (max-width:560px){
   .row,.row2{grid-template-columns:1fr}
+  .wl .btn.primary{justify-self:stretch}
   .top .join-top{display:none}
   .btn{white-space:normal;text-align:center}
 }
@@ -207,6 +194,12 @@ footer{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px 24px;pa
     <a class="btn ghost sm join-top" href="#join" data-t="navJoin">Join the waitlist</a>
   </div>
 </div></header>
+<div class="wrap"><nav class="aud" aria-label="Unbusyness">
+  <a href="/contractor/" aria-current="page"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.5 2.5-2.4-.6-.6-2.4z"/></svg><span data-t="audT">For trades</span></a>
+  <a href="/building-managers/"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="1.5"/><path d="M9 7h1M14 7h1M9 11h1M14 11h1M9 15h1M14 15h1M11 21v-3h2v3"/></svg><span data-t="audM">For building managers</span></a>
+  <a href="/hotels/"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 19V7M3 15h18v4M21 15v-3a3 3 0 0 0-3-3h-7v6"/><circle cx="7" cy="11.5" r="1.8"/></svg><span data-t="audH">For hotels</span></a>
+  <a href="/home/"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/></svg><span data-t="audD">For your home</span></a>
+</nav></div>
 
 <main>
 <div class="wrap">
@@ -219,14 +212,9 @@ footer{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px 24px;pa
       <form class="wl" data-form="hero" novalidate></form>
 
       <div class="demos">
-        <a class="btn ghost sm" href="/demo/trades-desktop.html"><span data-t="demoDesk">View Desktop Demo</span> <span aria-hidden="true">↗</span></a>
-        <a class="btn ghost sm" href="/demo/trades-phone.html"><span data-t="demoPhone">View Mobile Demo</span> <span aria-hidden="true">↗</span></a>
+        <a class="btn ghost" id="demoBtn" href="/demo/trades-desktop.html"><span data-t="demoBtn">View the demo</span> <span aria-hidden="true">↗</span></a>
+        <span class="note" data-t="demoNote">Clickable, with made-up data. No sign-up needed.</span>
       </div>
-      <a class="peek" href="#video-preview">
-        <span class="pl"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 4l13 8-13 8z"/></svg></span>
-        <span><b data-t="peekA">See Unbusyness in 30 seconds</b><span data-t="peekB">Watch the short preview</span></span>
-        <span class="dur" data-t="sec30">30 sec</span>
-      </a>
     </div>
 
     <div class="today" aria-label="Example: what Unbusyness did today">
@@ -238,29 +226,21 @@ footer{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px 24px;pa
   </section>
 </div>
 
-<section class="sec sand" id="video-preview">
-  <div class="wrap vgrid">
+<section class="sec why" id="video-preview">
+  <div class="wrap whygrid">
     <div>
-      <p class="eyebrow" data-t="vEyebrow">A little more breathing room</p>
-      <h2 data-t="vTitle">See what a calmer workday could look like.</h2>
-      <p class="sub" data-t="vSub">Meet Unbusyness in 30 seconds: the calls answered, the jobs moving, and more of your evening back.</p>
-      <p style="margin-top:24px"><a class="textlink" href="#join"><span data-t="early">Get early access</span> <span aria-hidden="true">→</span></a></p>
+      <p class="eyebrow" data-t="whyEyebrow">Why we're building this</p>
+      <h2 data-t="whyTitle">Service business owners are never really off.</h2>
+      <p class="sub" data-t="whySub">You take care of other people's homes all day. Then the evening goes to missed calls, quotes and invoices. Leads slip through while you're under a sink.</p>
+      <div class="ans">
+        <p class="eyebrow" data-t="ansEyebrow">Our answer</p>
+        <h3 data-t="ansTitle">Switch off your phone and still be there for your customers.</h3>
+        <p data-t="ansText">A business that keeps running when you're not there is easier to live with, and worth more when you decide to sell it.</p>
+      </div>
     </div>
     <div>
       <div class="phonevid"><video controls playsinline preload="none" poster="/media/unbusyness-preview-poster.jpg" aria-label="30-second Unbusyness preview" data-t-aria="vAria"><source src="/media/unbusyness-preview.mp4" type="video/mp4"></video></div>
       <p class="vcap"><span data-t="vCap">Watch the 30-second preview</span><span class="dur" data-t="sec30">30 sec</span></p>
-    </div>
-  </div>
-</section>
-
-<section class="sec why">
-  <div class="wrap">
-    <p class="eyebrow" data-t="whyEyebrow">Why we're building this</p>
-    <h2 data-t="whyTitle">Service business owners are never really off.</h2>
-    <p class="sub" data-t="whySub">You take care of other people's homes all day. Then the evening goes to missed calls, quotes and invoices. Leads slip through while you're under a sink.</p>
-    <div class="ans">
-      <div><p class="eyebrow" data-t="ansEyebrow">Our answer</p><h3 data-t="ansTitle">Switch off your phone and still be there for your customers.</h3></div>
-      <p data-t="ansText">A business that keeps running when you're not there is easier to live with, and worth more when you decide to sell it.</p>
     </div>
   </div>
 </section>
@@ -278,7 +258,7 @@ footer{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px 24px;pa
   </div>
 </section>
 
-<section class="sec sand">
+<section class="sec">
   <div class="wrap">
     <p class="eyebrow" data-t="featEyebrow">Unbusyness Business</p>
     <h2 data-t="featTitle">More of the day, handled.</h2>
@@ -318,98 +298,38 @@ footer{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px 24px;pa
   </div>
 </section>
 
-<section class="sec">
-  <div class="wrap">
-    <div class="band">
-      <div>
-        <p class="eyebrow" data-t="bmEyebrow">For building managers</p>
-        <h2 data-t="bmTitle">Fewer calls. More buildings fixed.</h2>
-        <p data-t="bmText">Every repair request, contractor and resident update in one place, with AI doing the admin.</p>
-      </div>
-      <div class="side">
-        <span class="pill"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l4 4 10-10"/></svg><span data-t="bmPilot">Founding pilot: free for three months.</span></span>
-        <a class="btn primary" href="/building-managers/#join"><span data-t="bmBtn">View manager waitlist</span> <span aria-hidden="true">↗</span></a>
-        <a class="textlink" href="/building-managers/" data-t="bmMore">Explore the building manager pilot</a>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section class="sec sand">
-  <div class="wrap homes">
-    <div>
-      <p class="eyebrow" data-t="homeEyebrow">Coming next · Unbusyness Home</p>
-      <h2 data-t="homeTitle">The things you own shouldn't own you.</h2>
-      <p class="sub" data-t="homeText">Your house, car and warranties in one calm place. Home reminds you when something is due and books a trusted local pro in one tap.</p>
-      <div class="chips">
-        <div class="chip"><i></i><span data-t="c1">Heat-pump service · due in 12 days</span></div>
-        <div class="chip"><i></i><span data-t="c2">Winter tyres · change before 15 Nov</span></div>
-        <div class="chip"><i></i><span data-t="c3">Dishwasher warranty · ends in March</span></div>
-      </div>
-      <p style="margin-top:24px"><a class="btn ghost" href="/home/#join" data-t="homeBtn">Notify me when Home launches</a></p>
-    </div>
-    <div>
-      <p class="vtitle" data-t="homeVTitle">A calmer home, in 26 seconds</p>
-      <div class="phonevid"><video controls playsinline preload="none" poster="/media/unbusyness-home-preview-poster.jpg" aria-label="26-second Unbusyness Home preview" data-t-aria="homeVAria"><source src="/media/unbusyness-home-preview.mp4" type="video/mp4"></video></div>
-      <p class="vcap"><span data-t="homeVCap">Watch the Home preview</span><span class="dur" data-t="sec26">26 sec</span></p>
-      <p class="vnote" data-t="homeVNote">See how Home keeps the important details in one calm place.</p>
-    </div>
-  </div>
-</section>
-
-<section class="sec" id="join">
+<section class="sec sand" id="join">
   <div class="wrap join">
     <div>
       <p class="eyebrow" data-t="joinEyebrow">Early access</p>
       <h2><span data-t="joinA" style="color:inherit">Get your evenings back.</span><span data-t="joinB">Join the waitlist.</span></h2>
-      <p class="sub" data-t="joinText">We're opening paid pilots to a small group of service businesses first. Leave your email and we'll be in touch.</p>
+      <p class="sub" data-t="joinText">We're opening pilots to a small group of service businesses first. Leave your email and we'll be in touch.</p>
     </div>
     <div>
       <form class="wl" data-form="join" novalidate></form>
-      <div class="inv" id="investors">
-        <p class="eyebrow" data-t="invEyebrow">For investors</p>
-        <h2 data-t="invTitle">Request investor presentation.</h2>
-        <p data-t="invText">Leave your email and phone number, and we'll be in touch about the presentation.</p>
-        <form class="wl" id="inv" novalidate>
-          <div class="row2">
-            <div class="field"><label class="sr" for="invEmail" data-t="email">Email address</label><input id="invEmail" type="email" autocomplete="email" placeholder="you@company.com" data-t-ph="emailPh" required></div>
-            <div class="field"><label class="sr" for="invPhone" data-t="phone">Phone number</label><input id="invPhone" type="tel" autocomplete="tel" placeholder="+386 …"></div>
-          </div>
-          <input class="hp" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
-          <label class="consent"><input type="checkbox" id="invConsent"><span data-t="invConsent">We'll only use these details to follow up on your investor presentation request.</span></label>
-          <p class="err" id="invErr" role="alert" hidden></p>
-          <button class="btn primary" type="submit" data-t="invBtn">Request presentation</button>
-        </form>
-        <div class="done" id="invDone" tabindex="-1" hidden><b data-t="invDoneT">Thank you.</b><p data-t="invDoneP">We'll be in touch about the presentation.</p><p class="pv" data-t="previewNote" hidden>Preview: this page isn't connected yet, so nothing was sent.</p></div>
-      </div>
     </div>
   </div>
 </section>
 </main>
 
-<div class="wrap"><footer><span>© 2026 Unbusyness · unbusyness.com</span><span data-t="foot">Questions? Write to info@unbusyness.com or call +386 40 290 963</span></footer></div>
+<div class="wrap"><footer><span>© 2026 Unbusyness · unbusyness.com</span><span data-t="foot">Questions? Write to info@unbusyness.com or call +386 40 290 963</span><a href="/investors/" data-t="footInv">For investors</a></footer></div>
 
 <template id="wlTpl">
-  <div class="row">
-    <div class="field"><label class="sr" data-for="email" data-t="email">Email address</label><input data-id="email" type="email" autocomplete="email" placeholder="you@company.com" data-t-ph="emailPh" required></div>
-    <button class="btn primary" type="submit" data-t="join">Join the waitlist</button>
-  </div>
   <div class="row2">
-    <div class="field"><label class="sr" data-for="kind" data-t="iam">I am</label>
+    <div class="field"><label class="sr" data-for="email" data-t="email">Email address</label><input data-id="email" type="email" autocomplete="email" placeholder="you@company.com" data-t-ph="emailPh" required></div>
+    <div class="field"><label class="sr" data-for="kind" data-t="iam">My trade</label>
       <select data-id="kind">
-        <option value="" data-t="kind0">I run a…</option>
-        <option value="plumbing" data-t="kind1">Plumbing business</option>
-        <option value="hvac" data-t="kind2">HVAC business</option>
-        <option value="electrical" data-t="kind3">Electrical business</option>
-        <option value="other" data-t="kind4">Other service business</option>
-        <option value="homeowner" data-t="kind5">I'm a homeowner (Unbusyness Home)</option>
-        <option value="manager" data-t="kind6">Building manager / operator</option>
+      <option value="" data-t="kind0">My trade…</option>
+      <option value="plumbing" data-t="kind1">Plumbing</option>
+      <option value="hvac" data-t="kind2">Heating, ventilation and air conditioning</option>
+      <option value="electrical" data-t="kind3">Electrical</option>
+      <option value="other" data-t="kind4">Other service business</option>
       </select></div>
-    <div class="field"><label class="sr" data-for="company" data-t="company">Company name (optional)</label><input data-id="company" type="text" autocomplete="organization" placeholder="Company name (optional)" data-t-ph="companyPh"></div>
   </div>
   <input class="hp" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
   <label class="consent"><input type="checkbox" data-id="consent"><span data-t="consent">Unbusyness may email me about early access. I can ask for my details to be deleted at any time.</span></label>
   <p class="err" role="alert" hidden></p>
+  <button class="btn primary" type="submit" data-t="join">Join the waitlist</button>
   <p class="note" data-t="noSpam">No spam. Just one email when your spot opens.</p>
 </template>
 <template id="doneTpl">
@@ -422,11 +342,13 @@ const WAITLIST_ENDPOINT = "";
 
 const SL = {
   navJoin:"Pridružite se čakalni listi",
+  audT:"Za obrtnike", audM:"Za upravnike stavb", audH:"Za hotele", audD:"Za dom", footInv:"Za vlagatelje",
+  demoBtn:"Oglejte si demo", demoNote:"Klikabilen, z izmišljenimi podatki. Brez prijave.",
   heroEyebrow:"Za vodovodarje, elektroinštalaterje, monterje ogrevanja in druge obrtnike",
   h1a:"Manj obremenjeni.", h1b:"Več opravljenega.",
   lede:"Vaš pisarniški pomočnik z umetno inteligenco, ki odgovarja na klice, pripravlja ponudbe in spremlja plačila računov, da lahko izklopite telefon.",
-  email:"E-poštni naslov", join:"Pridružite se čakalni listi", iam:"Moja dejavnost",
-  kind0:"Izberite dejavnost…", kind1:"Vodovodne inštalacije", kind2:"Ogrevanje, prezračevanje in klimatizacija", kind3:"Elektroinštalacije", kind4:"Druga storitvena dejavnost", kind5:"Lastnik doma (Unbusyness Home)", kind6:"Upravnik / upravljavec stavb",
+  email:"E-poštni naslov", join:"Pridružite se čakalni listi", iam:"Moja obrt",
+  kind0:"Moja obrt…", kind1:"Vodovodne inštalacije", kind2:"Ogrevanje, prezračevanje in klimatizacija", kind3:"Elektroinštalacije", kind4:"Druga storitvena dejavnost",
   company:"Ime podjetja (neobvezno)", companyPh:"Ime podjetja (neobvezno)", emailPh:"vi@podjetje.si",
   consent:"Unbusyness mi lahko piše glede zgodnjega dostopa. Kadar koli lahko zahtevam izbris svojih podatkov.",
   noSpam:"Brez neželene pošte. Le eno sporočilo, ko bo vaše mesto na voljo.",
@@ -464,7 +386,7 @@ const SL = {
   homeBtn:"Obvestite me, ko bo Home na voljo", homeVTitle:"Mirnejši dom v 26 sekundah", homeVCap:"Oglejte si predstavitev Home", homeVAria:"26-sekundna predstavitev Unbusyness Home",
   homeVNote:"Poglejte, kako Home hrani pomembne podatke na enem preglednem mestu.",
   joinEyebrow:"Zgodnji dostop", joinA:"Večeri naj bodo spet vaši.", joinB:"Pridružite se čakalni listi.",
-  joinText:"Plačljive pilotne programe najprej odpiramo manjši skupini storitvenih podjetij. Pustite svoj e-poštni naslov in oglasili se vam bomo.",
+  joinText:"Pilotne programe najprej odpiramo manjši skupini storitvenih podjetij. Pustite svoj e-poštni naslov in oglasili se vam bomo.",
   invEyebrow:"Za vlagatelje", invTitle:"Zahtevajte predstavitev za vlagatelje.",
   invText:"Pustite svoj e-poštni naslov in telefonsko številko. Oglasili se vam bomo glede predstavitve.",
   phone:"Telefonska številka", invBtn:"Zahtevajte predstavitev",
@@ -526,8 +448,7 @@ async function send(data) {
   if (!r.ok) throw new Error("send failed");
   return true;
 }
-// The "I am" choice decides which list the sign-up goes to.
-const KIND = { plumbing: ["tradespeople", "Plumbing"], hvac: ["tradespeople", "HVAC"], electrical: ["tradespeople", "Electrical"], other: ["tradespeople", "Other"], homeowner: ["residents", ""], manager: ["building_managers", ""] };
+const TRADE = { plumbing: "Plumbing", hvac: "HVAC", electrical: "Electrical", other: "Other" };
 
 document.querySelectorAll("form[data-form]").forEach((f) => {
   const p = f.dataset.form, $ = (id) => document.getElementById(p + "-" + id);
@@ -538,8 +459,7 @@ document.querySelectorAll("form[data-form]").forEach((f) => {
     const email = $("email").value.trim();
     if (!validEmail(email)) return fail("errEmail", $("email"));
     if (!$("consent").checked) return fail("errConsent", $("consent"));
-    const [segment, trade] = KIND[$("kind").value] || ["tradespeople", ""];
-    const data = { segment, email, company: $("company").value.trim(), trade, website: f.querySelector('[name="website"]').value, page: location.pathname + "#" + p, language: lang, consent: true };
+    const data = { segment: "tradespeople", email, trade: TRADE[$("kind").value] || "", website: f.querySelector('[name="website"]').value, page: location.pathname + "#" + p, language: lang, consent: true };
     const label = btn.textContent; btn.disabled = true; btn.textContent = t("sending");
     try {
       const sent = await send(data);
@@ -552,21 +472,10 @@ document.querySelectorAll("form[data-form]").forEach((f) => {
   });
 });
 
-const inv = document.getElementById("inv");
-inv.addEventListener("submit", async (e) => {
-  e.preventDefault();
-  const err = document.getElementById("invErr"); err.hidden = true;
-  const fail = (k, el) => { err.textContent = t(k); err.hidden = false; el && el.focus(); };
-  const email = document.getElementById("invEmail").value.trim();
-  if (!validEmail(email)) return fail("errEmail", document.getElementById("invEmail"));
-  if (!document.getElementById("invConsent").checked) return fail("errConsent", document.getElementById("invConsent"));
-  const btn = inv.querySelector('button[type="submit"]'); const label = btn.textContent; btn.disabled = true; btn.textContent = t("sending");
-  try {
-    const sent = await send({ segment: "investors", email, phone: document.getElementById("invPhone").value.trim(), website: inv.querySelector('[name="website"]').value, page: location.pathname + "#investors", language: lang, consent: true });
-    inv.hidden = true; const d = document.getElementById("invDone"); d.hidden = false; d.querySelector(".pv").hidden = sent; d.focus();
-  } catch { fail("errSend"); }
-  finally { btn.disabled = false; btn.textContent = label; }
-});
+// One demo button: the phone demo on small screens, the desktop demo otherwise.
+const demoBtn = document.getElementById("demoBtn");
+const pickDemo = () => (demoBtn.href = matchMedia("(max-width: 700px)").matches ? "/demo/trades-phone.html" : "/demo/trades-desktop.html");
+pickDemo(); addEventListener("resize", pickDemo);
 </script>
 </body>
 </html>

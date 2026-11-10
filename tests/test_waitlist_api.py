@@ -14,6 +14,8 @@ from waitlist_db import save_signup
 class WaitlistApiTests(unittest.TestCase):
     def setUp(self):
         self.request_number = 0
+        from app import _request_times
+        _request_times.clear()
 
     def call_api(self, payload):
         self.request_number += 1
@@ -82,6 +84,7 @@ class WaitlistApiTests(unittest.TestCase):
             response = self.call_api(self.valid_payload())
 
         self.assertEqual(response["status"], "503 Service Unavailable")
+        self.assertEqual(json.loads(response["body"])["code"], "storage_unavailable")
         send_email.assert_not_called()
 
     def test_honeypot_is_accepted_without_database_or_smtp(self):
@@ -100,7 +103,49 @@ class WaitlistApiTests(unittest.TestCase):
             response = self.call_api(self.valid_payload(consent=False))
 
         self.assertEqual(response["status"], "400 Bad Request")
+        self.assertEqual(json.loads(response["body"])["code"], "consent_required")
         save_signup.assert_not_called()
+
+    def test_home_form_payload_is_accepted(self):
+        payload = self.valid_payload(
+            name="Test resident", phone="", city="Test city", home="flat-own",
+            managerUsesUnbusyness="no", manager="Test manager", contactManager=True,
+            address="Test address", wants=["repairs"], language="sl",
+        )
+        with (
+            patch.dict(os.environ, {"WAITLIST_EMAIL_ENABLED": "false"}),
+            patch("app.save_signup", return_value=44) as store,
+            patch("app._send_email") as send_email,
+        ):
+            response = self.call_api(payload)
+        self.assertEqual(response["status"], "201 Created")
+        store.assert_called_once_with(payload)
+        send_email.assert_not_called()
+
+    def test_rejected_fields_return_specific_codes_without_storage(self):
+        with patch("app.save_signup") as store:
+            for fields, code in [
+                ({"email": "not-an-email"}, "invalid_email"),
+                ({"address": "x" * 2001}, "field_too_long"),
+                ({"segment": "unknown"}, "invalid_list"),
+            ]:
+                with self.subTest(code=code):
+                    response = self.call_api(self.valid_payload(**fields))
+                    self.assertEqual(response["status"], "400 Bad Request")
+                    self.assertEqual(json.loads(response["body"])["code"], code)
+            store.assert_not_called()
+
+    def test_rate_limit_returns_specific_code_without_storage_or_smtp(self):
+        with (
+            patch("app._is_rate_limited", return_value=True),
+            patch("app.save_signup") as store,
+            patch("app._send_email") as send_email,
+        ):
+            response = self.call_api(self.valid_payload())
+        self.assertEqual(response["status"], "429 Too Many Requests")
+        self.assertEqual(json.loads(response["body"])["code"], "rate_limited")
+        store.assert_not_called()
+        send_email.assert_not_called()
 
     def test_database_helper_uses_parameterized_insert(self):
         payload = self.valid_payload(name="A test applicant")

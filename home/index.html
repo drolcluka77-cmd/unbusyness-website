@@ -616,14 +616,26 @@ const SL = {
   qd:"Kdo vidi moje podatke?", qdd:"Samo vi in tisti, s katerimi delite potni list. Mojster vidi le, kar potrebuje za delo, na primer naslov in fotografijo okvare.",
   qe:"Sem najemnik. Je to zame?", qed:"Da. Okvare lahko prijavite najemodajalcu ali upravniku in imate zapis, kaj in kdaj ste prijavili.",
   foot:"Vprašanja? Pišite na info@unbusyness.com ali pokličite +386 40 290 963",
-  errReq:"Izpolnite ime, e-pošto, kraj in kje živite.", errEmail:"Vpišite veljaven e-poštni naslov.", errConsent:"Za prijavo potrdite soglasje.", errMgr:"Da vašega upravnika lahko kontaktiramo, vpišite njegovo ime ali podjetje.", errSend:"Prijave ni bilo mogoče poslati. Poskusite znova ali pišite na info@unbusyness.com.", sending:"Pošiljam …"
+  errReq:"Izpolnite ime, e-pošto, kraj in kje živite.", errEmail:"Vpišite veljaven e-poštni naslov.", errConsent:"Za prijavo potrdite soglasje.", errMgr:"Da vašega upravnika lahko kontaktiramo, vpišite njegovo ime ali podjetje.",
+  errSend:"Ni bilo mogoče preveriti, ali je prijava shranjena. Preverite povezavo ali pišite na info@unbusyness.com.",
+  errSave:"Prijave trenutno ni mogoče shraniti. Poskusite pozneje ali pišite na info@unbusyness.com.",
+  errRate:"V kratkem času je bilo preveč poskusov. Počakajte pet minut in nato poskusite znova.",
+  errRequest:"Zahteva je bila zavrnjena. Osvežite stran in preverite podatke obrazca.",
+  errLong:"Eno od polj je predolgo. Posamezno polje lahko vsebuje največ 2.000 znakov.",
+  sending:"Shranjujem …"
 };
 const EN_EXTRA = {
   copied:"Message copied.", copyFail:"Couldn't copy. Select the text and copy it yourself.",
   recSubj:"Suggestion: Unbusyness for our building",
   recBody:"Hello,\n\nI live at {addr}. I'd like to recommend Unbusyness (unbusyness.com), an assistant for building managers. Residents could report faults with one message, and you would get ready jobs with a photo and a suggested tradesperson, and fewer phone calls.\n\nBest regards",
   addrPh:"[address]",
-  errReq:"Please fill in your name, email, town and where you live.", errEmail:"Please enter a valid email address.", errConsent:"Please tick the consent box to join.", errMgr:"So we can contact your building manager, please add their name or company.", errSend:"We couldn't send your sign-up. Try again or write to info@unbusyness.com.", sending:"Sending…"
+  errReq:"Please fill in your name, email, town and where you live.", errEmail:"Please enter a valid email address.", errConsent:"Please tick the consent box to join.", errMgr:"So we can contact your building manager, please add their name or company.",
+  errSend:"We couldn't confirm whether your sign-up was saved. Check your connection or write to info@unbusyness.com.",
+  errSave:"We couldn't save your sign-up right now. Try later or write to info@unbusyness.com.",
+  errRate:"There have been too many attempts in a short time. Wait five minutes, then try again.",
+  errRequest:"The request was rejected. Reload this page and check your form details.",
+  errLong:"One field is too long. Each field can contain up to 2,000 characters.",
+  sending:"Saving…"
 };
 
 const EN = {};
@@ -688,7 +700,15 @@ form.addEventListener("submit", async (e) => {
   try {
     if (WAITLIST_ENDPOINT) {
       const r = await fetch(WAITLIST_ENDPOINT, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(data) });
-      if (!r.ok) throw new Error("send failed");
+      if (!r.ok) {
+        const response = await r.json().catch(() => ({}));
+        const errors = { invalid_email:"errEmail", consent_required:"errConsent", field_too_long:"errLong",
+          rate_limited:"errRate", storage_unavailable:"errSave", origin_blocked:"errRequest",
+          invalid_form:"errRequest", invalid_list:"errRequest" };
+        const key = errors[response.code] || (r.status === 429 ? "errRate" : r.status >= 500 ? "errSend" : "errRequest");
+        fail(key, response.code === "invalid_email" ? "email" : response.code === "consent_required" ? "consent" : null);
+        return;
+      }
     } else document.getElementById("previewNote").hidden = false;
     form.hidden = true; const d = document.getElementById("done"); d.hidden = false; d.focus();
   } catch { fail("errSend"); }

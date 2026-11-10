@@ -1,0 +1,1 @@
+- [Waitlist diagnosis](waitlist-diagnosis.md) — distinguish the visitor's generic error from evidence of a storage or SMTP failure.

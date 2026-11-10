@@ -101,7 +101,9 @@ _request_times: dict[str, deque[float]] = defaultdict(deque)
 
 
 class BadRequest(Exception):
-    pass
+    def __init__(self, message, code="invalid_form"):
+        super().__init__(message)
+        self.code = code
 
 
 class MissingSmtpConfiguration(Exception):
@@ -157,7 +159,7 @@ def _clean_value(value):
     if isinstance(value, str):
         value = value.strip()
         if len(value) > MAX_FIELD_CHARS:
-            raise BadRequest("A field is too long.")
+            raise BadRequest("A field is too long.", "field_too_long")
         return value
     if isinstance(value, (int, float, bool)) or value is None:
         return value
@@ -194,11 +196,11 @@ def _parse_signup(environ) -> dict:
     segment = cleaned.get("segment")
     email = cleaned.get("email")
     if segment not in ALLOWED_SEGMENTS:
-        raise BadRequest("Invalid list.")
+        raise BadRequest("Invalid list.", "invalid_list")
     if not isinstance(email, str) or len(email) > 254 or not EMAIL_RE.fullmatch(email):
-        raise BadRequest("Invalid email address.")
+        raise BadRequest("Invalid email address.", "invalid_email")
     if cleaned.get("consent") is not True:
-        raise BadRequest("Consent is required.")
+        raise BadRequest("Consent is required.", "consent_required")
     return cleaned
 
 
@@ -363,20 +365,23 @@ def application(environ, start_response):
         if origin:
             origin_host = urlsplit(origin).netloc.casefold()
             if not host or origin_host != host.casefold():
-                return _json_response(start_response, "403 Forbidden", {"error": "Request not allowed."})
+                logging.warning("Waitlist request rejected: origin_blocked")
+                return _json_response(start_response, "403 Forbidden", {"error": "Request not allowed.", "code": "origin_blocked"})
         if _is_rate_limited(_client_key(environ)):
-            return _json_response(start_response, "429 Too Many Requests", {"error": "Please try again later."})
+            logging.warning("Waitlist request rejected: rate_limited")
+            return _json_response(start_response, "429 Too Many Requests", {"error": "Please try again later.", "code": "rate_limited"})
         try:
             data = _parse_signup(environ)
-        except BadRequest:
-            return _json_response(start_response, "400 Bad Request", {"error": "Please check the form and try again."})
+        except BadRequest as exc:
+            logging.warning("Waitlist request rejected: %s", exc.code)
+            return _json_response(start_response, "400 Bad Request", {"error": "Please check the form and try again.", "code": exc.code})
         if data.get("website"):
             return _json_response(start_response, "200 OK", {"ok": True})
         try:
             signup_id = save_signup(data)
         except (DatabaseConfigurationError, psycopg.Error, OSError) as exc:
             logging.error("Waitlist signup could not be stored (%s)", type(exc).__name__)
-            return _json_response(start_response, "503 Service Unavailable", {"error": "We couldn't save your sign-up. Please try again."})
+            return _json_response(start_response, "503 Service Unavailable", {"error": "We couldn't save your sign-up. Please try again.", "code": "storage_unavailable"})
         email_enabled = os.environ.get("WAITLIST_EMAIL_ENABLED", "false").strip().lower() in {"1", "true", "yes", "on"}
         if not email_enabled:
             logging.info("Waitlist signup %s stored; notification pending; SMTP remains paused.", signup_id)

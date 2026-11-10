@@ -1,23 +1,26 @@
 # Running on Replit
 
-This is the imported Unbusyness static website. Preserve its existing HTML structure; no framework, package installation, or build step is required.
+This is the Unbusyness website with a small Python WSGI backend for the waitlist email endpoint. Keep the existing HTML site structure.
 
 ## Preview
 
-Use the **Start website** workflow (the Run button). It runs:
+Use the **Start website** workflow (the Run button). It runs Gunicorn on port 5000 and serves the website and `/api/waitlist`.
 
 ```sh
-python3 -m http.server 5000 --bind 0.0.0.0
+gunicorn --bind 0.0.0.0:5000 --reload app:application
 ```
 
-Run from the repository root. Open `/` for the welcome page, `/building-managers/`, `/hotels/`, or `/home/` for the waitlist pages, and the HTML files under `/demo/` for the interactive demos.
+Open `/` for the welcome page, `/building-managers/`, `/hotels/`, `/home/`, or `/contractor/` for the waitlist pages. Demo pages are under `/demo/`.
 
-The Python standard-library server is for development preview, not a production server. For publishing, serve the static site with an appropriate static hosting configuration.
+Publishing uses an autoscale deployment running `gunicorn --bind 0.0.0.0:5000 --workers 2 app:application`.
 
-## External services
+## SMTP secrets
 
-No secrets or external services are required to preview the site. Fonts load from Google Fonts.
+Configure these Replit Secrets for the environment where the app runs:
 
-Waitlist forms intentionally remain in preview mode: `WAITLIST_ENDPOINT` is empty in each marketing page. No sign-ups are sent or saved. Connecting real sign-ups requires a real endpoint and storage/email service; do not insert a dummy URL or credentials.
+- `SMTP_HOST`
+- `SMTP_PORT` (`465` for SSL or `587` for STARTTLS)
+- `SMTP_USERNAME`
+- `SMTP_PASSWORD`
 
-See `README.md` for the page inventory and marketing claims that must be confirmed before going public.
+Waitlist sign-ups are emailed to `info@unbusyness.com`; they are not saved in a database. Keep all SMTP credentials in Replit Secrets, never in source files. Fonts load from Google Fonts. See `README.md` for the page inventory and claims that need confirmation before going public.

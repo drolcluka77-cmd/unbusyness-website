@@ -812,7 +812,7 @@ form.addEventListener("submit", async (e) => {
   if (force) return void setTimeout(open, 300);
   if (snoozed()) return;
   const t0 = Date.now();
-  setTimeout(open, 25000);
+  setTimeout(open, 7000);
   addEventListener("scroll", function s() { const h = document.documentElement.scrollHeight - innerHeight; if (h > 0 && scrollY / h > .4 && Date.now() - t0 > 6000) { removeEventListener("scroll", s); open(); } }, { passive: true });
   document.addEventListener("mouseout", (e) => { if (!e.relatedTarget && e.clientY <= 0 && Date.now() - t0 > 6000) open(); });
 })();

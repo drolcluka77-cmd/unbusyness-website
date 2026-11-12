@@ -727,6 +727,16 @@ form.addEventListener("submit", async (e) => {
 .ubp li{display:flex;gap:10px;font-size:15px;line-height:1.4}
 .ubp li::before{content:"✓";flex:none;width:22px;height:22px;border-radius:50%;background:var(--apricot-soft);color:var(--apricot-ink);font-weight:800;font-size:12px;display:grid;place-items:center;margin-top:1px}
 .ubp .ubp-btn{display:block;width:100%;box-sizing:border-box;text-align:center;border-radius:999px;padding:14px 18px;font-weight:700;font-size:16px;text-decoration:none;cursor:pointer;border:0;font-family:inherit}
+.ubp .ubp-f{display:block;margin:0;padding:0;background:none;border:0;box-shadow:none;max-width:none;width:auto;grid-template-columns:none;gap:0}
+.ubp .ubp-f label{text-transform:none;letter-spacing:0}
+.ubp .ubp-l{padding:0;color:var(--ink);display:block;font-weight:700;font-size:14px;margin:0 0 6px}
+.ubp .ubp-in{display:block;width:100%;box-sizing:border-box;font:inherit;font-size:16px;padding:13px 16px;border:1px solid var(--line);border-radius:14px;background:var(--bg);color:var(--ink)}
+.ubp .ubp-in:focus{outline:3px solid var(--apricot);outline-offset:1px;border-color:transparent;background:var(--bg);box-shadow:none}
+.ubp .ubp-c{font-weight:400;flex-direction:row;grid-template-columns:none;padding:0;border:0;background:none;display:flex;gap:9px;align-items:flex-start;margin:11px 0 12px;font-size:13px;line-height:1.4;color:var(--muted);cursor:pointer}
+.ubp .ubp-c input{min-height:0;max-height:18px;border-radius:4px;box-shadow:none;position:static;display:block;order:0;padding:0;appearance:auto;-webkit-appearance:checkbox;flex:none;width:18px;height:18px;margin:1px 0 0;accent-color:var(--green)}
+.ubp .ubp-err{margin:-4px 0 10px;color:var(--red);font-size:14px;font-weight:600}
+.ubp .ubp-hp{position:absolute;left:-9999px;width:1px;height:1px;opacity:0}
+.ubp .ubp-main[disabled]{opacity:.7;cursor:wait}
 .ubp .ubp-main{background:var(--green);color:var(--bg)}
 .ubp .ubp-main:hover{background:var(--green-deep);color:#fff}
 .ubp .ubp-or{margin:20px 0 10px;padding-top:16px;border-top:1px solid var(--line)}
@@ -743,10 +753,10 @@ form.addEventListener("submit", async (e) => {
 </style>
 <script id="ubp-js">
 (() => {
-  const C = {"demo": {"phone": "home-phone"}, "sl": ["<b>Zgodnji dostop</b> do Unbusyness Home pred javnim zagonom.", "<b>Ustanovni pogoji</b> za vse s čakalnega seznama.", "<b>Kontaktiramo vašega upravnika</b> namesto vas, če želite."], "en": ["<b>Early access</b> to Unbusyness Home before public launch.", "<b>Founding terms</b> for everyone on the waitlist.", "<b>We contact your building manager</b> for you, if you like."], "page": "home"};
+  const C = {"segment": "residents", "demo": {"phone": "home-phone"}, "sl": ["<b>Zgodnji dostop</b> do Unbusyness Home pred javnim zagonom.", "<b>Ustanovni pogoji</b> za vse s čakalnega seznama.", "<b>Kontaktiramo vašega upravnika</b> namesto vas, če želite."], "en": ["<b>Early access</b> to Unbusyness Home before public launch.", "<b>Founding terms</b> for everyone on the waitlist.", "<b>We contact your building manager</b> for you, if you like."], "page": "home"};
   const TX = {
-    sl: { h: "Bodite med prvimi.", sub: "Prijavite se na čakalni seznam in dobite:", cta: "Prijava na čakalni seznam", orB: "Še niste prepričani?", orS: "Preizkusite klikabilni demo aplikacije z izmišljenimi podatki. Prijava ni potrebna.", demoP: "Odpri demo na telefonu", demoD: "Odpri demo na računalniku", altP: "ali demo za telefon", altD: "ali demo za računalnik", later: "Ne zdaj", close: "Zapri", label: "Prijava na čakalni seznam" },
-    en: { h: "Be among the first.", sub: "Join the waitlist and get:", cta: "Join the waitlist", orB: "Not sure yet?", orS: "Try the demo app: clickable, with made-up data, no sign-up.", demoP: "Open the phone demo", demoD: "Open the desktop demo", altP: "or the phone demo", altD: "or the desktop demo", later: "Not now", close: "Close", label: "Join the waitlist" },
+    sl: { h: "Bodite med prvimi.", sub: "Prijavite se na čakalni seznam in dobite:", cta: "Prijava na čakalni seznam", em: "Vaš e-poštni naslov", ph: "ime@primer.si", cons: "Unbusyness mi lahko piše glede zgodnjega dostopa. Izbris lahko zahtevam kadar koli.", eE: "Vpišite veljaven e-poštni naslov.", eC: "Za prijavo potrdite soglasje.", eS: "Prijave ni bilo mogoče shraniti. Poskusite znova ali pišite na info@unbusyness.com.", eR: "Preveč poskusov v kratkem času. Poskusite čez nekaj minut.", sending: "Shranjujem …", okH: "Ste na seznamu.", okP: "Hvala! Oglasili se vam bomo, ko boste lahko začeli.", more: "Povejte nam več o sebi", done: "Zapri", orB: "Še niste prepričani?", orS: "Preizkusite klikabilni demo aplikacije z izmišljenimi podatki. Prijava ni potrebna.", demoP: "Odpri demo na telefonu", demoD: "Odpri demo na računalniku", altP: "ali demo za telefon", altD: "ali demo za računalnik", later: "Ne zdaj", close: "Zapri", label: "Prijava na čakalni seznam" },
+    en: { h: "Be among the first.", sub: "Join the waitlist and get:", cta: "Join the waitlist", em: "Your email", ph: "name@example.com", cons: "Unbusyness may email me about early access. I can ask for deletion at any time.", eE: "Please enter a valid email address.", eC: "Please tick the consent box to join.", eS: "We couldn't save your sign-up. Try again or write to info@unbusyness.com.", eR: "Too many attempts in a short time. Try again in a few minutes.", sending: "Saving…", okH: "You're on the list.", okP: "Thanks! We'll be in touch when your spot opens.", more: "Tell us a bit more", done: "Close", orB: "Not sure yet?", orS: "Try the demo app: clickable, with made-up data, no sign-up.", demoP: "Open the phone demo", demoD: "Open the desktop demo", altP: "or the phone demo", altD: "or the desktop demo", later: "Not now", close: "Close", label: "Join the waitlist" },
   };
   const KEY = "ub-pop-" + C.page, DAYS = 1;
   const qs = new URLSearchParams(location.search), force = qs.get("popup") === "1";
@@ -755,9 +765,9 @@ form.addEventListener("submit", async (e) => {
   const snoozed = () => { const t = +get(KEY) || 0; return Date.now() - t < DAYS * 864e5; };
   const lang = () => (document.documentElement.lang || "en").startsWith("sl") ? "sl" : "en";
   const demoHref = (kind) => "/demo/" + C.demo[kind] + (!C.enOnly && lang() === "en" ? "-en" : "") + ".html";
-  let shown = false, back = null, lastFocus = null;
+  let shownOk = false, shown = false, back = null, lastFocus = null;
 
-  document.addEventListener("submit", () => set("ub-joined-" + C.page, "1"), true);
+  document.addEventListener("submit", (e) => { if (!(back && back.contains(e.target))) set("ub-joined-" + C.page, "1"); }, true);
   document.addEventListener("click", (e) => { const a = e.target.closest && e.target.closest('a[href*="/demo/"]'); if (a && !(back && back.contains(a))) set(KEY, Date.now()); }, true);
 
   function blocked() {
@@ -768,6 +778,8 @@ form.addEventListener("submit", async (e) => {
     return false;
   }
   function render() {
+    const keep = back.querySelector("#ubp-e"); const kv = keep ? keep.value : "", kc = !!(back.querySelector(".ubp-c input") || {}).checked;
+    if (back.querySelector(".ubp-f") === null && back.querySelector(".ubp h2") && shownOk) return;
     const t = TX[lang()], c = C[lang()];
     const narrow = matchMedia("(max-width: 760px)").matches;
     const kinds = Object.keys(C.demo); const first = kinds.length > 1 ? (narrow ? "phone" : "desk") : kinds[0]; const second = kinds.find((k) => k !== first);
@@ -775,14 +787,40 @@ form.addEventListener("submit", async (e) => {
     back.querySelector(".ubp").innerHTML = `<button type="button" class="ubp-x" aria-label="${t.close}">×</button>
       <h2 id="ubp-h">${t.h}</h2><p class="ubp-sub">${t.sub}</p>
       <ul>${c.map((x) => `<li><span>${x}</span></li>`).join("")}</ul>
-      <a class="ubp-btn ubp-main" href="#join">${t.cta}</a>
+      <form class="ubp-f" novalidate>
+        <label class="ubp-l" for="ubp-e">${t.em}</label>
+        <input id="ubp-e" class="ubp-in" type="email" name="email" autocomplete="email" inputmode="email" placeholder="${t.ph}" required>
+        <input type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" class="ubp-hp">
+        <label class="ubp-c"><input type="checkbox" name="consent"><span>${t.cons}</span></label>
+        <p class="ubp-err" role="alert" hidden></p>
+        <button class="ubp-btn ubp-main" type="submit">${t.cta}</button>
+      </form>
       <div class="ubp-or"><b>${t.orB}</b><span>${t.orS}</span></div>
       <a class="ubp-btn ubp-demo" href="${demoHref(first)}">${first === "phone" ? t.demoP : t.demoD}</a>
       ${second ? `<a class="ubp-alt" href="${demoHref(second)}">${second === "phone" ? t.altP : t.altD}</a>` : ""}
       <button type="button" class="ubp-later">${t.later}</button>`;
     const box = back.querySelector(".ubp");
+    if (kv) box.querySelector("#ubp-e").value = kv; if (kc) box.querySelector(".ubp-c input").checked = true;
     box.querySelector(".ubp-x").onclick = box.querySelector(".ubp-later").onclick = () => close();
-    box.querySelector(".ubp-main").onclick = (e) => { e.preventDefault(); close(true); const j = document.getElementById("join"); if (j) { j.scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "start" }); const f = j.querySelector("input:not([type=hidden]):not([tabindex='-1'])"); if (f) setTimeout(() => f.focus({ preventScroll: true }), 500); } };
+    const toJoin = (e) => { e.preventDefault(); close(true); const j = document.getElementById("join"); if (j) { j.scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "start" }); const f = j.querySelector("input:not([type=hidden]):not([tabindex='-1'])"); if (f) setTimeout(() => f.focus({ preventScroll: true }), 500); } };
+    const form = box.querySelector(".ubp-f"), err = box.querySelector(".ubp-err");
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault(); e.stopPropagation();
+      const email = form.email.value.trim(), btn = form.querySelector("button");
+      const fail = (m, el) => { err.textContent = m; err.hidden = false; if (el) el.focus(); };
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return fail(t.eE, form.email);
+      if (!form.consent.checked) return fail(t.eC, form.consent);
+      err.hidden = true; btn.disabled = true; btn.textContent = t.sending;
+      try {
+        const r = await fetch("/api/waitlist", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ segment: C.segment, email, consent: true, website: form.website.value, language: lang(), page: location.pathname + "#popup" }) });
+        if (!r.ok) throw r.status;
+        set("ub-joined-" + C.page, "1"); shownOk = true;
+        box.innerHTML = `<button type="button" class="ubp-x" aria-label="${t.close}">×</button><h2 id="ubp-h">${t.okH}</h2><p class="ubp-sub">${t.okP}</p>${document.getElementById("join") ? `<a class="ubp-btn ubp-demo" href="#join">${t.more}</a>` : ""}<button type="button" class="ubp-later">${t.done}</button>`;
+        box.querySelector(".ubp-x").onclick = box.querySelector(".ubp-later").onclick = () => close();
+        const m = box.querySelector('a[href="#join"]'); if (m) m.onclick = toJoin;
+        box.querySelector(".ubp-later").focus();
+      } catch (s) { btn.disabled = false; btn.textContent = t.cta; fail(s === 429 ? t.eR : t.eS); }
+    });
     box.querySelectorAll('a[href*="/demo/"]').forEach((a) => a.addEventListener("click", () => set(KEY, Date.now())));
   }
   function open() {
@@ -794,7 +832,7 @@ form.addEventListener("submit", async (e) => {
     back.addEventListener("mousedown", (e) => { if (e.target === back) close(); });
     document.addEventListener("keydown", onKey);
     requestAnimationFrame(() => back.classList.add("on"));
-    back.querySelector(".ubp-main").focus({ preventScroll: true });
+    back.querySelector("#ubp-e").focus({ preventScroll: true });
     new MutationObserver(() => back && render()).observe(document.documentElement, { attributes: true, attributeFilter: ["lang"] });
   }
   function close(keepScroll) {

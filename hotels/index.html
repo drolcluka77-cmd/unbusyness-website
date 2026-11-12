@@ -578,7 +578,7 @@ form.addEventListener("submit", async (e) => {
     sl: { h: "Bodite med prvimi.", sub: "Prijavite se na čakalni seznam in dobite:", cta: "Prijava na čakalni seznam", orB: "Še niste prepričani?", orS: "Preizkusite klikabilni demo aplikacije z izmišljenimi podatki. Prijava ni potrebna.", demoP: "Odpri demo na telefonu", demoD: "Odpri demo na računalniku", altP: "ali demo za telefon", altD: "ali demo za računalnik", later: "Ne zdaj", close: "Zapri", label: "Prijava na čakalni seznam" },
     en: { h: "Be among the first.", sub: "Join the waitlist and get:", cta: "Join the waitlist", orB: "Not sure yet?", orS: "Try the demo app: clickable, with made-up data, no sign-up.", demoP: "Open the phone demo", demoD: "Open the desktop demo", altP: "or the phone demo", altD: "or the desktop demo", later: "Not now", close: "Close", label: "Join the waitlist" },
   };
-  const KEY = "ub-pop-" + C.page, DAYS = 7;
+  const KEY = "ub-pop-" + C.page, DAYS = 1;
   const qs = new URLSearchParams(location.search), force = qs.get("popup") === "1";
   const get = (k) => { try { return localStorage.getItem(k); } catch { return null; } };
   const set = (k, v) => { try { localStorage.setItem(k, v); } catch {} };
@@ -642,7 +642,7 @@ form.addEventListener("submit", async (e) => {
   if (force) return void setTimeout(open, 300);
   if (snoozed()) return;
   const t0 = Date.now();
-  setTimeout(open, 7000);
+  setTimeout(open, 12000);
   addEventListener("scroll", function s() { const h = document.documentElement.scrollHeight - innerHeight; if (h > 0 && scrollY / h > .4 && Date.now() - t0 > 6000) { removeEventListener("scroll", s); open(); } }, { passive: true });
   document.addEventListener("mouseout", (e) => { if (!e.relatedTarget && e.clientY <= 0 && Date.now() - t0 > 6000) open(); });
 })();

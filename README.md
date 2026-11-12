@@ -27,6 +27,25 @@ Every demo except the trades demos has a Slovenian file and an English `-en.html
 
 The welcome page links to the full pages in the `PAGES` object near the top of its script.
 
+## Languages, search engines and AI crawlers
+
+The root pages (`index.html`, `contractor/`, `building-managers/`, `hotels/`, `home/`, `investors/`) are the **sources**: English in the HTML, Slovenian in each page's `SL` dictionary. Visitors never see them directly. `tools/build_pages.py` writes a static copy per language, and those are what is served and indexed:
+
+| Path | What it is |
+|---|---|
+| `/sl/…`, `/en/…` | Generated pages with the text already in the HTML, their own title, meta description, canonical, `hreflang` (sl, en, x-default), Open Graph/Twitter tags and JSON-LD (Organization, WebSite, WebPage, SoftwareApplication, FAQPage where the page has an FAQ). The SL/EN switch opens the other copy. **Do not edit them; edit the source and rebuild.** |
+| `/`, `/hotels/`, … | `app.py` answers with a redirect to `/sl/…` or `/en/…`: `?lang=` first, then the visitor's last choice (cookie `ub-lang`), then the browser language; English by default. |
+| `/sitemap.xml`, `/robots.txt`, `/llms.txt` | Written by the same script. `robots.txt` keeps `/api/` and `/demo/` out of search. |
+| `/media/og/` | 1200×630 sharing images, drawn by `node tools/og_images.cjs` (needs Playwright). |
+
+After changing any source page (or the titles and descriptions at the top of `tools/build_pages.py`), run:
+
+```sh
+python3 tools/build_pages.py
+```
+
+It needs `node` (used to read each page's Slovenian dictionary). Text that exists in one language only can be wrapped in `<!--l:sl-->…<!--/l-->` / `<!--l:en-->…<!--/l-->` (used for the "What is Unbusyness?" text on the welcome page).
+
 ## Waitlist submissions
 
 Every valid form submission is saved in the Replit PostgreSQL database before the visitor sees confirmation. The schema is documented in `db/schema.sql`; the full form payload, consent, and email-notification status are stored in `public.waitlist_signups`. SMTP notifications are currently paused (`WAITLIST_EMAIL_ENABLED=false`) until NEOSERV responds; no SMTP login is attempted while paused. New submissions stay `pending` and can be reviewed in the Replit database pane.

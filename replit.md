@@ -10,7 +10,9 @@ Use the **Start website** workflow (the Run button). It runs Gunicorn on port 50
 gunicorn --bind 0.0.0.0:5000 --reload app:application
 ```
 
-Open `/` for the welcome page, `/building-managers/`, `/hotels/`, `/home/`, or `/contractor/` for the waitlist pages. Demo pages are under `/demo/`.
+Open `/` for the welcome page, `/building-managers/`, `/hotels/`, `/home/`, or `/contractor/` for the waitlist pages; they redirect to the Slovenian (`/sl/...`) or English (`/en/...`) copy. Demo pages are under `/demo/`.
+
+The `/sl/` and `/en/` folders are generated. After editing a root page (`index.html`, `contractor/index.html`, ...), run `python3 tools/build_pages.py` and commit the result; see "Languages, search engines and AI crawlers" in `README.md`.
 
 Publishing uses an autoscale deployment running `gunicorn --bind 0.0.0.0:5000 --workers 2 app:application`.
 

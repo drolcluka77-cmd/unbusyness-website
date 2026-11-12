@@ -3,11 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-</head>
-<body>
-<title>Unbusyness Welcome</title>
-<meta name="claude:viewport-fit-sides" content="cover">
-<meta name="description" content="Welcome to Unbusyness. Tell us who you are and join the right waitlist.">
+<title>Unbusyness – AI office assistant for building managers, trades and hotels</title>
+<meta name="description" content="Unbusyness answers calls and fault reports, prepares quotes and jobs, and connects you directly with contractors. For building managers, trades, hotels and residents.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,500&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500&display=swap">
@@ -106,11 +103,26 @@ input:focus,select:focus{outline:none;border-color:var(--green);box-shadow:0 0 0
 .dots i.on{background:#F2A57A}
 .breath{all:unset;cursor:pointer;font-size:13px;font-weight:700;color:#F2A57A;border:1px solid rgba(242,165,122,.4);border-radius:999px;padding:7px 12px;justify-self:start}
 .breath:focus-visible{outline:3px solid #F2A57A}
+.intro{margin:4px 0 0;max-width:62em;font-size:15.5px;line-height:1.55;color:var(--muted)}
+.intro b{color:var(--ink)}
+html[lang="sl"] [data-l="en"],html[lang="en"] [data-l="sl"]{display:none!important}
+.about{border-top:1px solid var(--line);padding-block:44px 52px}
+.about h2{font-size:clamp(26px,3.4vw,38px);margin-bottom:10px}
+.about>p{margin:0 0 24px;max-width:46em;color:var(--muted);font-size:17px}
+.aud4{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.aud4 a{display:block;background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:20px 22px;color:inherit;text-decoration:none;transition:border-color .15s}
+.aud4 a:hover{border-color:var(--green)}
+.aud4 h3{margin:0 0 6px;font-size:18px;letter-spacing:-.01em}
+.aud4 p{margin:0;color:var(--muted);font-size:15px;line-height:1.5}
+.aud4 span{display:inline-block;margin-top:10px;font-weight:700;font-size:14.5px;color:var(--green)}
+@media (max-width:620px){.aud4{grid-template-columns:minmax(0,1fr)}.about{padding-block:32px 40px}}
 footer{padding-block:28px;border-top:1px solid var(--line);color:var(--muted);font-size:14px;display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between}
 
 @media (max-width:900px){.layout{grid-template-columns:minmax(0,1fr);gap:24px;padding-block:8px 48px}.meter{position:static;order:-1;grid-template-columns:minmax(0,1fr) auto;align-items:center;padding:16px 18px;gap:8px 14px}.meter .val{font-size:24px}.meter .gauge,.meter .ticks{grid-column:1/-1}.meter p,.meter .blob,.breath{display:none}}
 @media (max-width:620px){.choices,.row2{grid-template-columns:minmax(0,1fr)}form,.donebox{padding:18px}.lede{font-size:17px}}
 </style>
+</head>
+<body>
 
 <div class="wrap">
   <header class="top">
@@ -118,6 +130,8 @@ footer{padding-block:28px;border-top:1px solid var(--line);color:var(--muted);fo
     <div class="topr"><button class="back" id="back" type="button" hidden></button>
       <div class="langs" role="group" aria-label="Language / Jezik"><button type="button" data-lang="sl" aria-pressed="false">SL</button><button type="button" data-lang="en" aria-pressed="false">EN</button></div></div>
   </header>
+  <!--l:sl--><p class="intro" data-l="sl"><b>Unbusyness je pisarniški pomočnik z umetno inteligenco za upravnike stavb, obrtnike in hotele.</b> Sprejema klice in prijave okvar, pripravlja ponudbe in naloge ter vas neposredno poveže z izvajalci. Za stanovalce in lastnike domov je tu aplikacija Unbusyness Home.</p><!--/l-->
+  <!--l:en--><p class="intro" data-l="en"><b>Unbusyness is an AI office assistant for building managers, trades and hotels.</b> It answers calls and fault reports, prepares quotes and jobs, and connects you directly with contractors. For residents and homeowners there is the Unbusyness Home app.</p><!--/l-->
 
   <div class="layout">
     <main class="stage" id="stage" aria-live="polite"></main>
@@ -131,6 +145,26 @@ footer{padding-block:28px;border-top:1px solid var(--line);color:var(--muted);fo
       <button class="breath" type="button" id="breath">Take one deep breath</button>
     </aside>
   </div>
+  <!--l:sl--><section class="about" data-l="sl" aria-labelledby="about-sl">
+    <h2 id="about-sl">Kaj je Unbusyness?</h2>
+    <p>Programska oprema z umetno inteligenco, ki storitvenim podjetjem prevzame telefon, prijave in administracijo. Začenjamo v Sloveniji in regiji.</p>
+    <div class="aud4">
+      <a href="/building-managers/"><h3>Za upravnike stavb</h3><p>Aplikacija za upravnike stavb: prijave okvar, zahtevki stanovalcev, zbori lastnikov, čiščenje ter redno in nujno vzdrževanje, z neposredno povezavo do izvajalcev.</p><span>Več za upravnike →</span></a>
+      <a href="/contractor/"><h3>Za obrtnike</h3><p>Za vodoinštalaterje, električarje, serviserje ogrevanja in druge obrtnike: sprejema klice, pripravlja ponudbe in opominja na neplačane račune, medtem ko delate.</p><span>Več za obrtnike →</span></a>
+      <a href="/hotels/"><h3>Za hotele</h3><p>Sporočila, glasovna sporočila in fotografije osebja na WhatsAppu postanejo naloge z odgovorno osebo, ciljnim časom in samodejnim stopnjevanjem.</p><span>Več za hotele →</span></a>
+      <a href="/home/"><h3>Za dom: Unbusyness Home</h3><p>Digitalni potni list stanovanja, hiše, avta in garancij. Opomniki pred roki in zanesljiv mojster, ko se kaj pokvari.</p><span>Več o Unbusyness Home →</span></a>
+    </div>
+  </section><!--/l-->
+  <!--l:en--><section class="about" data-l="en" aria-labelledby="about-en">
+    <h2 id="about-en">What is Unbusyness?</h2>
+    <p>AI software that takes the phone, the requests and the admin off service businesses. We are starting in Slovenia and the wider region.</p>
+    <div class="aud4">
+      <a href="/building-managers/"><h3>For building managers</h3><p>An app for building and property managers: fault reports, resident requests, owners' meetings, cleaning, and planned and emergency maintenance, connected directly to your contractors.</p><span>More for managers →</span></a>
+      <a href="/contractor/"><h3>For trades</h3><p>For plumbers, electricians, heating engineers and other trades: it answers calls, drafts quotes and chases unpaid invoices while you work.</p><span>More for trades →</span></a>
+      <a href="/hotels/"><h3>For hotels</h3><p>Your staff's WhatsApp messages, voice notes and photos become jobs with one owner, a target time and automatic escalation.</p><span>More for hotels →</span></a>
+      <a href="/home/"><h3>For your home: Unbusyness Home</h3><p>A digital passport for your flat, house, car and warranties. Reminders before things are due, and a reliable tradesperson when something breaks.</p><span>More about Unbusyness Home →</span></a>
+    </div>
+  </section><!--/l-->
   <footer><span>© 2026 Unbusyness · unbusyness.com</span><span id="foot">info@unbusyness.com · +386 40 290 963</span></footer>
 </div>
 

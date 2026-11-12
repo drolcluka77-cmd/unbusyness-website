@@ -1,0 +1,18 @@
+# Unbusyness
+
+> Unbusyness is AI software for service businesses in Slovenia and the wider Central and Eastern European region. It answers calls and fault reports, turns them into jobs, prepares quotes and invoices, and connects customers directly with contractors. Unbusyness Home is the companion app for residents and homeowners. Pages are available in Slovenian (/sl/) and English (/en/).
+
+Unbusyness is in early access: each product has a waitlist, and the first building managers and hotels are set up by the Unbusyness team and use it free during the pilot.
+
+## Products
+
+- [Unbusyness for building managers](https://unbusyness.com/en/building-managers/): fault reports, resident requests, owners' meetings, cleaning, and planned and emergency maintenance, connected directly to contractors. Residents call, text or email as today; no app needed. Slovenian: [https://unbusyness.com/sl/building-managers/](https://unbusyness.com/sl/building-managers/)
+- [Unbusyness for trades](https://unbusyness.com/en/contractor/): an AI office manager for plumbers, electricians, heating engineers and other trades. It answers calls 24/7, drafts quotes and chases unpaid invoices; prices and anything sent to customers need the owner's approval. Slovenian: [https://unbusyness.com/sl/contractor/](https://unbusyness.com/sl/contractor/)
+- [Unbusyness for hotels](https://unbusyness.com/en/hotels/): staff keep using WhatsApp; messages, voice notes and photos become jobs with one owner, a target time and automatic escalation for housekeeping, maintenance and front desk. Slovenian: [https://unbusyness.com/sl/hotels/](https://unbusyness.com/sl/hotels/)
+- [Unbusyness Home](https://unbusyness.com/en/home/): a digital passport for a flat, house, car, appliances and warranties, with reminders before things are due and reliable, punctual tradespeople when something breaks. Slovenian: [https://unbusyness.com/sl/home/](https://unbusyness.com/sl/home/)
+
+## Company
+
+- [Start page](https://unbusyness.com/en/) · [Slovenian](https://unbusyness.com/sl/)
+- [Investors](https://unbusyness.com/en/investors/)
+- Contact: info@unbusyness.com, +386 40 290 963

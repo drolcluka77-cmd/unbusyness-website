@@ -168,8 +168,8 @@ class WaitlistApiTests(unittest.TestCase):
 
 
 class StaticFileTests(unittest.TestCase):
-    def get(self, path, range_header=None):
-        environ = {"PATH_INFO": path, "REQUEST_METHOD": "GET", "HTTP_HOST": "example.test"}
+    def get(self, path, range_header=None, **extra):
+        environ = {"PATH_INFO": path, "REQUEST_METHOD": "GET", "HTTP_HOST": "example.test", **extra}
         if range_header:
             environ["HTTP_RANGE"] = range_header
         result = {}
@@ -209,7 +209,7 @@ class StaticFileTests(unittest.TestCase):
     def test_one_cache_header_per_response(self):
         video = self.get("/media/unbusyness-preview.mp4")
         self.assertEqual(self.header(video, "Cache-Control"), ["public, max-age=86400"])
-        page = self.get("/contractor/")
+        page = self.get("/sl/contractor/")
         self.assertEqual(page["status"], "200 OK")
         self.assertEqual(self.header(page, "Cache-Control"), ["no-cache"])
 
@@ -218,8 +218,34 @@ class StaticFileTests(unittest.TestCase):
             self.assertEqual(self.get(path)["status"], "404 Not Found", path)
 
     def test_new_pages_are_served(self):
-        for path in ("/investors/", "/manager/", "/contractor/sl/"):
+        for path in ("/manager/", "/contractor/sl/", "/sl/", "/en/", "/sl/investors/", "/en/home/", "/en/hotels/index.html"):
             self.assertEqual(self.get(path)["status"], "200 OK", path)
+
+    def test_build_tools_are_not_served(self):
+        for path in ("/tools/extract_dict.js", "/tools/build_pages.py"):
+            self.assertEqual(self.get(path)["status"], "404 Not Found", path)
+
+    def test_old_addresses_redirect_to_a_language(self):
+        def where(path, **extra):
+            r = self.get(path, **extra)
+            self.assertEqual(r["status"], "302 Found", path)
+            return self.header(r, "Location")[0]
+
+        self.assertEqual(where("/"), "/en/")
+        self.assertEqual(where("/hotels/", HTTP_ACCEPT_LANGUAGE="sl-SI,sl;q=0.9,en;q=0.8"), "/sl/hotels/")
+        self.assertEqual(where("/hotels", HTTP_ACCEPT_LANGUAGE="de-AT,en;q=0.5,sl;q=0.4"), "/en/hotels/")
+        self.assertEqual(where("/home/", HTTP_ACCEPT_LANGUAGE="sl", HTTP_COOKIE="a=1; ub-lang=en"), "/en/home/")
+        self.assertEqual(where("/contractor/", QUERY_STRING="lang=sl&popup=1", HTTP_COOKIE="ub-lang=en"), "/sl/contractor/?popup=1")
+        self.assertEqual(where("/building-managers/index.html", HTTP_ACCEPT_LANGUAGE="sl"), "/sl/building-managers/")
+        self.assertEqual(where("/investors/"), "/en/investors/")
+
+    def test_crawler_files(self):
+        robots = self.get("/robots.txt")
+        self.assertEqual(robots["status"], "200 OK")
+        self.assertEqual(self.header(robots, "Content-Type"), ["text/plain; charset=utf-8"])
+        self.assertIn(b"Sitemap: https://unbusyness.com/sitemap.xml", robots["body"])
+        self.assertIn(b'hreflang="sl"', self.get("/sitemap.xml")["body"])
+        self.assertIn(b"# Unbusyness", self.get("/llms.txt")["body"])
 
 
 if __name__ == "__main__":

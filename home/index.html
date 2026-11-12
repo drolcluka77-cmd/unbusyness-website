@@ -716,5 +716,106 @@ form.addEventListener("submit", async (e) => {
 });
 </script>
 
+<style id="ubp-css">
+.ubp-back{position:fixed;inset:0;z-index:1000;background:rgba(20,32,30,.45);display:flex;align-items:center;justify-content:center;padding:16px;opacity:0;transition:opacity .2s}
+.ubp-back.on{opacity:1}
+.ubp{position:relative;width:100%;max-width:440px;max-height:calc(100vh - 32px);overflow:auto;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:22px;box-shadow:0 24px 60px rgba(0,0,0,.25);padding:26px 24px 20px;font-family:var(--body);transform:translateY(10px);transition:transform .2s}
+.ubp-back.on .ubp{transform:none}
+.ubp h2{font-family:var(--display,Georgia,serif);font-size:26px;line-height:1.15;margin:0 34px 6px 0;letter-spacing:-.01em}
+.ubp .ubp-sub{margin:0 0 14px;color:var(--muted);font-size:15px}
+.ubp ul{list-style:none;margin:0 0 18px;padding:0;display:grid;gap:9px}
+.ubp li{display:flex;gap:10px;font-size:15px;line-height:1.4}
+.ubp li::before{content:"✓";flex:none;width:22px;height:22px;border-radius:50%;background:var(--apricot-soft);color:var(--apricot-ink);font-weight:800;font-size:12px;display:grid;place-items:center;margin-top:1px}
+.ubp .ubp-btn{display:block;width:100%;box-sizing:border-box;text-align:center;border-radius:999px;padding:14px 18px;font-weight:700;font-size:16px;text-decoration:none;cursor:pointer;border:0;font-family:inherit}
+.ubp .ubp-main{background:var(--green);color:var(--bg)}
+.ubp .ubp-main:hover{background:var(--green-deep);color:#fff}
+.ubp .ubp-or{margin:20px 0 10px;padding-top:16px;border-top:1px solid var(--line)}
+.ubp .ubp-or b{display:block;font-size:16px;margin-bottom:2px}
+.ubp .ubp-or span{color:var(--muted);font-size:14px}
+.ubp .ubp-demo{background:var(--apricot-soft);color:var(--apricot-ink);border:1px solid var(--apricot)}
+.ubp .ubp-demo:hover{background:var(--apricot);color:#14201E}
+.ubp .ubp-alt{display:block;text-align:center;margin-top:9px;font-size:14px;color:var(--muted)}
+.ubp .ubp-x{position:absolute;top:14px;right:14px;width:36px;height:36px;border-radius:50%;border:1px solid var(--line);background:var(--surface);color:var(--muted);font-size:20px;line-height:1;cursor:pointer}
+.ubp .ubp-later{display:block;margin:12px auto 0;background:none;border:0;color:var(--muted);font:inherit;font-size:14px;text-decoration:underline;cursor:pointer}
+.ubp :focus-visible{outline:3px solid var(--apricot);outline-offset:2px}
+@media (max-width:620px){.ubp-back{align-items:flex-end;padding:0}.ubp{max-width:none;border-radius:22px 22px 0 0;max-height:88vh;padding:24px 18px calc(16px + env(safe-area-inset-bottom))}}
+@media (prefers-reduced-motion:reduce){.ubp-back,.ubp{transition:none}}
+</style>
+<script id="ubp-js">
+(() => {
+  const C = {"demo": {"phone": "home-phone"}, "sl": ["<b>Zgodnji dostop</b> do Unbusyness Home pred javnim zagonom.", "<b>Ustanovni pogoji</b> za vse s čakalnega seznama.", "<b>Kontaktiramo vašega upravnika</b> namesto vas, če želite."], "en": ["<b>Early access</b> to Unbusyness Home before public launch.", "<b>Founding terms</b> for everyone on the waitlist.", "<b>We contact your building manager</b> for you, if you like."], "page": "home"};
+  const TX = {
+    sl: { h: "Bodite med prvimi.", sub: "Prijavite se na čakalni seznam in dobite:", cta: "Prijava na čakalni seznam", orB: "Še niste prepričani?", orS: "Preizkusite klikabilni demo aplikacije z izmišljenimi podatki. Prijava ni potrebna.", demoP: "Odpri demo na telefonu", demoD: "Odpri demo na računalniku", altP: "ali demo za telefon", altD: "ali demo za računalnik", later: "Ne zdaj", close: "Zapri", label: "Prijava na čakalni seznam" },
+    en: { h: "Be among the first.", sub: "Join the waitlist and get:", cta: "Join the waitlist", orB: "Not sure yet?", orS: "Try the demo app: clickable, with made-up data, no sign-up.", demoP: "Open the phone demo", demoD: "Open the desktop demo", altP: "or the phone demo", altD: "or the desktop demo", later: "Not now", close: "Close", label: "Join the waitlist" },
+  };
+  const KEY = "ub-pop-" + C.page, DAYS = 7;
+  const qs = new URLSearchParams(location.search), force = qs.get("popup") === "1";
+  const get = (k) => { try { return localStorage.getItem(k); } catch { return null; } };
+  const set = (k, v) => { try { localStorage.setItem(k, v); } catch {} };
+  const snoozed = () => { const t = +get(KEY) || 0; return Date.now() - t < DAYS * 864e5; };
+  const lang = () => (document.documentElement.lang || "en").startsWith("sl") ? "sl" : "en";
+  const demoHref = (kind) => "/demo/" + C.demo[kind] + (!C.enOnly && lang() === "en" ? "-en" : "") + ".html";
+  let shown = false, back = null, lastFocus = null;
+
+  document.addEventListener("submit", () => set("ub-joined-" + C.page, "1"), true);
+  document.addEventListener("click", (e) => { const a = e.target.closest && e.target.closest('a[href*="/demo/"]'); if (a && !(back && back.contains(a))) set(KEY, Date.now()); }, true);
+
+  function blocked() {
+    if (force) return false;
+    if (shown || snoozed() || get("ub-joined-" + C.page)) return true;
+    const a = document.activeElement; if (a && /INPUT|SELECT|TEXTAREA/.test(a.tagName)) return true;
+    const j = document.getElementById("join"); if (j) { const r = j.getBoundingClientRect(); if (r.top < innerHeight * .8 && r.bottom > 0) return true; }
+    return false;
+  }
+  function render() {
+    const t = TX[lang()], c = C[lang()];
+    const narrow = matchMedia("(max-width: 760px)").matches;
+    const kinds = Object.keys(C.demo); const first = kinds.length > 1 ? (narrow ? "phone" : "desk") : kinds[0]; const second = kinds.find((k) => k !== first);
+    back.querySelector(".ubp").setAttribute("aria-label", t.label);
+    back.querySelector(".ubp").innerHTML = `<button type="button" class="ubp-x" aria-label="${t.close}">×</button>
+      <h2 id="ubp-h">${t.h}</h2><p class="ubp-sub">${t.sub}</p>
+      <ul>${c.map((x) => `<li><span>${x}</span></li>`).join("")}</ul>
+      <a class="ubp-btn ubp-main" href="#join">${t.cta}</a>
+      <div class="ubp-or"><b>${t.orB}</b><span>${t.orS}</span></div>
+      <a class="ubp-btn ubp-demo" href="${demoHref(first)}">${first === "phone" ? t.demoP : t.demoD}</a>
+      ${second ? `<a class="ubp-alt" href="${demoHref(second)}">${second === "phone" ? t.altP : t.altD}</a>` : ""}
+      <button type="button" class="ubp-later">${t.later}</button>`;
+    const box = back.querySelector(".ubp");
+    box.querySelector(".ubp-x").onclick = box.querySelector(".ubp-later").onclick = () => close();
+    box.querySelector(".ubp-main").onclick = (e) => { e.preventDefault(); close(true); const j = document.getElementById("join"); if (j) { j.scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "start" }); const f = j.querySelector("input:not([type=hidden]):not([tabindex='-1'])"); if (f) setTimeout(() => f.focus({ preventScroll: true }), 500); } };
+    box.querySelectorAll('a[href*="/demo/"]').forEach((a) => a.addEventListener("click", () => set(KEY, Date.now())));
+  }
+  function open() {
+    if (blocked()) return;
+    shown = true; lastFocus = document.activeElement;
+    back = document.createElement("div"); back.className = "ubp-back";
+    back.innerHTML = '<div class="ubp" role="dialog" aria-modal="true" aria-labelledby="ubp-h"></div>';
+    document.body.appendChild(back); render();
+    back.addEventListener("mousedown", (e) => { if (e.target === back) close(); });
+    document.addEventListener("keydown", onKey);
+    requestAnimationFrame(() => back.classList.add("on"));
+    back.querySelector(".ubp-main").focus({ preventScroll: true });
+    new MutationObserver(() => back && render()).observe(document.documentElement, { attributes: true, attributeFilter: ["lang"] });
+  }
+  function close(keepScroll) {
+    if (!back) return; set(KEY, Date.now());
+    document.removeEventListener("keydown", onKey);
+    const b = back; back = null; b.classList.remove("on"); setTimeout(() => b.remove(), 200);
+    if (!keepScroll && lastFocus && lastFocus.focus) lastFocus.focus({ preventScroll: true });
+  }
+  function onKey(e) {
+    if (e.key === "Escape") return close();
+    if (e.key !== "Tab") return;
+    const f = [...back.querySelectorAll("a,button")]; const i = f.indexOf(document.activeElement);
+    if (e.shiftKey && i <= 0) { e.preventDefault(); f[f.length - 1].focus(); } else if (!e.shiftKey && i === f.length - 1) { e.preventDefault(); f[0].focus(); }
+  }
+  if (force) return void setTimeout(open, 300);
+  if (snoozed()) return;
+  const t0 = Date.now();
+  setTimeout(open, 25000);
+  addEventListener("scroll", function s() { const h = document.documentElement.scrollHeight - innerHeight; if (h > 0 && scrollY / h > .4 && Date.now() - t0 > 6000) { removeEventListener("scroll", s); open(); } }, { passive: true });
+  document.addEventListener("mouseout", (e) => { if (!e.relatedTarget && e.clientY <= 0 && Date.now() - t0 > 6000) open(); });
+})();
+</script>
 </body>
 </html>

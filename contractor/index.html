@@ -212,7 +212,8 @@ footer{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px 24px;pa
       <form class="wl" data-form="hero" novalidate></form>
 
       <div class="demos">
-        <a class="btn ghost" id="demoBtn" href="/demo/trades-desktop.html"><span data-t="demoBtn">View the demo</span> <span aria-hidden="true">↗</span></a>
+        <a class="btn ghost" href="/demo/trades-phone.html"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="7" y="2.5" width="10" height="19" rx="2.5"/><path d="M11 18.5h2"/></svg><span data-t="demoPhone">Demo on the phone</span></a>
+        <a class="btn ghost" href="/demo/trades-desktop.html"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="4.5" width="16" height="11" rx="1.5"/><path d="M2 19.5h20"/></svg><span data-t="demoDesk">Demo on the computer</span></a>
         <span class="note" data-t="demoNote">Clickable, with made-up data. No sign-up needed.</span>
       </div>
     </div>
@@ -343,7 +344,7 @@ const WAITLIST_ENDPOINT = "/api/waitlist";
 const SL = {
   navJoin:"Pridružite se čakalni listi",
   audT:"Za obrtnike", audM:"Za upravnike stavb", audH:"Za hotele", audD:"Za dom", footInv:"Za vlagatelje",
-  demoBtn:"Oglejte si demo", demoNote:"Klikabilen, z izmišljenimi podatki. Brez prijave.",
+  demoPhone:"Demo na telefonu", demoDesk:"Demo na računalniku", demoNote:"Klikabilen, z izmišljenimi podatki. Brez prijave.",
   heroEyebrow:"Za vodovodarje, elektroinštalaterje, monterje ogrevanja in druge obrtnike",
   h1a:"Manj obremenjeni.", h1b:"Več opravljenega.",
   lede:"Vaš pisarniški pomočnik z umetno inteligenco, ki odgovarja na klice, pripravlja ponudbe in spremlja plačila računov, da lahko izklopite telefon.",
@@ -352,7 +353,7 @@ const SL = {
   company:"Ime podjetja (neobvezno)", companyPh:"Ime podjetja (neobvezno)", emailPh:"vi@podjetje.si",
   consent:"Unbusyness mi lahko piše glede zgodnjega dostopa. Kadar koli lahko zahtevam izbris svojih podatkov.",
   noSpam:"Brez neželene pošte. Le eno sporočilo, ko bo vaše mesto na voljo.",
-  demoDesk:"Demo za računalnik", demoPhone:"Mobilni demo",
+  
   peekA:"Spoznajte Unbusyness v 30 sekundah", peekB:"Oglejte si kratko predstavitev", sec30:"30 s", sec26:"26 s",
   todayEyebrow:"Danes, medtem ko ste delali",
   t1a:"3 sprejeti klici", t1b:"1 nujno puščanje, termin ob 14.00",
@@ -472,10 +473,6 @@ document.querySelectorAll("form[data-form]").forEach((f) => {
   });
 });
 
-// One demo button: the phone demo on small screens, the desktop demo otherwise.
-const demoBtn = document.getElementById("demoBtn");
-const pickDemo = () => (demoBtn.href = matchMedia("(max-width: 700px)").matches ? "/demo/trades-phone.html" : "/demo/trades-desktop.html");
-pickDemo(); addEventListener("resize", pickDemo);
 </script>
 </body>
 </html>

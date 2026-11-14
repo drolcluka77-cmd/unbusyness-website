@@ -146,6 +146,14 @@
       "@type": "Answer",
       "text": "Da, če vam sporočila gostov vzamejo večere ali si želite več neposrednih rezervacij. Najnižji znesek je 49 € na mesec."
      }
+    },
+    {
+     "@type": "Question",
+     "name": "Kaj je GEO in zakaj je pomemben?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "GEO (optimizacija za generativno iskanje) je kot SEO za AI-asistente, kot so ChatGPT, Gemini in Perplexity. Vse več popotnikov jih vpraša, kje prespati. Ko AI vaš apartma priporoči po imenu in poveže na vašo stran, gost rezervira neposredno, vi pa ne plačate provizije platformi."
+     }
     }
    ]
   }
@@ -400,6 +408,19 @@ footer{padding-block:36px;color:var(--muted);font-size:14px;display:flex;flex-wr
 .plan.dark .pr small,.plan.dark .sub,.plan.dark li{color:var(--on-green)}
 .plan .sub{color:var(--muted);font-size:14px}
 .plan ul{margin:4px 0 0;padding-left:18px;line-height:1.85;color:var(--muted);font-size:15px}
+.geo{background:var(--sand)}
+.flow{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;position:relative}
+.flow li{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:22px;display:grid;gap:8px;align-content:start;position:relative}
+.flow li:not(:last-child)::after{content:"→";position:absolute;right:-14px;top:50%;transform:translateY(-50%);width:28px;height:28px;border-radius:50%;background:var(--green);color:var(--bg);display:grid;place-items:center;font-weight:800;z-index:1}
+.flow .fk{width:34px;height:34px;border-radius:50%;background:var(--green-soft,#E6EEEB);color:var(--green);display:grid;place-items:center;font-weight:800}
+.flow h3{font-size:18px;font-weight:800}
+.flow p{color:var(--muted);font-size:15.5px}
+.flow li.win{background:var(--green-deep);border-color:transparent;color:#F3F6F4}
+.flow li.win .fk{background:#F2A57A;color:#14201E}
+.flow li.win p{color:var(--on-green)}.flow li.win b{color:#fff}
+.geocall{margin-top:22px;border-left:0;background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:18px 20px;font-size:16.5px}
+.geocall b{color:var(--green)}
+@media (max-width:900px){.flow{grid-template-columns:minmax(0,1fr)}.flow li:not(:last-child)::after{content:"↓";right:auto;left:50%;top:auto;bottom:-14px;transform:translateX(-50%)}}
 .split2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:40px;align-items:start}
 @media (max-width:900px){.feegrid,.tagbox,.prices,.split2{grid-template-columns:minmax(0,1fr)}.feegrid{gap:20px}}
 @media (max-width:440px){.brand [data-t="brandSub"]{display:none}}
@@ -430,10 +451,14 @@ footer{padding-block:36px;color:var(--muted);font-size:14px;display:flex;flex-wr
     <div>
       <div class="eyebrow" data-t="eyebrow">Za gostitelje na Airbnbju, Bookingu in drugih platformah</div>
       <h1 data-t="h1" data-html>Vaš AI-gostitelj 24/7. <em>In vaše lastne neposredne rezervacije.</em></h1>
-      <p class="lede" data-t="lede">Nehajte odgovarjati gostom ob treh zjutraj in nehajte plačevati do 15 % od vsake rezervacije. Unbusyness odgovarja gostom, organizira čiščenje in popravila ter pomaga, da vas popotniki najdejo in rezervirajo neposredno.</p>
+      <p class="lede" data-t="lede">Nehajte odgovarjati gostom ob treh zjutraj in nehajte plačevati do 15 % od vsake rezervacije. Unbusyness odgovarja gostom, organizira čiščenje in popravila ter pomaga, da vas popotniki najdejo in rezervirajo neposredno.</p>
       <div class="cta">
         <a class="btn primary" href="#join" data-t="cta">Prijava na čakalni seznam</a>
         <a class="btn ghost" href="#how" data-t="ctaHow">Poglejte, kako deluje</a>
+      </div>
+      <div class="demos" aria-label="Demo">
+        <span class="lab" data-t="demoLab">Preizkusite aplikacijo za gostitelje: klikabilni demo na telefonu z izmišljenimi podatki.</span>
+        <a class="btn ghost" data-demo="hosts-phone" href="/demo/hosts-phone.html"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="7" y="2.5" width="10" height="19" rx="2.5"/><path d="M11 18.5h2"/></svg><span data-t="demo0">Odpri demo na telefonu</span></a>
       </div>
       <p class="note" style="margin-top:16px" data-t="ctaNote">Pilot izvajamo z apartmaji v Ljubljani. Deluje skupaj z Airbnbjem in Booking.com.</p>
     </div>
@@ -454,11 +479,11 @@ footer{padding-block:36px;color:var(--muted);font-size:14px;display:flex;flex-wr
   <div class="wrap">
     <div class="feegrid">
       <h2 id="fees-h" data-t="fh">Koliko vas stane vsaka rezervacija</h2>
-      <div class="fee"><b data-t="fp1">15,5 %</b><span data-t="f1">Airbnb, ko plača samo gostitelj</span></div>
-      <div class="fee"><b data-t="fp2">~15 %</b><span data-t="f2">Običajna provizija Booking.com</span></div>
-      <div class="fee"><b class="good" data-t="fp3">~3 %</b><span data-t="f3">Neposredna rezervacija (stroški plačila s kartico)</span></div>
+      <div class="fee"><b data-t="fp1">15,5 %</b><span data-t="f1">Airbnb, ko plača samo gostitelj</span></div>
+      <div class="fee"><b data-t="fp2">~15 %</b><span data-t="f2">Običajna provizija Booking.com</span></div>
+      <div class="fee"><b class="good" data-t="fp3">~3 %</b><span data-t="f3">Neposredna rezervacija (stroški plačila s kartico)</span></div>
     </div>
-    <p class="cap" data-t="fcap">Airbnbjeva provizija 15,5 % velja za gostitelje na modelu, kjer provizijo plača samo gostitelj. Provizija Booking.com je odvisna od države in programov.</p>
+    <p class="cap" data-t="fcap">Airbnbjeva provizija 15,5 % velja za gostitelje na modelu, kjer provizijo plača samo gostitelj. Provizija Booking.com je odvisna od države in programov.</p>
   </div>
 </section>
 
@@ -512,11 +537,29 @@ footer{padding-block:36px;color:var(--muted);font-size:14px;display:flex;flex-wr
   </div>
 </section>
 
+<section id="geo" class="geo">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="eyebrow" data-t="g0">Zakaj je GEO tako pomemben</div>
+      <h2 data-t="g1">Vaš naslednji gost bo vprašal AI, ne rezervacijske platforme.</h2>
+      <p data-t="g2">Ljudje že danes AI-asistente sprašujejo za vse: kje jesti, kaj obiskati in vse pogosteje tudi, kje prespati, v apartmaju ali hotelu. AI ne odgovori s seznamom sto oglasov, ampak priporoči nekaj namestitev po imenu. Če je med njimi vaša in ima povezavo na vašo stran, gost rezervira neposredno pri vas, vi pa ne plačate provizije platformi.</p>
+    </div>
+    <ol class="flow">
+      <li><span class="fk">1</span><h3 data-t="g3">Gost vpraša AI</h3><p data-t="g3d">»Miren apartma v Ljubljani s parkiriščem?« v ChatGPT, Gemini, Perplexity ali v Googlovih odgovorih AI.</p></li>
+      <li><span class="fk">2</span><h3 data-t="g4">AI vas priporoči po imenu</h3><p data-t="g4d">S kratkim opisom in povezavo na vašo rezervacijsko stran, ne na oglas na platformi.</p></li>
+      <li class="win"><span class="fk">3</span><h3 data-t="g5">Gost rezervira neposredno</h3><p data-t="g5d" data-html><b>0 % provizije platformi.</b> Samo približno 3 % za plačilo s kartico namesto do 15,5 %.</p></li>
+    </ol>
+    <div class="geocall">
+      <p data-t="g6" data-html><b>GEO</b> (optimizacija za generativno iskanje) poskrbi, da AI-asistenti vašo namestitev poznajo, razumejo, kaj ponuja, in jo lahko priporočijo. AI se uči iz tega, kar je o vas na spletu zapisano danes, zato bodo te rezervacije dobivali gostitelji in hoteli, ki bodo vidni prvi. Zato GEO začnemo že v pilotu.</p>
+    </div>
+  </div>
+</section>
+
 <section id="direct">
   <div class="wrap split2">
     <div>
       <div class="sec-head" style="margin-bottom:0">
-        <div class="eyebrow" data-t="d0">Neposredne rezervacije in iskanje z AI</div>
+        <div class="eyebrow" data-t="d0">Kaj to pomeni za vas</div>
         <h2 data-t="d1">Bodite apartma, ki ga AI priporoči po imenu</h2>
         <p data-t="d2">Vse več popotnikov potovanja načrtuje z AI-asistenti. Pripravimo vašo rezervacijsko stran in jo optimiziramo za Google in iskanje z AI, da se ob vprašanju po namestitvi, kot je vaša, prikaže vaš apartma s povezavo za neposredno rezervacijo.</p>
       </div>
@@ -527,7 +570,7 @@ footer{padding-block:36px;color:var(--muted);font-size:14px;display:flex;flex-wr
         <div><label for="share"><span data-t="c2">Delež rezervacij, ki preidejo na neposredne</span><output id="shareOut" for="share">30%</output></label>
         <input id="share" type="range" min="5" max="60" step="5" value="30"></div>
         <div class="res"><span data-t="c3">Prihranjena provizija na leto</span><b id="saved">€2,250</b></div>
-        <p class="cap" style="margin:0" data-t="c4">Ocena: 15,5 % provizije platforme, zmanjšano za približno 3 % stroškov plačila pri neposrednih rezervacijah.</p>
+        <p class="cap" style="margin:0" data-t="c4">Ocena: 15,5 % provizije platforme, zmanjšano za približno 3 % stroškov plačila pri neposrednih rezervacijah.</p>
       </div>
     </div>
     <div class="ai" aria-label="Illustration: an AI assistant recommends a property">
@@ -635,6 +678,7 @@ footer{padding-block:36px;color:var(--muted);font-size:14px;display:flex;flex-wr
       <details><summary data-t="qb">Kaj se zgodi, ko se ponoči kaj pokvari?</summary><p data-t="qbd">AI-gostitelj najprej pomaga gostu. Če težave ni mogoče rešiti, ustvari nalogo za vašo čistilko ali vzdrževanje z apartmajem, opisom težave in nujnostjo, vas pa obvesti samo, ko ste potrebni.</p></details>
       <details><summary data-t="qc">Ali gostje potrebujejo aplikacijo?</summary><p data-t="qcd">Ne. S telefonom se dotaknejo oznake NFC ali skenirajo kodo QR in stran apartmaja se odpre v brskalniku.</p></details>
       <details><summary data-t="qd">V katerih jezikih govori AI-gostitelj?</summary><p data-t="qdd">Odgovarja v jeziku gosta. Kar ne zna odgovoriti, posreduje vam.</p></details>
+      <details><summary data-t="qg">Kaj je GEO in zakaj je pomemben?</summary><p data-t="qgd">GEO (optimizacija za generativno iskanje) je kot SEO za AI-asistente, kot so ChatGPT, Gemini in Perplexity. Vse več popotnikov jih vpraša, kje prespati. Ko AI vaš apartma priporoči po imenu in poveže na vašo stran, gost rezervira neposredno, vi pa ne plačate provizije platformi.</p></details>
       <details><summary data-t="qe">Koliko stane?</summary><p data-t="qed">Med pilotom 12 € na apartma na mesec, najmanj 49 € na mesec. Lastna rezervacijska stran s SEO in GEO je dodatnih 99 € na mesec.</p></details>
       <details><summary data-t="qf">Imam en apartma. Se splača?</summary><p data-t="qfd">Da, če vam sporočila gostov vzamejo večere ali si želite več neposrednih rezervacij. Najnižji znesek je 49 € na mesec.</p></details>
     </div>
@@ -651,13 +695,13 @@ const SL = {
   brandSub:"za gostitelje",
   eyebrow:"Za gostitelje na Airbnbju, Bookingu in drugih platformah",
   h1:"Vaš AI-gostitelj 24/7. <em>In vaše lastne neposredne rezervacije.</em>",
-  lede:"Nehajte odgovarjati gostom ob treh zjutraj in nehajte plačevati do 15 % od vsake rezervacije. Unbusyness odgovarja gostom, organizira čiščenje in popravila ter pomaga, da vas popotniki najdejo in rezervirajo neposredno.",
+  lede:"Nehajte odgovarjati gostom ob treh zjutraj in nehajte plačevati do 15 % od vsake rezervacije. Unbusyness odgovarja gostom, organizira čiščenje in popravila ter pomaga, da vas popotniki najdejo in rezervirajo neposredno.",
   cta:"Prijava na čakalni seznam", ctaHow:"Poglejte, kako deluje", ctaNote:"Pilot izvajamo z apartmaji v Ljubljani. Deluje skupaj z Airbnbjem in Booking.com.",
   tNo:"AI-GOSTITELJ · APARTMA 3", tOn:"Na zvezi",
   m1:"Pozdravljeni, tople vode ni.", m2:"Opravičujemo se! Preverite, ali je stikalo bojlerja v omari na hodniku vklopljeno. Za vsak primer sem obvestil tudi naše vzdrževanje.", m3:"To je pomagalo, hvala!",
   tk1:"Naloga ustvarjena samodejno", tk2:"Apartma 3 · Topla voda · Vodoinštalater obveščen", tk3:"Nujno · Obisk do 9.00",
   fh:"Koliko vas stane vsaka rezervacija", f1:"Airbnb, ko plača samo gostitelj", f2:"Običajna provizija Booking.com", f3:"Neposredna rezervacija (stroški plačila s kartico)",
-  fcap:"Airbnbjeva provizija 15,5 % velja za gostitelje na modelu, kjer provizijo plača samo gostitelj. Provizija Booking.com je odvisna od države in programov.",
+  fcap:"Airbnbjeva provizija 15,5 % velja za gostitelje na modelu, kjer provizijo plača samo gostitelj. Provizija Booking.com je odvisna od države in programov.",
   p0:"Vse, kar gostitelj potrebuje, na enem mestu", p1:"Manj sporočil. Manj presenečenj. Več neposrednih gostov.",
   fa:"AI-gostitelj: gostje dobijo odgovor 24/7", fad:"Odgovarja gostom noč in dan, uredi vsakdanje prošnje, prijavljene težave pa spremeni v naloge za čistilce in vzdrževanje.",
   fa1:"Prihod, Wi-Fi, parkiranje, hišni red", fa2:"Odgovarja v jeziku gosta", fa3:"Vas pokliče samo, ko je res treba",
@@ -671,15 +715,23 @@ const SL = {
   hb:"AI-gostitelj odgovori ali ukrepa", hbd:"Na vprašanja odgovori takoj. Težave postanejo naloge za vašo čistilko ali vzdrževanje.",
   hc:"Vse vidite na enem mestu", hcd:"Odprte naloge, odzivni časi, stanje čiščenja in apartmaji, ki potrebujejo pozornost.",
   hd:"Zadovoljni gostje se vrnejo neposredno", hdd:"Gostje se vpišejo na vaš seznam za popust pri naslednjem bivanju, rezerviranem na vaši strani.",
-  d0:"Neposredne rezervacije in iskanje z AI", d1:"Bodite apartma, ki ga AI priporoči po imenu",
+  d0:"Kaj to pomeni za vas", d1:"Bodite apartma, ki ga AI priporoči po imenu",
   d2:"Vse več popotnikov potovanja načrtuje z AI-asistenti. Pripravimo vašo rezervacijsko stran in jo optimiziramo za Google in iskanje z AI, da se ob vprašanju po namestitvi, kot je vaša, prikaže vaš apartma s povezavo za neposredno rezervacijo.",
   c0:"Koliko bi lahko obdržali?", c1:"Letni prihodek od rezervacij (vsi apartmaji)", c2:"Delež rezervacij, ki preidejo na neposredne", c3:"Prihranjena provizija na leto",
-  c4:"Ocena: 15,5 % provizije platforme, zmanjšano za približno 3 % stroškov plačila pri neposrednih rezervacijah.",
+  c4:"Ocena: 15,5 % provizije platforme, zmanjšano za približno 3 % stroškov plačila pri neposrednih rezervacijah.",
   a0:"AI-asistent za potovanja", a1:"Miren apartma blizu ljubljanskega starega mestnega jedra za dva, s parkiriščem in samostojnim prihodom?",
   a2:"Dobra izbira je <b>[vaš apartma]</b>:", a3:"[X] minut hoje do starega mestnega jedra", a4:"Zasebno parkirišče in samostojni prihod 24/7", a5:"Gostje pravijo, da je miren in brezhibno čist", a6:"Rezervirajte neposredno na [vasapartma].si",
   a7:"Ponazoritev cilja. V oglatih oklepajih so mesta za podatke o vašem apartmaju.",
   pr0:"Pilotne cene", pr1:"Preprosto, na apartma",
-  gst:"Gost", paP:"12 €", pbP:"+99 €", fp1:"15,5 %", fp2:"~15 %", fp3:"~3 %",
+  demoLab:"Preizkusite aplikacijo za gostitelje: klikabilni demo na telefonu z izmišljenimi podatki.", demo0:"Odpri demo na telefonu",
+  g0:"Zakaj je GEO tako pomemben", g1:"Vaš naslednji gost bo vprašal AI, ne rezervacijske platforme.",
+  g2:"Ljudje že danes AI-asistente sprašujejo za vse: kje jesti, kaj obiskati in vse pogosteje tudi, kje prespati, v apartmaju ali hotelu. AI ne odgovori s seznamom sto oglasov, ampak priporoči nekaj namestitev po imenu. Če je med njimi vaša in ima povezavo na vašo stran, gost rezervira neposredno pri vas, vi pa ne plačate provizije platformi.",
+  g3:"Gost vpraša AI", g3d:"»Miren apartma v Ljubljani s parkiriščem?« v ChatGPT, Gemini, Perplexity ali v Googlovih odgovorih AI.",
+  g4:"AI vas priporoči po imenu", g4d:"S kratkim opisom in povezavo na vašo rezervacijsko stran, ne na oglas na platformi.",
+  g5:"Gost rezervira neposredno", g5d:"<b>0 % provizije platformi.</b> Samo približno 3 % za plačilo s kartico namesto do 15,5 %.",
+  g6:"<b>GEO</b> (optimizacija za generativno iskanje) poskrbi, da AI-asistenti vašo namestitev poznajo, razumejo, kaj ponuja, in jo lahko priporočijo. AI se uči iz tega, kar je o vas na spletu zapisano danes, zato bodo te rezervacije dobivali gostitelji in hoteli, ki bodo vidni prvi. Zato GEO začnemo že v pilotu.",
+  qg:"Kaj je GEO in zakaj je pomemben?", qgd:"GEO (optimizacija za generativno iskanje) je kot SEO za AI-asistente, kot so ChatGPT, Gemini in Perplexity. Vse več popotnikov jih vpraša, kje prespati. Ko AI vaš apartma priporoči po imenu in poveže na vašo stran, gost rezervira neposredno, vi pa ne plačate provizije platformi.",
+  gst:"Gost", paP:"12 €", pbP:"+99 €", fp1:"15,5 %", fp2:"~15 %", fp3:"~3 %",
   pa:"Gostitelj", pa1:"/ apartma / mesec", pa2:"Najmanj 49 € na mesec", pa3:"AI-gostitelj 24/7 v jeziku gosta", pa4:"Oznaka NFC/QR in digitalni vodič za vsak apartma", pa5:"Samodejne naloge za čiščenje in popravila", pa6:"Pregled za gostitelja",
   pb:"Gostitelj + neposredne rezervacije", pbB:"Največ vrednosti", pb1:"/ mesec", pb2:"Poleg paketa Gostitelj", pb3:"Lastna rezervacijska stran in sistem", pb4:"SEO in GEO za Google in iskanje z AI", pb5:"Seznam gostov in popusti za naslednje bivanje", pb6:"Mesečno poročilo o vidnosti",
   j0:"Čakalni seznam", j1:"Vrnite si noči.", j2:"Začenjamo pilot z gostitelji v Sloveniji. Vse nastavimo namesto vas.",
@@ -709,6 +761,7 @@ function t(k) { return (lang === "sl" ? SL : EN)[k] ?? EN[k] ?? ""; }
 function setLang(l) {
   lang = l === "sl" ? "sl" : "en";
   document.documentElement.lang = lang;
+  document.querySelectorAll("[data-demo]").forEach((a) => (a.href = "/demo/" + a.dataset.demo + (lang === "en" ? "-en" : "") + ".html"));
   document.querySelectorAll("[data-t]").forEach((el) => {
     const v = t(el.dataset.t); if (!v) return;
     if (el.hasAttribute("data-html") || /<\w/.test(v)) el.innerHTML = v; else el.textContent = v;
@@ -724,7 +777,7 @@ function money(n) { return lang === "sl" ? n.toLocaleString("sl-SI") + " €" : 
 function calc() {
   const r = Number(rev.value), s = Number(share.value);
   document.getElementById("revOut").textContent = money(r);
-  document.getElementById("shareOut").textContent = lang === "sl" ? s + " %" : s + "%";
+  document.getElementById("shareOut").textContent = lang === "sl" ? s + " %" : s + "%";
   document.getElementById("saved").textContent = money(Math.round(r * (s / 100) * (0.155 - 0.03)));
 }
 rev.addEventListener("input", calc); share.addEventListener("input", calc);
@@ -791,7 +844,7 @@ form.addEventListener("submit", async (e) => {
 </style>
 <script id="ubp-js">
 (() => {
-  const C = {"segment": "hosts", "demo": {}, "more": "#how", "sl": ["<b>Nastavimo namesto vas</b>: vodiče, oznake in odgovore za vsak apartma.", "<b>Pilotne cene</b> za prve gostitelje.", "<b>Deluje z Airbnbjem in Booking.com</b>, ničesar vam ni treba opustiti."], "en": ["<b>Set up for you</b>: guides, tags and answers for every apartment.", "<b>Pilot prices</b> for the first hosts.", "<b>Works with Airbnb and Booking.com</b>, nothing to give up."], "page": "hosts"};
+  const C = {"segment": "hosts", "demo": {"phone": "hosts-phone"}, "sl": ["<b>Nastavimo namesto vas</b>: vodiče, oznake in odgovore za vsak apartma.", "<b>Pilotne cene</b> za prve gostitelje.", "<b>Deluje z Airbnbjem in Booking.com</b>, ničesar vam ni treba opustiti."], "en": ["<b>Set up for you</b>: guides, tags and answers for every apartment.", "<b>Pilot prices</b> for the first hosts.", "<b>Works with Airbnb and Booking.com</b>, nothing to give up."], "page": "hosts"};
   const TX = {
     sl: { h: "Bodite med prvimi.", sub: "Prijavite se na čakalni seznam in dobite:", cta: "Prijava na čakalni seznam", howS: "Poglejte, kako deluje: oznaka v apartmaju, AI-gostitelj in neposredne rezervacije.", howB: "Poglejte, kako deluje", em: "Vaš e-poštni naslov", ph: "ime@primer.si", cons: "Unbusyness mi lahko piše glede zgodnjega dostopa. Izbris lahko zahtevam kadar koli.", eE: "Vpišite veljaven e-poštni naslov.", eC: "Za prijavo potrdite soglasje.", eS: "Prijave ni bilo mogoče shraniti. Poskusite znova ali pišite na info@unbusyness.com.", eR: "Preveč poskusov v kratkem času. Poskusite čez nekaj minut.", sending: "Shranjujem …", okH: "Ste na seznamu.", okP: "Hvala! Oglasili se vam bomo, ko boste lahko začeli.", more: "Povejte nam več o sebi", done: "Zapri", orB: "Še niste prepričani?", orS: "Preizkusite klikabilni demo aplikacije z izmišljenimi podatki. Prijava ni potrebna.", demoP: "Odpri demo na telefonu", demoD: "Odpri demo na računalniku", altP: "ali demo za telefon", altD: "ali demo za računalnik", later: "Ne zdaj", close: "Zapri", label: "Prijava na čakalni seznam" },
     en: { h: "Be among the first.", sub: "Join the waitlist and get:", cta: "Join the waitlist", howS: "See how it works: the tag in each apartment, the AI host and direct bookings.", howB: "See how it works", em: "Your email", ph: "name@example.com", cons: "Unbusyness may email me about early access. I can ask for deletion at any time.", eE: "Please enter a valid email address.", eC: "Please tick the consent box to join.", eS: "We couldn't save your sign-up. Try again or write to info@unbusyness.com.", eR: "Too many attempts in a short time. Try again in a few minutes.", sending: "Saving…", okH: "You're on the list.", okP: "Thanks! We'll be in touch when your spot opens.", more: "Tell us a bit more", done: "Close", orB: "Not sure yet?", orS: "Try the demo app: clickable, with made-up data, no sign-up.", demoP: "Open the phone demo", demoD: "Open the desktop demo", altP: "or the phone demo", altD: "or the desktop demo", later: "Not now", close: "Close", label: "Join the waitlist" },

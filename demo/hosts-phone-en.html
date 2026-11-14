@@ -1,0 +1,385 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Unbusyness for Hosts · phone</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<style>
+/* Unbusyness for Hosts, phone demo. Same device frame as the other demos; all data is made up. */
+:root{
+  --green:#1F4D45; --green-dark:#173D37; --green-soft:#E6EEEB; --on-green:#CFE0DA;
+  --apricot:#E8915F; --apricot-light:#F2A57A; --apricot-ink:#A84E22; --apricot-soft:#FBE8DC;
+  --slate:#4F5F80; --slate-soft:#E9ECF3;
+  --sand:#F4EFE6; --linen:#FBFAF7; --white:#FFFFFF;
+  --ink:#14201E; --muted:#56615F; --line:#E7E3DA;
+  --red:#B23A32; --red-soft:#FBEAE8; --ok:#2F7A55; --ok-soft:#E4F1E8;
+  --font:'Plus Jakarta Sans','Segoe UI',system-ui,-apple-system,sans-serif;
+  color-scheme:light;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{margin:0;background:var(--sand);color:var(--ink);font-family:var(--font);font-size:17px;line-height:1.45;-webkit-font-smoothing:antialiased}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none;padding:0}
+:focus-visible{outline:3px solid var(--apricot);outline-offset:2px}
+@media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
+
+.stage{min-height:100%;display:flex;align-items:center;justify-content:center;gap:56px;padding-block:32px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.side{max-width:330px;display:flex;flex-direction:column;gap:16px}
+.side h1{margin:0;font-size:40px;line-height:1.05;letter-spacing:-1.5px;font-weight:700;text-wrap:balance}
+.side h1 span{color:var(--green)}
+.side p{margin:0;color:var(--muted);font-size:16px}
+.side ul{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:10px;font-size:15px}
+.side li{display:flex;gap:10px;align-items:flex-start}
+.side li:before{content:"";width:8px;height:8px;border-radius:50%;background:var(--apricot);margin-top:8px;flex-shrink:0}
+.brandrow{display:flex;align-items:center;gap:10px;font-size:20px;font-weight:700;letter-spacing:-.5px}
+.phone{position:relative;width:390px;height:844px;max-height:calc(100vh - 64px);border-radius:48px;background:var(--linen);box-shadow:0 0 0 10px #14201E,0 30px 80px rgba(20,32,30,.28);overflow:hidden;display:flex;flex-direction:column}
+@media (max-width:820px){.side{display:none}.stage{padding:0;gap:0;align-items:stretch}.phone{width:100%;height:100vh;height:100dvh;max-height:none;border-radius:0;box-shadow:none}}
+
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:20px 18px 6px;background:var(--linen);min-height:76px}
+@media (max-width:820px){.topbar{padding-top:calc(14px + env(safe-area-inset-top,0px))}}
+.hello small{display:block;font-size:13px;font-weight:600;letter-spacing:1.2px;text-transform:uppercase;color:var(--muted)}
+.hello strong{font-size:26px;font-weight:700;letter-spacing:-.8px}
+.avatar{width:44px;height:44px;border-radius:50%;background:var(--apricot-soft);color:var(--apricot-ink);display:grid;place-items:center;font-weight:700;font-size:15px}
+.back{display:flex;align-items:center;gap:6px;min-height:48px;padding:0 14px 0 8px;margin-left:-8px;border-radius:99px;font-weight:700;font-size:16px;color:var(--green)}
+.title{font-size:20px;font-weight:700;letter-spacing:-.4px}
+.screen{flex:1;overflow-y:auto;overflow-x:hidden;padding:12px 18px 120px}
+
+.tabs{position:absolute;left:0;right:0;bottom:0;background:var(--white);border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(5,1fr);padding:8px 4px calc(10px + env(safe-area-inset-bottom,0px));z-index:5}
+.tab{display:flex;flex-direction:column;align-items:center;gap:3px;min-height:56px;justify-content:center;font-size:11.5px;font-weight:600;color:var(--muted);border-radius:14px;position:relative}
+.tab.on{color:var(--green)}
+.tab.on:after{content:"";position:absolute;top:2px;width:22px;height:3px;border-radius:3px;background:var(--green)}
+.tab .badge{position:absolute;top:4px;left:calc(50% + 6px);min-width:18px;height:18px;padding:0 5px;border-radius:9px;background:var(--red);color:#fff;font-size:11px;font-weight:700;display:grid;place-items:center}
+
+.eyebrow{font-size:13px;font-weight:700;letter-spacing:1.3px;text-transform:uppercase;color:var(--muted);margin:24px 2px 10px;display:flex;justify-content:space-between;align-items:center}
+.night{background:var(--green);color:var(--linen);border-radius:26px;padding:20px;display:flex;flex-direction:column;gap:12px}
+.night small{font-size:13px;font-weight:700;color:var(--on-green);letter-spacing:.4px;text-transform:uppercase}
+.night h2{margin:0;font-size:23px;letter-spacing:-.6px;line-height:1.2}
+.night p{margin:0;color:var(--on-green);font-size:15.5px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.stats div{background:rgba(255,255,255,.1);border-radius:14px;padding:10px}
+.stats b{display:block;font-size:22px;letter-spacing:-.5px}
+.stats span{font-size:12px;color:var(--on-green)}
+.card{background:var(--white);border:1px solid var(--line);border-radius:22px;padding:16px;display:flex;flex-direction:column;gap:12px}
+.card+.card{margin-top:12px}
+.row{display:flex;align-items:center;gap:12px}
+.ic{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;flex-shrink:0}
+.ic.green{background:var(--green-soft);color:var(--green)}.ic.red{background:var(--red-soft);color:var(--red)}.ic.apricot{background:var(--apricot-soft);color:var(--apricot-ink)}.ic.slate{background:var(--slate-soft);color:var(--slate)}
+.main{flex:1;min-width:0}
+.main strong{display:block;font-size:16.5px;font-weight:700;line-height:1.3}
+.main span{display:block;font-size:14.5px;color:var(--muted)}
+.tag{display:inline-flex;align-items:center;border-radius:99px;padding:3px 10px;font-size:12px;font-weight:700;white-space:nowrap}
+.tag.red{background:var(--red-soft);color:var(--red)}.tag.green{background:var(--green-soft);color:var(--green)}.tag.apricot{background:var(--apricot-soft);color:var(--apricot-ink)}.tag.ok{background:var(--ok-soft);color:var(--ok)}.tag.slate{background:var(--slate-soft);color:var(--slate)}
+.btn{min-height:52px;border-radius:16px;padding:0 16px;font-weight:700;font-size:16px;display:inline-flex;align-items:center;justify-content:center;gap:8px;width:100%}
+.btn:active{transform:scale(.98)}
+.btn.primary{background:var(--green);color:var(--linen)}
+.btn.apricot{background:var(--apricot);color:var(--ink)}
+.btn.soft{background:var(--green-soft);color:var(--green)}
+.btn.line{background:var(--white);border:1.5px solid var(--line);color:var(--ink)}
+.btns{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.list{background:var(--white);border:1px solid var(--line);border-radius:22px;padding:2px 14px}
+.item{display:flex;align-items:center;gap:12px;padding:14px 0;border-bottom:1px solid var(--line);width:100%;text-align:left;min-height:72px}
+.item:last-child{border-bottom:0}
+.chev{color:#8A938F;flex-shrink:0}
+.time{font-weight:800;font-size:15px;min-width:48px}
+
+.chat{display:flex;flex-direction:column;gap:8px;background:var(--sand);border-radius:22px;padding:14px}
+.msg{max-width:86%;border-radius:16px;padding:9px 12px;font-size:15px;line-height:1.45;background:var(--white);border:1px solid var(--line)}
+.msg.g{align-self:flex-start}
+.msg.ai{align-self:flex-end;background:var(--green-soft);border-color:transparent}
+.msg.you{align-self:flex-end;background:var(--green);color:var(--linen);border-color:transparent}
+.msg small{display:block;font-size:11.5px;color:var(--muted);margin-top:3px}
+.msg.you small{color:var(--on-green)}
+.sys{align-self:center;font-size:12.5px;font-weight:700;color:var(--apricot-ink);background:var(--apricot-soft);border-radius:99px;padding:5px 12px;text-align:center}
+.steps{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
+.steps li{display:grid;grid-template-columns:48px 16px 1fr;gap:10px;padding:8px 0;position:relative}
+.steps time{font-weight:800;font-size:13.5px;color:var(--muted)}
+.steps i{width:12px;height:12px;border-radius:50%;background:var(--green);margin-top:5px}
+.steps li.todo i{background:var(--white);border:2px solid var(--line)}
+.steps b{display:block;font-size:15px}.steps span{font-size:13.5px;color:var(--muted)}
+.big{font-size:34px;font-weight:800;letter-spacing:-1px;color:var(--green)}
+.bar{height:10px;border-radius:5px;background:var(--sand);overflow:hidden}.bar i{display:block;height:100%;background:var(--green);border-radius:5px}
+.q{background:var(--sand);border-radius:16px;padding:12px 14px;display:flex;flex-direction:column;gap:6px}
+.q em{font-style:normal;font-size:14.5px}
+.q .res{display:flex;justify-content:space-between;gap:8px;align-items:center;font-size:13px;color:var(--muted)}
+.note{font-size:13px;color:var(--muted);margin:10px 4px 0}
+
+/* guest page preview (what the NFC/QR tag opens) */
+.guest{position:absolute;inset:0;background:var(--linen);z-index:20;display:flex;flex-direction:column;animation:up .25s ease-out}
+@keyframes up{from{transform:translateY(30px);opacity:.4}to{transform:none;opacity:1}}
+.guest .gh{background:var(--green);color:var(--linen);padding:22px 18px 18px;display:flex;flex-direction:column;gap:6px}
+@media (max-width:820px){.guest .gh{padding-top:calc(18px + env(safe-area-inset-top,0px))}}
+.guest .gh small{color:var(--on-green);font-weight:700;font-size:12.5px;letter-spacing:1px;text-transform:uppercase}
+.guest .gh h2{margin:0;font-size:24px;letter-spacing:-.5px}
+.guest .gb{flex:1;overflow:auto;padding:16px 18px 110px;display:flex;flex-direction:column;gap:10px}
+.gtile{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.gtile button{background:var(--white);border:1px solid var(--line);border-radius:18px;padding:14px;text-align:left;display:flex;flex-direction:column;gap:6px;min-height:92px}
+.gtile b{font-size:15px}.gtile span{font-size:13px;color:var(--muted)}
+.offer{background:var(--apricot-soft);border:1px solid var(--apricot);border-radius:18px;padding:14px;display:flex;flex-direction:column;gap:8px}
+.offer b{font-size:16px}
+.gclose{position:absolute;top:16px;right:16px;width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.16);color:#fff;display:grid;place-items:center;font-size:20px}
+@media (max-width:820px){.gclose{top:calc(12px + env(safe-area-inset-top,0px))}}
+.toast{position:absolute;left:16px;right:16px;bottom:96px;background:var(--ink);color:var(--linen);border-radius:16px;padding:14px 16px;font-size:15px;font-weight:600;z-index:30;animation:up .2s ease-out}
+</style>
+</head>
+<body>
+<div class="stage">
+  <div class="side" id="side"></div>
+  <div class="phone" id="phone">
+    <div class="topbar" id="topbar"></div>
+    <main class="screen" id="screen"></main>
+    <nav class="tabs" id="tabs"></nav>
+    <div id="overlay"></div>
+    <div id="toastHost"></div>
+  </div>
+</div>
+<script>
+const LANG = "en";
+const T = {
+  sl: {
+    menu: "Glavni meni", tToday: "Pregled", tInbox: "Sporočila", tJobs: "Naloge", tApts: "Apartmaji", tDirect: "Neposredno",
+    sideH: 'Vaši apartmaji, <span>v žepu.</span>', sideP: "Unbusyness za gostitelje na telefonu. AI-gostitelj odgovarja gostom, vi vidite samo, kar potrebuje vas.",
+    sideL: ["Kaj je AI-gostitelj uredil ponoči", "Pogovori z gosti v njihovem jeziku", "Naloge za čiščenje in popravila", "Kaj vidi gost, ko se dotakne oznake", "Neposredne rezervacije in vidnost v AI"],
+    sideN: "Interaktivni demo z izmišljenimi podatki. Poskusite <b>Apartmaji → Poglej, kaj vidi gost</b>.",
+    hi: "Dobro jutro", host: "Ana", back: "Nazaj",
+    nightS: "Ponoči, 22.00–7.00", nightH: "AI-gostitelj je odgovoril na 9 sporočil. Ena stvar čaka na vas.", nightP: "Topla voda v apartmaju 3 je urejena, vodoinštalater pride ob 9.00.",
+    stA: "odgovorov", stB: "nalog", stC: "klic vam",
+    needs: "Čaka na vas", today: "Danes",
+    lateQ: "Pozen odhod do 13.00?", lateD: "Apartma 2 · Sofia (IT) · naslednji gost pride ob 16.00",
+    approve: "Odobri", decline: "Zavrni", approved: "Odobreno. AI-gostitelj je Sofii sporočil, da lahko ostane do 13.00, čiščenje je prestavljeno na 13.15.", declined: "AI-gostitelj je Sofii vljudno sporočil, da odhod ostane ob 11.00.",
+    co: "Odhod", ci: "Prihod", cl: "Čiščenje",
+    a1: "Apartma 1", a2: "Apartma 2", a3: "Apartma 3",
+    dirS: "Neposredne rezervacije ta mesec", dirP: "3 rezervacije · prihranjena provizija 186 €",
+    inboxH: "Sporočila gostov", aiDone: "AI je odgovoril", needYou: "Potrebuje vas", resolved: "Rešeno",
+    jobsH: "Naloge", open: "Odprte", done: "Opravljeno", markDone: "Označi kot opravljeno", call: "Pokliči", doneT: "Naloga je opravljena. Gost je obveščen.",
+    aptsH: "Apartmaji", occ: "Zaseden", free: "Prost", cleaning: "Čiščenje", scans: "dotikov oznake ta teden", guestView: "Poglej, kaj vidi gost",
+    directH: "Neposredne rezervacije", saved: "Prihranjena provizija letos", savedD: "11 neposrednih rezervacij namesto prek platform",
+    channels: "Rezervacije po kanalih, zadnjih 30 dni", direct: "Neposredno",
+    aiH: "Vidnost v iskanju z AI", aiD: "Kako pogosto AI-asistenti ob takih vprašanjih priporočijo vaše apartmaje", rec: "priporočeni", notYet: "še ne",
+    q1: "Apartma v starem delu Ljubljane s parkiriščem", q2: "Miren apartma v Ljubljani za družino", q3: "Kje prespati blizu Ljubljanskega gradu",
+    listH: "Vaš seznam gostov", listD: "214 gostov se je prijavilo prek oznake v apartmaju", sendOffer: "Pošlji ponudbo -10 % za zimo", offerSent: "Ponudba je poslana 214 gostom s povezavo na vašo stran.",
+    demoNote: "Izmišljeni podatki za demo.",
+    gS: "Apartma 3 · Dobrodošli", gH: "Dobrodošli, Lukas!", gWifi: "Wi-Fi", gWifiD: "Ana-Apt3 · geslo na kartici", gOut: "Odhod", gOutD: "do 11.00, ključ v nabiralnik", gHelp: "Prijavite težavo", gHelpD: "odgovorimo takoj", gTips: "Nasveti", gTipsD: "zajtrk, parkiranje, izleti",
+    gChat: "Vprašajte AI-gostitelja", gChatD: "Odgovarja v vašem jeziku, 24/7.",
+    gOff: "10 % popusta pri naslednjem bivanju", gOffD: "Rezervirajte neposredno na ana-apartmaji.si. Vpišite e-pošto in kodo dobite takoj.", gJoin: "Želim popust", gJoined: "Lukas je na vašem seznamu gostov.",
+    close: "Zapri",
+    convs: [
+      { n: "Lukas", f: "DE", apt: "Apartma 3", t: "02:14", s: "done", last: "That fixed it, thank you!",
+        m: [["g","Hallo, das Warmwasser funktioniert nicht.","02:14"],["ai","Entschuldigung! Bitte prüfen Sie, ob der Boiler-Schalter im Flurschrank eingeschaltet ist. Ich habe vorsichtshalber auch unsere Wartung informiert.","02:14"],["sys","Naloga ustvarjena: Apartma 3 · topla voda · vodoinštalater do 9.00"],["g","Das hat geholfen, danke!","02:17"]] },
+      { n: "Sofia", f: "IT", apt: "Apartma 2", t: "07:41", s: "you", last: "Possiamo restare fino alle 13?",
+        m: [["g","Buongiorno! Possiamo restare fino alle 13? Il volo è alle 17.","07:41"],["ai","Buongiorno Sofia! Chiedo subito all'host e le rispondo entro pochi minuti.","07:41"],["sys","Vprašanje za vas: pozen odhod do 13.00"]] },
+      { n: "Emma", f: "EN", apt: "Apartma 1", t: "23:05", s: "done", last: "Where can I park tomorrow?",
+        m: [["g","Hi! Where can I park tomorrow morning?","23:05"],["ai","Hi Emma! You can use space 14 in the courtyard until 11:00 checkout. The gate code is in the guide on the door tag.","23:05"],["g","Perfect, thanks!","23:06"]] },
+      { n: "Marta", f: "SL", apt: "Apartma 1", t: "Včeraj", s: "done", last: "Kje so dodatne brisače?",
+        m: [["g","Kje so dodatne brisače?","Včeraj 18:20"],["ai","Pozdravljeni, Marta! Dodatne brisače so v zgornjem predalu omare v spalnici. Če jih potrebujete več, jih čistilka prinese jutri do 10.00.","Včeraj 18:20"]] }
+    ],
+    jobs: [
+      { id: "hw", t: "Topla voda", apt: "Apartma 3", who: "Marko, vodoinštalater", when: "do 9.00", tag: ["red","Nujno"],
+        st: [["02:14","Gost je prijavil težavo","AI-gostitelj je pomagal in ustvaril nalogo"],["02:15","Marko obveščen","Dežurni vodoinštalater"],["07:52","Marko je sprejel","Pride ob 9.00"],["","Popravilo","Čaka"]] },
+      { id: "cl1", t: "Čiščenje po odhodu", apt: "Apartma 1", who: "Mojca, čistilka", when: "11.00", tag: ["slate","Danes"],
+        st: [["10:00","Odhod gosta",""],["11:00","Mojca začne čiščenje","Naslednji gost ob 15.00"],["","Pripravljeno za prihod","Čaka"]] },
+      { id: "tw", t: "Dodatne brisače", apt: "Apartma 2", who: "Mojca, čistilka", when: "do 12.00", tag: ["apricot","Prošnja gosta"],
+        st: [["08:03","Gost je prosil prek oznake","Stran apartmaja → Prijavite težavo"],["08:04","Mojca obveščena",""],["","Dostava","Čaka"]] }
+    ],
+    apts: [["Apartma 1","free",38],["Apartma 2","occ",21],["Apartma 3","occ",17]]
+  },
+  en: {
+    menu: "Main menu", tToday: "Today", tInbox: "Messages", tJobs: "Jobs", tApts: "Apartments", tDirect: "Direct",
+    sideH: 'Your apartments, <span>in your pocket.</span>', sideP: "Unbusyness for Hosts on your phone. The AI host answers guests; you only see what needs you.",
+    sideL: ["What the AI host handled overnight", "Guest chats in their own language", "Jobs for cleaning and repairs", "What a guest sees when they tap the tag", "Direct bookings and AI visibility"],
+    sideN: "Interactive demo with made-up data. Try <b>Apartments → See what the guest sees</b>.",
+    hi: "Good morning", host: "Ana", back: "Back",
+    nightS: "Overnight, 22:00–07:00", nightH: "The AI host answered 9 messages. One thing is waiting for you.", nightP: "Hot water in apartment 3 is handled; the plumber comes at 9:00.",
+    stA: "answers", stB: "jobs", stC: "calls to you",
+    needs: "Waiting for you", today: "Today",
+    lateQ: "Late check-out until 13:00?", lateD: "Apartment 2 · Sofia (IT) · next guest arrives at 16:00",
+    approve: "Approve", decline: "Decline", approved: "Approved. The AI host told Sofia she can stay until 13:00; cleaning moved to 13:15.", declined: "The AI host politely told Sofia check-out stays at 11:00.",
+    co: "Check-out", ci: "Check-in", cl: "Cleaning",
+    a1: "Apartment 1", a2: "Apartment 2", a3: "Apartment 3",
+    dirS: "Direct bookings this month", dirP: "3 bookings · €186 commission saved",
+    inboxH: "Guest messages", aiDone: "AI answered", needYou: "Needs you", resolved: "Resolved",
+    jobsH: "Jobs", open: "Open", done: "Done", markDone: "Mark as done", call: "Call", doneT: "Job done. The guest has been told.",
+    aptsH: "Apartments", occ: "Occupied", free: "Free", cleaning: "Cleaning", scans: "tag taps this week", guestView: "See what the guest sees",
+    directH: "Direct bookings", saved: "Commission saved this year", savedD: "11 direct bookings instead of through platforms",
+    channels: "Bookings by channel, last 30 days", direct: "Direct",
+    aiH: "Visibility in AI search", aiD: "How often AI assistants recommend your apartments for questions like these", rec: "recommended", notYet: "not yet",
+    q1: "Apartment in Ljubljana old town with parking", q2: "Quiet apartment in Ljubljana for a family", q3: "Where to stay near Ljubljana Castle",
+    listH: "Your guest list", listD: "214 guests joined through the tag in the apartment", sendOffer: "Send a -10% winter offer", offerSent: "Offer sent to 214 guests with a link to your site.",
+    demoNote: "Made-up data for the demo.",
+    gS: "Apartment 3 · Welcome", gH: "Welcome, Lukas!", gWifi: "Wi-Fi", gWifiD: "Ana-Apt3 · password on the card", gOut: "Check-out", gOutD: "by 11:00, key in the letterbox", gHelp: "Report a problem", gHelpD: "we answer right away", gTips: "Tips", gTipsD: "breakfast, parking, trips",
+    gChat: "Ask the AI host", gChatD: "Answers in your language, 24/7.",
+    gOff: "10% off your next stay", gOffD: "Book direct at ana-apartments.com. Enter your email and get the code straight away.", gJoin: "I want the discount", gJoined: "Lukas joined your guest list.",
+    close: "Close",
+    convs: [
+      { n: "Lukas", f: "DE", apt: "Apartment 3", t: "02:14", s: "done", last: "Das hat geholfen, danke!",
+        m: [["g","Hallo, das Warmwasser funktioniert nicht.","02:14"],["ai","Entschuldigung! Bitte prüfen Sie, ob der Boiler-Schalter im Flurschrank eingeschaltet ist. Ich habe vorsichtshalber auch unsere Wartung informiert.","02:14"],["sys","Job created: Apartment 3 · hot water · plumber by 9:00"],["g","Das hat geholfen, danke!","02:17"]] },
+      { n: "Sofia", f: "IT", apt: "Apartment 2", t: "07:41", s: "you", last: "Possiamo restare fino alle 13?",
+        m: [["g","Buongiorno! Possiamo restare fino alle 13? Il volo è alle 17.","07:41"],["ai","Buongiorno Sofia! Chiedo subito all'host e le rispondo entro pochi minuti.","07:41"],["sys","Question for you: late check-out until 13:00"]] },
+      { n: "Emma", f: "EN", apt: "Apartment 1", t: "23:05", s: "done", last: "Perfect, thanks!",
+        m: [["g","Hi! Where can I park tomorrow morning?","23:05"],["ai","Hi Emma! You can use space 14 in the courtyard until 11:00 checkout. The gate code is in the guide on the door tag.","23:05"],["g","Perfect, thanks!","23:06"]] },
+      { n: "Marta", f: "SL", apt: "Apartment 1", t: "Yesterday", s: "done", last: "Kje so dodatne brisače?",
+        m: [["g","Kje so dodatne brisače?","Yesterday 18:20"],["ai","Pozdravljeni, Marta! Dodatne brisače so v zgornjem predalu omare v spalnici. Če jih potrebujete več, jih čistilka prinese jutri do 10.00.","Yesterday 18:20"]] }
+    ],
+    jobs: [
+      { id: "hw", t: "Hot water", apt: "Apartment 3", who: "Marko, plumber", when: "by 9:00", tag: ["red","Urgent"],
+        st: [["02:14","Guest reported the problem","The AI host helped and created the job"],["02:15","Marko notified","Plumber on call"],["07:52","Marko accepted","Coming at 9:00"],["","Repair","Waiting"]] },
+      { id: "cl1", t: "Clean after check-out", apt: "Apartment 1", who: "Mojca, cleaner", when: "11:00", tag: ["slate","Today"],
+        st: [["10:00","Guest checks out",""],["11:00","Mojca starts cleaning","Next guest at 15:00"],["","Ready for check-in","Waiting"]] },
+      { id: "tw", t: "Extra towels", apt: "Apartment 2", who: "Mojca, cleaner", when: "by 12:00", tag: ["apricot","Guest request"],
+        st: [["08:03","Guest asked through the tag","Apartment page → Report a problem"],["08:04","Mojca notified",""],["","Delivery","Waiting"]] }
+    ],
+    apts: [["Apartment 1","free",38],["Apartment 2","occ",21],["Apartment 3","occ",17]]
+  }
+};
+const L = T[LANG];
+const I = {
+  home: '<path d="M4 11l8-7 8 7v9H4z"/><path d="M10 20v-5h4v5"/>',
+  chat: '<path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/>',
+  list: '<path d="M9 6h11M9 12h11M9 18h11"/><path d="M4 6h.01M4 12h.01M4 18h.01"/>',
+  bed: '<path d="M3 19V7M3 15h18v4M21 15v-3a3 3 0 0 0-3-3h-7v6"/><circle cx="7" cy="11.5" r="1.8"/>',
+  spark: '<circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3M11 8v6M8 11h6"/>',
+  chev: '<path d="M9 6l6 6-6 6"/>', left: '<path d="M15 6l-6 6 6 6"/>',
+  wrench: '<path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.5 2.5-2.4-.6-.6-2.4z"/>',
+  broom: '<path d="M14 4l6 6M4 20l6-6M9 15l-3-3 6-6 6 6-6 6z"/>',
+  door: '<path d="M6 21V4h10l2 2v15M6 21h14M13 12h.01"/>',
+  key: '<circle cx="8" cy="15" r="4"/><path d="M10.8 12.2 20 3M17 6l3 3M15 8l2 2"/>',
+  wifi: '<path d="M5 12.5a10 10 0 0 1 14 0M8.5 16a5 5 0 0 1 7 0M12 19.5h.01"/>',
+  nfc: '<path d="M6 8.3a7 7 0 0 1 0 7.4"/><path d="M9.5 6a11 11 0 0 1 0 12"/><path d="M13 4a15 15 0 0 1 0 16"/>',
+  phone: '<path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"/>',
+  pin: '<path d="M12 21s7-6.2 7-12a7 7 0 0 0-14 0c0 5.8 7 12 7 12z"/><circle cx="12" cy="9" r="2.5"/>'
+};
+const svg = (n, s = 22) => `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${I[n]}</svg>`;
+const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const $ = (id) => document.getElementById(id);
+const state = { tab: "today", view: null, late: null, done: {}, offer: false, joined: false };
+
+function toast(t) { const h = $("toastHost"); h.innerHTML = `<div class="toast" role="status">${esc(t)}</div>`; clearTimeout(toast.t); toast.t = setTimeout(() => (h.innerHTML = ""), 3600); }
+function topBar(title) {
+  $("topbar").innerHTML = title
+    ? `<button class="back" data-back>${svg("left", 20)}${esc(L.back)}</button><div class="title">${esc(title)}</div><div style="width:44px"></div>`
+    : `<div class="hello"><small>${esc(L.hi)}</small><strong>${esc(L.host)}</strong></div><div class="avatar">AN</div>`;
+}
+function tabs() {
+  const open = L.jobs.filter((j) => !state.done[j.id]).length;
+  const need = state.late ? 0 : 1;
+  const tb = [["today","home",L.tToday,0],["inbox","chat",L.tInbox,need],["jobs","list",L.tJobs,open],["apts","bed",L.tApts,0],["direct","spark",L.tDirect,0]];
+  $("tabs").setAttribute("aria-label", L.menu);
+  $("tabs").innerHTML = tb.map(([k, ic, lab, n]) => `<button class="tab${state.tab === k ? " on" : ""}" data-tab="${k}" ${state.tab === k ? 'aria-current="page"' : ""}>${svg(ic)}${esc(lab)}${n ? `<span class="badge">${n}</span>` : ""}</button>`).join("");
+}
+const item = (ic, color, title, sub, right, attrs = "") => `<button class="item" ${attrs}><span class="ic ${color}">${svg(ic)}</span><span class="main"><strong>${esc(title)}</strong><span>${esc(sub)}</span></span>${right}</button>`;
+
+function vToday() {
+  topBar(); let h = `<div class="night"><small>${esc(L.nightS)}</small><h2>${esc(L.nightH)}</h2><p>${esc(L.nightP)}</p>
+    <div class="stats"><div><b>9</b><span>${esc(L.stA)}</span></div><div><b>2</b><span>${esc(L.stB)}</span></div><div><b>0</b><span>${esc(L.stC)}</span></div></div></div>`;
+  h += `<div class="eyebrow">${esc(L.needs)}</div>`;
+  if (!state.late) h += `<div class="card"><div class="row"><span class="ic apricot">${svg("door")}</span><div class="main"><strong>${esc(L.lateQ)}</strong><span>${esc(L.lateD)}</span></div></div>
+    <div class="btns"><button class="btn primary" data-late="yes">${esc(L.approve)}</button><button class="btn line" data-late="no">${esc(L.decline)}</button></div></div>`;
+  else h += `<div class="card"><div class="row"><span class="ic green">${svg("door")}</span><div class="main"><strong>${esc(L.lateQ)}</strong><span>${esc(state.late === "yes" ? L.approved : L.declined)}</span></div></div></div>`;
+  h += `<div class="eyebrow">${esc(L.today)}</div><div class="list">
+    ${item("door","slate",L.co+" · "+L.a1,"10:00 · Emma",'<span class="time">10:00</span>')}
+    ${item("broom","green",L.cl+" · "+L.a1,"Mojca",'<span class="time">11:00</span>','data-job="cl1"')}
+    ${item("wrench","red",L.jobs[0].t+" · "+L.a3,L.jobs[0].who,'<span class="time">09:00</span>','data-job="hw"')}
+    ${item("key","apricot",L.ci+" · "+L.a1,"Lukas & Jana (AT)",'<span class="time">15:00</span>')}</div>`;
+  h += `<div class="eyebrow">${esc(L.direct)}</div><button class="card" data-tab="direct" style="text-align:left;width:100%"><div class="row"><span class="ic green">${svg("spark")}</span><div class="main"><strong>${esc(L.dirS)}</strong><span>${esc(L.dirP)}</span></div><span class="chev">${svg("chev",20)}</span></div></button>`;
+  return h;
+}
+function vInbox() {
+  topBar(); const lab = { done: ["green", L.aiDone], you: ["red", L.needYou] };
+  return `<div class="eyebrow">${esc(L.inboxH)}</div><div class="list">${L.convs.map((c, i) => {
+    const s = c.s === "you" && state.late ? ["ok", L.resolved] : lab[c.s];
+    return item("chat", c.s === "you" && !state.late ? "apricot" : "green", `${c.n} · ${c.f}`, `${c.apt} · ${c.last}`, `<span class="tag ${s[0]}">${esc(s[1])}</span>`, `data-conv="${i}"`);
+  }).join("")}</div><p class="note">${esc(L.demoNote)}</p>`;
+}
+function vConv(i) {
+  const c = L.convs[i]; topBar(`${c.n} · ${c.apt}`);
+  let h = `<div class="chat">${c.m.map(([w, t, tm]) => w === "sys" ? `<div class="sys">${esc(t)}</div>` : `<div class="msg ${w}">${esc(t)}${tm ? `<small>${esc(tm)}${w === "ai" ? " · AI" : ""}</small>` : ""}</div>`).join("")}`;
+  if (c.s === "you" && state.late) h += `<div class="msg ai">${esc(state.late === "yes" ? "Certo! Potete restare fino alle 13. Buon viaggio!" : "Mi dispiace, il check-out resta alle 11 perché arrivano nuovi ospiti.")}<small>${LANG === "sl" ? "zdaj" : "now"} · AI</small></div>`;
+  h += `</div>`;
+  if (c.s === "you" && !state.late) h += `<div class="card" style="margin-top:12px"><strong>${esc(L.lateQ)}</strong><div class="btns"><button class="btn primary" data-late="yes">${esc(L.approve)}</button><button class="btn line" data-late="no">${esc(L.decline)}</button></div></div>`;
+  return h;
+}
+function vJobs() {
+  topBar(); const open = L.jobs.filter((j) => !state.done[j.id]), done = L.jobs.filter((j) => state.done[j.id]);
+  const ic = { hw: ["wrench","red"], cl1: ["broom","green"], tw: ["bed","apricot"] };
+  const li = (j) => item(ic[j.id][0], state.done[j.id] ? "green" : ic[j.id][1], `${j.t} · ${j.apt}`, `${j.who} · ${j.when}`, state.done[j.id] ? `<span class="tag ok">${esc(L.done)}</span>` : `<span class="tag ${j.tag[0]}">${esc(j.tag[1])}</span>`, `data-job="${j.id}"`);
+  return `<div class="eyebrow">${esc(L.open)} · ${open.length}</div><div class="list">${open.map(li).join("") || `<p class="note">—</p>`}</div>${done.length ? `<div class="eyebrow">${esc(L.done)}</div><div class="list">${done.map(li).join("")}</div>` : ""}`;
+}
+function vJob(id) {
+  const j = L.jobs.find((x) => x.id === id); topBar(j.apt);
+  const st = j.st.map((s, i) => (state.done[id] && i === j.st.length - 1 ? [LANG === "sl" ? "zdaj" : "now", s[1], L.done] : s));
+  return `<div class="card"><div class="row"><div class="main"><strong style="font-size:21px">${esc(j.t)}</strong><span>${esc(j.who)} · ${esc(j.when)}</span></div><span class="tag ${state.done[id] ? "ok" : j.tag[0]}">${esc(state.done[id] ? L.done : j.tag[1])}</span></div>
+    <ol class="steps">${st.map(([t, b, s]) => `<li class="${t ? "" : "todo"}"><time>${esc(t)}</time><i></i><div><b>${esc(b)}</b><span>${esc(s)}</span></div></li>`).join("")}</ol>
+    ${state.done[id] ? "" : `<div class="btns"><button class="btn primary" data-finish="${id}">${esc(L.markDone)}</button><button class="btn soft" data-call>${svg("phone",20)}${esc(L.call)}</button></div>`}</div>`;
+}
+function vApts() {
+  topBar(); const st = { occ: ["slate", L.occ], free: ["ok", L.free] };
+  return `<div class="eyebrow">${esc(L.aptsH)}</div>${L.apts.map(([n, s, scans], i) => `<div class="card"><div class="row"><span class="ic ${i === 2 ? "apricot" : "green"}">${svg("key")}</span><div class="main"><strong>${esc(n)}</strong><span>${svg("nfc",14)} ${scans} ${esc(L.scans)}</span></div><span class="tag ${st[s][0]}">${esc(st[s][1])}</span></div>
+    ${i === 2 ? `<button class="btn apricot" data-guest>${svg("nfc",20)}${esc(L.guestView)}</button>` : ""}</div>`).join("")}<p class="note">${esc(L.demoNote)}</p>`;
+}
+function vDirect() {
+  topBar(); const ch = [["Airbnb", 52], ["Booking.com", 29], [L.direct, 19]];
+  return `<div class="card"><small style="font-weight:700;color:var(--muted)">${esc(L.saved)}</small><div class="big">${LANG === "sl" ? "1.240 €" : "€1,240"}</div><span style="color:var(--muted);font-size:14.5px">${esc(L.savedD)}</span></div>
+    <div class="card"><strong>${esc(L.channels)}</strong>${ch.map(([n, p]) => `<div><div class="row" style="justify-content:space-between;font-size:14.5px"><span>${esc(n)}</span><b>${p} %</b></div><div class="bar"><i style="width:${p}%;${n === L.direct ? "background:var(--apricot)" : ""}"></i></div></div>`).join("")}</div>
+    <div class="eyebrow">${esc(L.aiH)}</div><div class="card"><span style="font-size:14.5px;color:var(--muted)">${esc(L.aiD)}</span>
+      ${[[L.q1, 7], [L.q2, 4], [L.q3, 0]].map(([q, n]) => `<div class="q"><em>»${esc(q)}«</em><div class="res"><span>ChatGPT · Perplexity · Gemini</span><span class="tag ${n ? "ok" : "slate"}">${n ? `${n}/10 ${esc(L.rec)}` : esc(L.notYet)}</span></div></div>`).join("")}</div>
+    <div class="eyebrow">${esc(L.listH)}</div><div class="card"><span style="font-size:15px">${esc(L.listD)}</span>
+      ${state.offer ? `<span class="tag ok" style="align-self:flex-start">${esc(L.offerSent)}</span>` : `<button class="btn primary" data-offer>${esc(L.sendOffer)}</button>`}</div><p class="note">${esc(L.demoNote)}</p>`;
+}
+function guest() {
+  $("overlay").innerHTML = `<div class="guest" role="dialog" aria-modal="true" aria-label="${esc(L.guestView)}"><button class="gclose" data-gclose aria-label="${esc(L.close)}">×</button>
+    <div class="gh"><small>${esc(L.gS)}</small><h2>${esc(L.gH)}</h2></div>
+    <div class="gb"><div class="gtile">
+      <button>${svg("wifi")}<b>${esc(L.gWifi)}</b><span>${esc(L.gWifiD)}</span></button>
+      <button>${svg("door")}<b>${esc(L.gOut)}</b><span>${esc(L.gOutD)}</span></button>
+      <button>${svg("wrench")}<b>${esc(L.gHelp)}</b><span>${esc(L.gHelpD)}</span></button>
+      <button>${svg("pin")}<b>${esc(L.gTips)}</b><span>${esc(L.gTipsD)}</span></button></div>
+      <div class="card"><div class="row"><span class="ic green">${svg("chat")}</span><div class="main"><strong>${esc(L.gChat)}</strong><span>${esc(L.gChatD)}</span></div></div></div>
+      <div class="offer"><b>${esc(L.gOff)}</b><span style="font-size:14.5px">${esc(L.gOffD)}</span>${state.joined ? `<span class="tag ok" style="align-self:flex-start">✓</span>` : `<button class="btn apricot" data-join>${esc(L.gJoin)}</button>`}</div>
+    </div></div>`;
+  $("overlay").querySelector("[data-gclose]").focus();
+}
+function render() {
+  const v = state.view;
+  const html = v && v[0] === "conv" ? vConv(v[1]) : v && v[0] === "job" ? vJob(v[1]) : { today: vToday, inbox: vInbox, jobs: vJobs, apts: vApts, direct: vDirect }[state.tab]();
+  $("screen").innerHTML = html; $("screen").scrollTop = 0; tabs();
+}
+document.addEventListener("click", (e) => {
+  const b = e.target.closest("button"); if (!b) return;
+  const d = b.dataset;
+  if (d.tab) { state.tab = d.tab; state.view = null; return render(); }
+  if (b.hasAttribute("data-back")) { state.view = null; return render(); }
+  if (d.conv) { state.view = ["conv", +d.conv]; return render(); }
+  if (d.job) { state.tab = "jobs"; state.view = ["job", d.job]; return render(); }
+  if (d.late) { state.late = d.late; toast(d.late === "yes" ? L.approved : L.declined); return render(); }
+  if (d.finish) { state.done[d.finish] = true; toast(L.doneT); return render(); }
+  if (b.hasAttribute("data-call")) return toast(LANG === "sl" ? "Demo: klic se tukaj ne izvede." : "Demo: no call is made here.");
+  if (b.hasAttribute("data-offer")) { state.offer = true; toast(L.offerSent); return render(); }
+  if (b.hasAttribute("data-guest")) return guest();
+  if (b.hasAttribute("data-gclose")) { $("overlay").innerHTML = ""; return; }
+  if (b.hasAttribute("data-join")) { state.joined = true; toast(L.gJoined); return guest(); }
+});
+document.addEventListener("keydown", (e) => { if (e.key === "Escape" && $("overlay").innerHTML) $("overlay").innerHTML = ""; });
+$("side").innerHTML = `<div class="brandrow"><svg width="36" height="36" viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="24" fill="#1F4D45"/><path d="M14.5 19 V25.5 a9.5 9.5 0 0 0 19 0 V19" fill="none" stroke="#FBFAF7" stroke-width="4" stroke-linecap="round"/><circle cx="24" cy="15.5" r="3.4" fill="#F2A57A"/></svg>unbusyness</div>
+  <h1>${L.sideH}</h1><p>${esc(L.sideP)}</p><ul>${L.sideL.map((x) => `<li>${esc(x)}</li>`).join("")}</ul><p style="font-size:13px">${L.sideN}</p>`;
+render();
+</script>
+
+<!-- Link back to the waitlist page and SL/EN switch (added for the website) -->
+<style>
+.ub-demo-bar{position:fixed;left:16px;bottom:16px;z-index:35;display:flex;align-items:center;gap:2px;padding:3px;border-radius:999px;background:rgba(20,32,30,.9);box-shadow:0 6px 18px rgba(0,0,0,.18);font:700 13px "Plus Jakarta Sans",system-ui,sans-serif}
+.ub-demo-bar a{color:#FBFAF7;text-decoration:none;padding:7px 12px;border-radius:999px;white-space:nowrap}
+.ub-demo-bar a:hover{background:rgba(255,255,255,.12)}
+.ub-demo-bar .on{background:#FBFAF7;color:#14201E}
+.ub-demo-bar .sep{width:1px;height:18px;background:rgba(255,255,255,.25);margin:0 4px}
+.ub-demo-bar a:focus-visible{outline:2px solid #E8915F;outline-offset:2px}
+@media (max-width:820px){.ub-demo-bar{bottom:calc(92px + env(safe-area-inset-bottom));left:12px}.ub-demo-bar a{padding:7px 10px;font-size:12px}}
+</style>
+<nav class="ub-demo-bar" aria-label="Demo">
+<a href="/en/hosts/#join" aria-label="Back to the page and join the waitlist">← Join the waitlist</a><span class="sep" aria-hidden="true"></span>
+<a href="hosts-phone.html" lang="sl" hreflang="sl" class="" aria-current="false" onclick="try{localStorage.setItem('ub-lang','sl')}catch(e){}">SL</a><a href="hosts-phone-en.html" lang="en" hreflang="en" class="on" aria-current="true" onclick="try{localStorage.setItem('ub-lang','en')}catch(e){}">EN</a>
+</nav>
+</body>
+</html>

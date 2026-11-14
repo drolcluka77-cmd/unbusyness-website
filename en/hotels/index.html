@@ -146,6 +146,14 @@
       "@type": "Answer",
       "text": "Yes. Each hotel has its own setup, and the owner sees one overview across all properties."
      }
+    },
+    {
+     "@type": "Question",
+     "name": "What does the GEO package cost?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "From €399 a month, with 20 rooms included and €12 for each additional room. A new hotel website starts at €1,499 one-off, with the design refreshed once a year while GEO is active."
+     }
     }
    ]
   }
@@ -381,6 +389,45 @@ footer{padding-block:36px;color:var(--muted);font-size:14px;display:flex;flex-wr
 .late em{font-style:normal;color:var(--red);font-weight:700;font-family:var(--mono);font-size:13px}
 @media (max-width:900px){.split2{grid-template-columns:minmax(0,1fr)}.tiles{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media (max-width:520px){.ladder li{grid-template-columns:minmax(0,1fr);gap:4px}.bar2{grid-template-columns:96px minmax(0,1fr) 48px}}
+/* GEO for hotels */
+.geo{background:var(--sand)}
+.flow{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;position:relative}
+.flow li{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:22px;display:grid;gap:8px;align-content:start;position:relative}
+.flow li:not(:last-child)::after{content:"→";position:absolute;right:-14px;top:50%;transform:translateY(-50%);width:28px;height:28px;border-radius:50%;background:var(--green);color:var(--bg);display:grid;place-items:center;font-weight:800;z-index:1}
+.flow .fk{width:34px;height:34px;border-radius:50%;background:var(--green-soft,#E6EEEB);color:var(--green);display:grid;place-items:center;font-weight:800}
+.flow h3{font-size:18px;font-weight:800}
+.flow p{color:var(--muted);font-size:15.5px}
+.flow li.win{background:var(--green-deep);border-color:transparent;color:#F3F6F4}
+.flow li.win .fk{background:#F2A57A;color:#14201E}
+.flow li.win p{color:var(--on-green)}.flow li.win b{color:#fff}
+.geocall{margin-top:22px;border-left:0;background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:18px 20px;font-size:16.5px}
+.geocall b{color:var(--green)}
+@media (max-width:900px){.flow{grid-template-columns:minmax(0,1fr)}.flow li:not(:last-child)::after{content:"↓";right:auto;left:50%;top:auto;bottom:-14px;transform:translateX(-50%)}}
+.prices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;margin-top:28px}
+.plan{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:26px;display:grid;gap:12px;align-content:start}
+.plan.dark{background:var(--green-deep);color:#F3F6F4;border-color:transparent}
+.plan h3{font-size:20px;font-weight:800;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.plan .badge{font-size:12px;font-weight:800;background:#F2A57A;color:#14201E;padding:3px 9px;border-radius:999px}
+.plan .pr{font-family:var(--display);font-size:46px;font-weight:600;line-height:1;letter-spacing:-.02em}
+.plan .pr small{font-family:var(--body);font-size:15px;font-weight:500;color:var(--muted);letter-spacing:0}
+.plan.dark .pr small,.plan.dark .sub,.plan.dark li{color:var(--on-green)}
+.plan .sub{color:var(--muted);font-size:14px}
+.plan ul{margin:4px 0 0;padding-left:18px;line-height:1.85;color:var(--muted);font-size:15px}
+.geo{background:var(--sand)}
+.flow{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;position:relative}
+.flow li{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:22px;display:grid;gap:8px;align-content:start;position:relative}
+.flow li:not(:last-child)::after{content:"→";position:absolute;right:-14px;top:50%;transform:translateY(-50%);width:28px;height:28px;border-radius:50%;background:var(--green);color:var(--bg);display:grid;place-items:center;font-weight:800;z-index:1}
+.flow .fk{width:34px;height:34px;border-radius:50%;background:var(--green-soft,#E6EEEB);color:var(--green);display:grid;place-items:center;font-weight:800}
+.flow h3{font-size:18px;font-weight:800}
+.flow p{color:var(--muted);font-size:15.5px}
+.flow li.win{background:var(--green-deep);border-color:transparent;color:#F3F6F4}
+.flow li.win .fk{background:#F2A57A;color:#14201E}
+.flow li.win p{color:var(--on-green)}.flow li.win b{color:#fff}
+.geocall{margin-top:22px;border-left:0;background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:18px 20px;font-size:16.5px}
+.geocall b{color:var(--green)}
+@media (max-width:900px){.flow{grid-template-columns:minmax(0,1fr)}.flow li:not(:last-child)::after{content:"↓";right:auto;left:50%;top:auto;bottom:-14px;transform:translateX(-50%)}}
+.split2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:40px;align-items:start}
+@media (max-width:900px){.prices{grid-template-columns:minmax(0,1fr)}}
 </style>
 
 <div class="wrap">
@@ -521,6 +568,36 @@ footer{padding-block:36px;color:var(--muted);font-size:14px;display:flex;flex-wr
   </div>
 </section>
 
+<section id="geo" class="geo">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="eyebrow" data-t="g0">GEO for hotels</div>
+      <h2 data-t="g1">Your next guest will ask AI, not Booking.com.</h2>
+      <p data-t="g2">People already ask AI assistants about everything, and more and more often where to stay. AI doesn't show a list of a hundred hotels; it recommends a few by name. If yours is one of them, with a link to your own website, the guest books directly and you pay no commission to Booking.com or other platforms.</p>
+    </div>
+    <ol class="flow">
+      <li><span class="fk">1</span><h3 data-t="g3">The guest asks AI</h3><p data-t="g3d">"A boutique hotel in Ljubljana with breakfast and parking?" in ChatGPT, Gemini, Perplexity or Google's AI answers.</p></li>
+      <li><span class="fk">2</span><h3 data-t="g4">AI recommends your hotel by name</h3><p data-t="g4d">With what makes you a good fit and a link to your own website.</p></li>
+      <li class="win"><span class="fk">3</span><h3 data-t="g5">The guest books directly</h3><p data-t="g5d" data-html><b>No platform commission</b>, which is typically around 15% on Booking.com.</p></li>
+    </ol>
+    <div class="geocall"><p data-t="g6" data-html><b>GEO</b> (generative engine optimisation) makes sure AI assistants know your hotel, understand what it offers and can recommend it. AI learns from what is written about you on the web today, so the hotels that are visible first will get these bookings. GEO is a separate package and works with or without Unbusyness for your staff.</p></div>
+    <div class="prices">
+      <div class="plan dark">
+        <h3 data-t="gpa">GEO for hotels</h3>
+        <div class="pr"><span data-t="gpaP">from €399</span> <small data-t="gpa1">/ month</small></div>
+        <div class="sub" data-t="gpa2">Includes 20 rooms, then €12 per room</div>
+        <ul><li data-t="gpa3">SEO and GEO so Google and AI assistants recommend you by name</li><li data-t="gpa4">Content and structured data about your rooms, location and offers</li><li data-t="gpa5">Monthly report: where AI recommends you and how many direct bookings came in</li></ul>
+      </div>
+      <div class="plan">
+        <h3 data-t="gpb">Your hotel website</h3>
+        <div class="pr"><span data-t="gpbP">from €1,499</span> <small data-t="gpb1">one-off</small></div>
+        <div class="sub" data-t="gpb2">For the GEO package</div>
+        <ul><li data-t="gpb3">A modern, fast website in several languages, linked to your booking engine</li><li data-t="gpb4">Built for Google and AI search from day one</li><li data-t="gpb5">Design refreshed once a year while GEO is active</li></ul>
+      </div>
+    </div>
+  </div>
+</section>
+
 <section class="join" id="join">
   <div class="wrap joingrid">
     <div>
@@ -594,6 +671,7 @@ footer{padding-block:36px;color:var(--muted);font-size:14px;display:flex;flex-wr
       <details><summary data-t="qa">Do staff need a new app?</summary><p data-t="qad">No. They report on WhatsApp by text, voice note or photo. Managers also get a web overview.</p></details>
       <details><summary data-t="qb">Which languages does it understand?</summary><p data-t="qbd">Slovenian, English, German and Italian to start. Voice notes in many more languages are turned into clear written tasks.</p></details>
       <details><summary data-t="qc">Who decides the rules?</summary><p data-t="qcd">You do: departments, target times and who is alerted when. The same situation always gives the same result, and selected actions can wait for a manager's approval.</p></details>
+      <details><summary data-t="qg">What does the GEO package cost?</summary><p data-t="qgd">From €399 a month, with 20 rooms included and €12 for each additional room. A new hotel website starts at €1,499 one-off, with the design refreshed once a year while GEO is active.</p></details>
       <details><summary data-t="qd">What will it cost?</summary><p data-t="qdd">It is free during the pilot. After that you pay a monthly price per hotel that depends on the number of rooms, and pilot hotels keep founding terms.</p></details>
       <details><summary data-t="qe">What about guests' and staff data?</summary><p data-t="qed">It is stored in the EU, each hotel's data is kept separate, and we sign a GDPR data-processing agreement with you.</p></details>
       <details><summary data-t="qf">Does it work for hotel groups?</summary><p data-t="qfd">Yes. Each hotel has its own setup, and the owner sees one overview across all properties.</p></details>
@@ -646,6 +724,14 @@ const SL = {
   ha:"Nastavimo mi", had:"Oddelki, zaposleni, izmene, seznam sob in vaši ciljni časi. Pošljite, kar imate, v kateri koli obliki.",
   hb:"En oddelek začne", hbd:"Običajno gospodinjstvo ali vzdrževanje. Zaposleni številko Unbusyness samo dodajo v klepet, ki ga že uporabljajo.",
   hc:"Primerjajte in razširite", hcd:"Po nekaj tednih vidite odzivne čase v primerjavi z začetkom, nato dodate naslednje oddelke in hotele.",
+  g0:"GEO za hotele", g1:"Vaš naslednji gost bo vprašal AI, ne Booking.com.",
+  g2:"Ljudje že danes AI-asistente sprašujejo za vse in vse pogosteje tudi, kje prespati. AI ne pokaže seznama sto hotelov, ampak jih priporoči nekaj po imenu. Če je med njimi vaš in ima povezavo na vašo spletno stran, gost rezervira neposredno, vi pa ne plačate provizije Booking.com ali drugim platformam.",
+  g3:"Gost vpraša AI", g3d:"»Butični hotel v Ljubljani z zajtrkom in parkiriščem?« v ChatGPT, Gemini, Perplexity ali v Googlovih odgovorih AI.",
+  g4:"AI vaš hotel priporoči po imenu", g4d:"Z opisom, zakaj ustreza, in povezavo na vašo spletno stran.",
+  g5:"Gost rezervira neposredno", g5d:"<b>Brez provizije platformi</b>, ki na Booking.com običajno znaša okoli 15 %.",
+  g6:"<b>GEO</b> (optimizacija za generativno iskanje) poskrbi, da AI-asistenti vaš hotel poznajo, razumejo, kaj ponuja, in ga lahko priporočijo. AI se uči iz tega, kar je o vas na spletu zapisano danes, zato bodo te rezervacije dobivali hoteli, ki bodo vidni prvi. GEO je ločen paket in deluje z Unbusyness za osebje ali brez njega.",
+  gpa:"GEO za hotele", gpaP:"od 399 €", gpa1:"/ mesec", gpa2:"Vključenih 20 sob, vsaka naslednja 12 €", gpa3:"SEO in GEO, da vas Google in AI-asistenti priporočijo po imenu", gpa4:"Vsebina in strukturirani podatki o sobah, lokaciji in ponudbah", gpa5:"Mesečno poročilo: kje vas AI priporoča in koliko neposrednih rezervacij je prišlo",
+  gpb:"Spletna stran hotela", gpbP:"od 1.499 €", gpb1:"enkratno", gpb2:"Za paket GEO", gpb3:"Moderna, hitra stran v več jezikih, povezana z vašim rezervacijskim sistemom", gpb4:"Od prvega dne pripravljena za Google in iskanje z AI", gpb5:"Dizajn osvežimo enkrat na leto, dokler je GEO aktiven",
   j0:"Čakalni seznam", j1:"Bodite med prvimi hoteli na Unbusyness.", j2:"Začenjamo z majhno skupino hotelov v Sloveniji in regiji, pred naslednjo poletno sezono.",
   k1:"<b>Nastavimo namesto vas</b>: oddelke, zaposlene, sobe in ciljne čase.", k2:"<b>Brezplačno med pilotom</b>, po njem ustanovni pogoji.", k3:"<b>Prilagojeno vašemu hotelu</b>: vaše vrste prošenj, vaša pravila, vaša poročila.",
   lName:"Ime in priimek", lCompany:"Hotel ali skupina", lEmail:"E-pošta", lPhone:"Telefon", optional:"(neobvezno)", lRooms:"Število sob", choose:"Izberite …", group:"Več hotelov",
@@ -661,6 +747,7 @@ const SL = {
   qb:"Katere jezike razume?", qbd:"Za začetek slovensko, angleško, nemško in italijansko. Glasovna sporočila v mnogih drugih jezikih spremeni v jasne pisne naloge.",
   qc:"Kdo določi pravila?", qcd:"Vi: oddelke, ciljne čase in kdo je obveščen kdaj. Ista situacija vedno da isti rezultat, izbrana dejanja pa lahko počakajo na odobritev vodje.",
   qd:"Koliko bo stalo?", qdd:"Med pilotom je brezplačno. Po njem plačate mesečno ceno na hotel, ki je odvisna od števila sob. Hoteli iz pilota obdržijo ustanovne pogoje.",
+  qg:"Koliko stane paket GEO?", qgd:"Od 399 € na mesec, vključenih je 20 sob, vsaka naslednja stane 12 €. Nova spletna stran hotela od 1.499 € enkratno, z letno osvežitvijo dizajna, dokler je GEO aktiven.",
   qe:"Kaj pa podatki gostov in zaposlenih?", qed:"Shranjeni so v EU, podatki vsakega hotela so ločeni, z vami pa podpišemo pogodbo o obdelavi osebnih podatkov (GDPR).",
   qf:"Ali deluje za hotelske skupine?", qfd:"Da. Vsak hotel ima svojo nastavitev, lastnik pa vidi en pregled čez vse hotele.",
   foot:"Vprašanja? Pišite na info@unbusyness.com ali pokličite +386 40 290 963",

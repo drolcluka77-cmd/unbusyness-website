@@ -136,7 +136,7 @@
      "name": "Koliko stane?",
      "acceptedAnswer": {
       "@type": "Answer",
-      "text": "Med pilotom 12 € na apartma na mesec, najmanj 49 € na mesec. Lastna rezervacijska stran s SEO in GEO je dodatnih 99 € na mesec."
+      "text": "Med pilotom: AI-gostitelj 12 € na apartma na mesec, najmanj 49 €. Paket GEO in neposredne rezervacije od 149 € na mesec (vključeni 3 apartmaji, vsak naslednji 35 €). Spletna stran od 999 € enkratno, z letno osvežitvijo dizajna."
      }
     },
     {
@@ -144,7 +144,7 @@
      "name": "Imam en apartma. Se splača?",
      "acceptedAnswer": {
       "@type": "Answer",
-      "text": "Da, če vam sporočila gostov vzamejo večere ali si želite več neposrednih rezervacij. Najnižji znesek je 49 € na mesec."
+      "text": "Da. Za en apartma je AI-gostitelj 49 € na mesec. Paket GEO se začne splačati, ko neposredne rezervacije prinesejo več, kot stane: izračunajte v kalkulatorju zgoraj."
      }
     },
     {
@@ -398,7 +398,7 @@ footer{padding-block:36px;color:var(--muted);font-size:14px;display:flex;flex-wr
 .ai .ans{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:16px;display:grid;gap:8px;font-size:15px}
 .ai .ans ul{margin:0;padding-left:18px;color:var(--muted);font-size:14.5px}
 .ai .book{justify-self:start;background:var(--green);color:var(--bg);border-radius:10px;padding:9px 14px;font-weight:700;font-size:14px;text-decoration:none}
-.prices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+.prices{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
 .plan{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:26px;display:grid;gap:12px;align-content:start}
 .plan.dark{background:var(--green-deep);color:#F3F6F4;border-color:transparent}
 .plan h3{font-size:20px;font-weight:800;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
@@ -578,7 +578,7 @@ footer{padding-block:36px;color:var(--muted);font-size:14px;display:flex;flex-wr
       <div class="msg me" style="max-width:92%"><span data-t="a1">Miren apartma blizu ljubljanskega starega mestnega jedra za dva, s parkiriščem in samostojnim prihodom?</span></div>
       <div class="ans">
         <span data-t="a2" data-html>Dobra izbira je <b>[vaš apartma]</b>:</span>
-        <ul><li data-t="a3">[X] minut hoje do starega mestnega jedra</li><li data-t="a4">Zasebno parkirišče in samostojni prihod 24/7</li><li data-t="a5">Gostje pravijo, da je miren in brezhibno čist</li></ul>
+        <ul><li data-t="a3">[X] minut hoje do starega mestnega jedra</li><li data-t="a4">Zasebno parkirišče in samostojni prihod 24/7</li><li data-t="a5">Gostje pravijo, da je miren in brezhibno čist</li></ul>
         <a class="book" href="#join" data-t="a6">Rezervirajte neposredno na [vasapartma].si</a>
       </div>
       <p class="cap" style="margin:0" data-t="a7">Ponazoritev cilja. V oglatih oklepajih so mesta za podatke o vašem apartmaju.</p>
@@ -590,20 +590,26 @@ footer{padding-block:36px;color:var(--muted);font-size:14px;display:flex;flex-wr
   <div class="wrap">
     <div class="sec-head">
       <div class="eyebrow" data-t="pr0">Pilotne cene</div>
-      <h2 data-t="pr1">Preprosto, na apartma</h2>
+      <h2 data-t="pr1">Začnite z AI-gostiteljem. GEO dodajte, ko želite neposredne rezervacije.</h2>
     </div>
     <div class="prices">
       <div class="plan">
         <h3 data-t="pa">Gostitelj</h3>
-        <div class="pr"><span data-t="paP">12 €</span> <small data-t="pa1">/ apartma / mesec</small></div>
-        <div class="sub" data-t="pa2">Najmanj 49 € na mesec</div>
+        <div class="pr"><span data-t="paP">12 €</span> <small data-t="pa1">/ apartma / mesec</small></div>
+        <div class="sub" data-t="pa2">Najmanj 49 € na mesec</div>
         <ul><li data-t="pa3">AI-gostitelj 24/7 v jeziku gosta</li><li data-t="pa4">Oznaka NFC/QR in digitalni vodič za vsak apartma</li><li data-t="pa5">Samodejne naloge za čiščenje in popravila</li><li data-t="pa6">Pregled za gostitelja</li></ul>
       </div>
       <div class="plan dark">
-        <h3><span data-t="pb">Gostitelj + neposredne rezervacije</span><span class="badge" data-t="pbB">Največ vrednosti</span></h3>
-        <div class="pr"><span data-t="pbP">+99 €</span> <small data-t="pb1">/ mesec</small></div>
-        <div class="sub" data-t="pb2">Poleg paketa Gostitelj</div>
-        <ul><li data-t="pb3">Lastna rezervacijska stran in sistem</li><li data-t="pb4">SEO in GEO za Google in iskanje z AI</li><li data-t="pb5">Seznam gostov in popusti za naslednje bivanje</li><li data-t="pb6">Mesečno poročilo o vidnosti</li></ul>
+        <h3><span data-t="pb">GEO in neposredne rezervacije</span><span class="badge" data-t="pbB">Največ vrednosti</span></h3>
+        <div class="pr"><span data-t="pbP">od 149 €</span> <small data-t="pb1">/ mesec</small></div>
+        <div class="sub" data-t="pb2">Vključeni 3 apartmaji, vsak naslednji 35 €</div>
+        <ul><li data-t="pb3">SEO in GEO, da vas Google in AI-asistenti priporočijo po imenu</li><li data-t="pb4">Rezervacijski sistem na vaši strani, s sprotnimi cenami</li><li data-t="pb5">Seznam gostov in ponudbe za naslednje bivanje</li><li data-t="pb6">Mesečno poročilo: kje vas AI priporoča in koliko neposrednih rezervacij je prišlo</li></ul>
+      </div>
+      <div class="plan">
+        <h3 data-t="pc">Vaša spletna stran</h3>
+        <div class="pr"><span data-t="pcP">od 999 €</span> <small data-t="pc1">enkratno</small></div>
+        <div class="sub" data-t="pc2">Za paket GEO</div>
+        <ul><li data-t="pc3">Moderna, hitra stran za vaše apartmaje, v več jezikih</li><li data-t="pc4">Od prvega dne pripravljena za Google in iskanje z AI</li><li data-t="pc5">Dizajn osvežimo enkrat na leto, dokler je GEO aktiven</li><li data-t="pc6">Vaša domena, vaši gostje, brez platforme vmes</li></ul>
       </div>
     </div>
   </div>
@@ -679,8 +685,8 @@ footer{padding-block:36px;color:var(--muted);font-size:14px;display:flex;flex-wr
       <details><summary data-t="qc">Ali gostje potrebujejo aplikacijo?</summary><p data-t="qcd">Ne. S telefonom se dotaknejo oznake NFC ali skenirajo kodo QR in stran apartmaja se odpre v brskalniku.</p></details>
       <details><summary data-t="qd">V katerih jezikih govori AI-gostitelj?</summary><p data-t="qdd">Odgovarja v jeziku gosta. Kar ne zna odgovoriti, posreduje vam.</p></details>
       <details><summary data-t="qg">Kaj je GEO in zakaj je pomemben?</summary><p data-t="qgd">GEO (optimizacija za generativno iskanje) je kot SEO za AI-asistente, kot so ChatGPT, Gemini in Perplexity. Vse več popotnikov jih vpraša, kje prespati. Ko AI vaš apartma priporoči po imenu in poveže na vašo stran, gost rezervira neposredno, vi pa ne plačate provizije platformi.</p></details>
-      <details><summary data-t="qe">Koliko stane?</summary><p data-t="qed">Med pilotom 12 € na apartma na mesec, najmanj 49 € na mesec. Lastna rezervacijska stran s SEO in GEO je dodatnih 99 € na mesec.</p></details>
-      <details><summary data-t="qf">Imam en apartma. Se splača?</summary><p data-t="qfd">Da, če vam sporočila gostov vzamejo večere ali si želite več neposrednih rezervacij. Najnižji znesek je 49 € na mesec.</p></details>
+      <details><summary data-t="qe">Koliko stane?</summary><p data-t="qed">Med pilotom: AI-gostitelj 12 € na apartma na mesec, najmanj 49 €. Paket GEO in neposredne rezervacije od 149 € na mesec (vključeni 3 apartmaji, vsak naslednji 35 €). Spletna stran od 999 € enkratno, z letno osvežitvijo dizajna.</p></details>
+      <details><summary data-t="qf">Imam en apartma. Se splača?</summary><p data-t="qfd">Da. Za en apartma je AI-gostitelj 49 € na mesec. Paket GEO se začne splačati, ko neposredne rezervacije prinesejo več, kot stane: izračunajte v kalkulatorju zgoraj.</p></details>
     </div>
   </div>
 </section>
@@ -720,9 +726,9 @@ const SL = {
   c0:"Koliko bi lahko obdržali?", c1:"Letni prihodek od rezervacij (vsi apartmaji)", c2:"Delež rezervacij, ki preidejo na neposredne", c3:"Prihranjena provizija na leto",
   c4:"Ocena: 15,5 % provizije platforme, zmanjšano za približno 3 % stroškov plačila pri neposrednih rezervacijah.",
   a0:"AI-asistent za potovanja", a1:"Miren apartma blizu ljubljanskega starega mestnega jedra za dva, s parkiriščem in samostojnim prihodom?",
-  a2:"Dobra izbira je <b>[vaš apartma]</b>:", a3:"[X] minut hoje do starega mestnega jedra", a4:"Zasebno parkirišče in samostojni prihod 24/7", a5:"Gostje pravijo, da je miren in brezhibno čist", a6:"Rezervirajte neposredno na [vasapartma].si",
+  a2:"Dobra izbira je <b>[vaš apartma]</b>:", a3:"[X] minut hoje do starega mestnega jedra", a4:"Zasebno parkirišče in samostojni prihod 24/7", a5:"Gostje pravijo, da je miren in brezhibno čist", a6:"Rezervirajte neposredno na [vasapartma].si",
   a7:"Ponazoritev cilja. V oglatih oklepajih so mesta za podatke o vašem apartmaju.",
-  pr0:"Pilotne cene", pr1:"Preprosto, na apartma",
+  pr0:"Pilotne cene", pr1:"Začnite z AI-gostiteljem. GEO dodajte, ko želite neposredne rezervacije.",
   demoLab:"Preizkusite aplikacijo za gostitelje: klikabilni demo na telefonu z izmišljenimi podatki.", demo0:"Odpri demo na telefonu",
   g0:"Zakaj je GEO tako pomemben", g1:"Vaš naslednji gost bo vprašal AI, ne rezervacijske platforme.",
   g2:"Ljudje že danes AI-asistente sprašujejo za vse: kje jesti, kaj obiskati in vse pogosteje tudi, kje prespati, v apartmaju ali hotelu. AI ne odgovori s seznamom sto oglasov, ampak priporoči nekaj namestitev po imenu. Če je med njimi vaša in ima povezavo na vašo stran, gost rezervira neposredno pri vas, vi pa ne plačate provizije platformi.",
@@ -731,9 +737,10 @@ const SL = {
   g5:"Gost rezervira neposredno", g5d:"<b>0 % provizije platformi.</b> Samo približno 3 % za plačilo s kartico namesto do 15,5 %.",
   g6:"<b>GEO</b> (optimizacija za generativno iskanje) poskrbi, da AI-asistenti vašo namestitev poznajo, razumejo, kaj ponuja, in jo lahko priporočijo. AI se uči iz tega, kar je o vas na spletu zapisano danes, zato bodo te rezervacije dobivali gostitelji in hoteli, ki bodo vidni prvi. Zato GEO začnemo že v pilotu.",
   qg:"Kaj je GEO in zakaj je pomemben?", qgd:"GEO (optimizacija za generativno iskanje) je kot SEO za AI-asistente, kot so ChatGPT, Gemini in Perplexity. Vse več popotnikov jih vpraša, kje prespati. Ko AI vaš apartma priporoči po imenu in poveže na vašo stran, gost rezervira neposredno, vi pa ne plačate provizije platformi.",
-  gst:"Gost", paP:"12 €", pbP:"+99 €", fp1:"15,5 %", fp2:"~15 %", fp3:"~3 %",
-  pa:"Gostitelj", pa1:"/ apartma / mesec", pa2:"Najmanj 49 € na mesec", pa3:"AI-gostitelj 24/7 v jeziku gosta", pa4:"Oznaka NFC/QR in digitalni vodič za vsak apartma", pa5:"Samodejne naloge za čiščenje in popravila", pa6:"Pregled za gostitelja",
-  pb:"Gostitelj + neposredne rezervacije", pbB:"Največ vrednosti", pb1:"/ mesec", pb2:"Poleg paketa Gostitelj", pb3:"Lastna rezervacijska stran in sistem", pb4:"SEO in GEO za Google in iskanje z AI", pb5:"Seznam gostov in popusti za naslednje bivanje", pb6:"Mesečno poročilo o vidnosti",
+  gst:"Gost", paP:"12 €", fp1:"15,5 %", fp2:"~15 %", fp3:"~3 %",
+  pa:"Gostitelj", pa1:"/ apartma / mesec", pa2:"Najmanj 49 € na mesec", pa3:"AI-gostitelj 24/7 v jeziku gosta", pa4:"Oznaka NFC/QR in digitalni vodič za vsak apartma", pa5:"Samodejne naloge za čiščenje in popravila", pa6:"Pregled za gostitelja",
+  pb:"GEO in neposredne rezervacije", pbB:"Največ vrednosti", pbP:"od 149 €", pb1:"/ mesec", pb2:"Vključeni 3 apartmaji, vsak naslednji 35 €", pb3:"SEO in GEO, da vas Google in AI-asistenti priporočijo po imenu", pb4:"Rezervacijski sistem na vaši strani, s sprotnimi cenami", pb5:"Seznam gostov in ponudbe za naslednje bivanje", pb6:"Mesečno poročilo: kje vas AI priporoča in koliko neposrednih rezervacij je prišlo",
+  pc:"Vaša spletna stran", pcP:"od 999 €", pc1:"enkratno", pc2:"Za paket GEO", pc3:"Moderna, hitra stran za vaše apartmaje, v več jezikih", pc4:"Od prvega dne pripravljena za Google in iskanje z AI", pc5:"Dizajn osvežimo enkrat na leto, dokler je GEO aktiven", pc6:"Vaša domena, vaši gostje, brez platforme vmes",
   j0:"Čakalni seznam", j1:"Vrnite si noči.", j2:"Začenjamo pilot z gostitelji v Sloveniji. Vse nastavimo namesto vas.",
   k1:"<b>Nastavimo namesto vas</b>: vodiče, oznake in odgovore za vsak apartma.", k2:"<b>Pilotne cene</b> za prve gostitelje.", k3:"<b>Deluje z Airbnbjem in Booking.com</b>: ničesar vam ni treba opustiti.",
   lName:"Ime in priimek", lEmail:"E-pošta", lPhone:"Telefon", optional:"(neobvezno)", lCity:"Kraj ali območje", lUnits:"Število apartmajev", choose:"Izberite …",
@@ -746,8 +753,8 @@ const SL = {
   qb:"Kaj se zgodi, ko se ponoči kaj pokvari?", qbd:"AI-gostitelj najprej pomaga gostu. Če težave ni mogoče rešiti, ustvari nalogo za vašo čistilko ali vzdrževanje z apartmajem, opisom težave in nujnostjo, vas pa obvesti samo, ko ste potrebni.",
   qc:"Ali gostje potrebujejo aplikacijo?", qcd:"Ne. S telefonom se dotaknejo oznake NFC ali skenirajo kodo QR in stran apartmaja se odpre v brskalniku.",
   qd:"V katerih jezikih govori AI-gostitelj?", qdd:"Odgovarja v jeziku gosta. Kar ne zna odgovoriti, posreduje vam.",
-  qe:"Koliko stane?", qed:"Med pilotom 12 € na apartma na mesec, najmanj 49 € na mesec. Lastna rezervacijska stran s SEO in GEO je dodatnih 99 € na mesec.",
-  qf:"Imam en apartma. Se splača?", qfd:"Da, če vam sporočila gostov vzamejo večere ali si želite več neposrednih rezervacij. Najnižji znesek je 49 € na mesec.",
+  qe:"Koliko stane?", qed:"Med pilotom: AI-gostitelj 12 € na apartma na mesec, najmanj 49 €. Paket GEO in neposredne rezervacije od 149 € na mesec (vključeni 3 apartmaji, vsak naslednji 35 €). Spletna stran od 999 € enkratno, z letno osvežitvijo dizajna.",
+  qf:"Imam en apartma. Se splača?", qfd:"Da. Za en apartma je AI-gostitelj 49 € na mesec. Paket GEO se začne splačati, ko neposredne rezervacije prinesejo več, kot stane: izračunajte v kalkulatorju zgoraj.",
   foot:"Vprašanja? Pišite na info@unbusyness.com ali pokličite +386 40 290 963",
   errReq:"Izpolnite ime, e-pošto in število apartmajev.", errEmail:"Vpišite veljaven e-poštni naslov.", errConsent:"Za prijavo potrdite soglasje.", errSend:"Prijave ni bilo mogoče poslati. Poskusite znova ali pišite na info@unbusyness.com.", sending:"Pošiljam …"
 };

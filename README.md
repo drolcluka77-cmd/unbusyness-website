@@ -10,11 +10,11 @@ Tests: `python -m unittest tests.test_waitlist_api`.
 |---|---|
 | `/` | Welcome page: greeting with the cortisol meter and an SL/EN switch in the header, then "who are you". Each choice opens its own page (resident → `/home/`, building manager → `/building-managers/`, tradesperson → `/contractor/`, hotel → `/hotels/`). |
 | `/building-managers/` | Waitlist for building managers (upravniki), SL/EN |
-| `/hotels/` | Waitlist for "Unbusyness for Hotels", SL/EN |
+| `/hotels/` | Waitlist for "Unbusyness for Hotels", plus a GEO for hotels section with prices (from €399 a month with 20 rooms, then €12 per room; website from €1,499 one-off), SL/EN |
 | `/manager` | Redirects to `/building-managers/` (the address used on the old unbusyness.com). |
 | `/contractor/` | Waitlist for tradespeople (plumbers, HVAC, electricians, other trades): hero sign-up, why + 30-second film, how it works, six features (three with short films), final sign-up. SL/EN. `/contractor/sl/` redirects to the Slovenian version. |
 | `/investors/` | Request for the investor presentation (email, phone). Linked from the footer of the waitlist pages. |
-| `/hosts/` | Waitlist for "Unbusyness for Hosts" (Airbnb and short-term rental hosts): AI host chat, platform fees, three pillars (AI host, NFC/QR tag per apartment, direct bookings + AI search), how the tag works, savings estimate, pilot prices (€12 per apartment per month, minimum €49; +€99 for the booking site), form (segment `hosts`), FAQ, and a "Why GEO matters" section (guests ask AI where to stay → AI recommends you by name → direct booking without platform commission). SL/EN |
+| `/hosts/` | Waitlist for "Unbusyness for Hosts" (Airbnb and short-term rental hosts): AI host chat, platform fees, three pillars (AI host, NFC/QR tag per apartment, direct bookings + AI search), how the tag works, savings estimate, pilot prices (AI host €12 per apartment per month, minimum €49; GEO and direct bookings from €149 a month with 3 apartments, then €35 each; website from €999 one-off), form (segment `hosts`), FAQ, and a "Why GEO matters" section (guests ask AI where to stay → AI recommends you by name → direct booking without platform commission). SL/EN |
 | `/home/` | Waitlist for Unbusyness Home (residents and homeowners): digital passport, reminders, reliable tradespeople, property passport, recommend-to-your-manager, SL/EN |
 | `/demo/building-managers-desktop.html`, `-phone.html` | Interactive demo for building managers (made-up data) |
 | `/demo/hotels-desktop.html`, `-phone.html` | Interactive hotel demo (made-up data) |

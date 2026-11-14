@@ -198,7 +198,7 @@
 
 *{box-sizing:border-box}
 [hidden]{display:none!important}
-body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased}
 .wrap{max-width:1120px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
 a{color:inherit}
 :focus-visible{outline:3px solid var(--apricot);outline-offset:3px;border-radius:6px}
@@ -336,7 +336,7 @@ details p{color:var(--muted);margin-top:8px}
 .aud a:hover{border-color:var(--green)}
 .aud a[aria-current="page"]{border:2px solid var(--green);color:var(--green);font-weight:800}
 .aud svg{flex-shrink:0}
-@media (max-width:620px){.aud{display:grid;grid-template-columns:1fr 1fr;overflow:visible}.aud a{white-space:normal;line-height:1.2;padding:8px 12px;font-size:14px;justify-content:flex-start}}
+@media (max-width:620px){.aud{display:grid;grid-template-columns:1fr 1fr;overflow:visible}.aud a:last-child:nth-child(odd){grid-column:1/-1}.aud a{white-space:normal;line-height:1.2;padding:8px 12px;font-size:14px;justify-content:flex-start}}
 footer a{color:inherit;font-weight:700}
 footer{padding-block:36px;color:var(--muted);font-size:14px;display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;border-top:1px solid var(--line)}
 
@@ -369,6 +369,7 @@ footer{padding-block:36px;color:var(--muted);font-size:14px;display:flex;flex-wr
   <a href="/sl/contractor/"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.5 2.5-2.4-.6-.6-2.4z"/></svg><span data-t="audT">Za obrtnike</span></a>
   <a href="/sl/building-managers/" aria-current="page"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="1.5"/><path d="M9 7h1M14 7h1M9 11h1M14 11h1M9 15h1M14 15h1M11 21v-3h2v3"/></svg><span data-t="audM">Za upravnike stavb</span></a>
   <a href="/sl/hotels/"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 19V7M3 15h18v4M21 15v-3a3 3 0 0 0-3-3h-7v6"/><circle cx="7" cy="11.5" r="1.8"/></svg><span data-t="audH">Za hotele</span></a>
+  <a href="/sl/hosts/"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="8" cy="15" r="4"/><path d="M10.8 12.2 20 3M17 6l3 3M15 8l2 2"/></svg><span data-t="audA">Za gostitelje Airbnb</span></a>
   <a href="/sl/home/"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/></svg><span data-t="audD">Za dom</span></a>
 </nav>
 
@@ -549,7 +550,7 @@ footer{padding-block:36px;color:var(--muted);font-size:14px;display:flex;flex-wr
 const WAITLIST_ENDPOINT = "/api/waitlist";
 
 const SL = {
-  audT:"Za obrtnike", audM:"Za upravnike stavb", audH:"Za hotele", audD:"Za dom", footInv:"Za vlagatelje",
+  audT:"Za obrtnike", audM:"Za upravnike stavb", audH:"Za hotele", audA:"Za gostitelje Airbnb", audD:"Za dom", footInv:"Za vlagatelje",
   eyebrow:"Za upravnike stavb", h1:"Puščanje ob 23:40 je <em>že urejeno</em>, ko se zjutraj zbudite.",
   lede:"Unbusyness noč in dan odgovarja stanovalcem, vsak klic spremeni v prijavo okvare, pošlje pravega izvajalca ter skrbi za preglede in čiščenje vsake stavbe. Vse vidite na enem mestu.",
   demoLab:"Poglejte, kako deluje: klikabilni demo z izmišljenimi podatki.", demo0:"Na telefonu", demo1:"Na računalniku", 
@@ -687,8 +688,8 @@ form.addEventListener("submit", async (e) => {
 (() => {
   const C = {"segment": "building_managers", "demo": {"phone": "building-managers-phone", "desk": "building-managers-desktop"}, "sl": ["<b>Nastavimo namesto vas</b>: uvozimo stavbe, izvajalce in roke.", "<b>Brezplačno med pilotom</b>, po njem ustanovni pogoji.", "<b>Prilagojeno vašemu delu</b>: povejte, kaj spremeniti."], "en": ["<b>Set up for you</b>: we import your buildings, contractors and deadlines.", "<b>Free during the pilot</b>, founding terms after.", "<b>Shaped around your work</b>: tell us what to change."], "page": "building-managers"};
   const TX = {
-    sl: { h: "Bodite med prvimi.", sub: "Prijavite se na čakalni seznam in dobite:", cta: "Prijava na čakalni seznam", em: "Vaš e-poštni naslov", ph: "ime@primer.si", cons: "Unbusyness mi lahko piše glede zgodnjega dostopa. Izbris lahko zahtevam kadar koli.", eE: "Vpišite veljaven e-poštni naslov.", eC: "Za prijavo potrdite soglasje.", eS: "Prijave ni bilo mogoče shraniti. Poskusite znova ali pišite na info@unbusyness.com.", eR: "Preveč poskusov v kratkem času. Poskusite čez nekaj minut.", sending: "Shranjujem …", okH: "Ste na seznamu.", okP: "Hvala! Oglasili se vam bomo, ko boste lahko začeli.", more: "Povejte nam več o sebi", done: "Zapri", orB: "Še niste prepričani?", orS: "Preizkusite klikabilni demo aplikacije z izmišljenimi podatki. Prijava ni potrebna.", demoP: "Odpri demo na telefonu", demoD: "Odpri demo na računalniku", altP: "ali demo za telefon", altD: "ali demo za računalnik", later: "Ne zdaj", close: "Zapri", label: "Prijava na čakalni seznam" },
-    en: { h: "Be among the first.", sub: "Join the waitlist and get:", cta: "Join the waitlist", em: "Your email", ph: "name@example.com", cons: "Unbusyness may email me about early access. I can ask for deletion at any time.", eE: "Please enter a valid email address.", eC: "Please tick the consent box to join.", eS: "We couldn't save your sign-up. Try again or write to info@unbusyness.com.", eR: "Too many attempts in a short time. Try again in a few minutes.", sending: "Saving…", okH: "You're on the list.", okP: "Thanks! We'll be in touch when your spot opens.", more: "Tell us a bit more", done: "Close", orB: "Not sure yet?", orS: "Try the demo app: clickable, with made-up data, no sign-up.", demoP: "Open the phone demo", demoD: "Open the desktop demo", altP: "or the phone demo", altD: "or the desktop demo", later: "Not now", close: "Close", label: "Join the waitlist" },
+    sl: { h: "Bodite med prvimi.", sub: "Prijavite se na čakalni seznam in dobite:", cta: "Prijava na čakalni seznam", howS: "Poglejte, kako deluje: oznaka v apartmaju, AI-gostitelj in neposredne rezervacije.", howB: "Poglejte, kako deluje", em: "Vaš e-poštni naslov", ph: "ime@primer.si", cons: "Unbusyness mi lahko piše glede zgodnjega dostopa. Izbris lahko zahtevam kadar koli.", eE: "Vpišite veljaven e-poštni naslov.", eC: "Za prijavo potrdite soglasje.", eS: "Prijave ni bilo mogoče shraniti. Poskusite znova ali pišite na info@unbusyness.com.", eR: "Preveč poskusov v kratkem času. Poskusite čez nekaj minut.", sending: "Shranjujem …", okH: "Ste na seznamu.", okP: "Hvala! Oglasili se vam bomo, ko boste lahko začeli.", more: "Povejte nam več o sebi", done: "Zapri", orB: "Še niste prepričani?", orS: "Preizkusite klikabilni demo aplikacije z izmišljenimi podatki. Prijava ni potrebna.", demoP: "Odpri demo na telefonu", demoD: "Odpri demo na računalniku", altP: "ali demo za telefon", altD: "ali demo za računalnik", later: "Ne zdaj", close: "Zapri", label: "Prijava na čakalni seznam" },
+    en: { h: "Be among the first.", sub: "Join the waitlist and get:", cta: "Join the waitlist", howS: "See how it works: the tag in each apartment, the AI host and direct bookings.", howB: "See how it works", em: "Your email", ph: "name@example.com", cons: "Unbusyness may email me about early access. I can ask for deletion at any time.", eE: "Please enter a valid email address.", eC: "Please tick the consent box to join.", eS: "We couldn't save your sign-up. Try again or write to info@unbusyness.com.", eR: "Too many attempts in a short time. Try again in a few minutes.", sending: "Saving…", okH: "You're on the list.", okP: "Thanks! We'll be in touch when your spot opens.", more: "Tell us a bit more", done: "Close", orB: "Not sure yet?", orS: "Try the demo app: clickable, with made-up data, no sign-up.", demoP: "Open the phone demo", demoD: "Open the desktop demo", altP: "or the phone demo", altD: "or the desktop demo", later: "Not now", close: "Close", label: "Join the waitlist" },
   };
   const KEY = "ub-pop-" + C.page, DAYS = 1;
   const qs = new URLSearchParams(location.search), force = qs.get("popup") === "1";
@@ -727,8 +728,9 @@ form.addEventListener("submit", async (e) => {
         <p class="ubp-err" role="alert" hidden></p>
         <button class="ubp-btn ubp-main" type="submit">${t.cta}</button>
       </form>
-      <div class="ubp-or"><b>${t.orB}</b><span>${t.orS}</span></div>
-      <a class="ubp-btn ubp-demo" href="${demoHref(first)}">${first === "phone" ? t.demoP : t.demoD}</a>
+      ${first ? `<div class="ubp-or"><b>${t.orB}</b><span>${t.orS}</span></div>
+      <a class="ubp-btn ubp-demo" href="${demoHref(first)}">${first === "phone" ? t.demoP : t.demoD}</a>` : C.more ? `<div class="ubp-or"><b>${t.orB}</b><span>${t.howS}</span></div>
+      <a class="ubp-btn ubp-demo ubp-more" href="${C.more}">${t.howB}</a>` : ""}
       ${second ? `<a class="ubp-alt" href="${demoHref(second)}">${second === "phone" ? t.altP : t.altD}</a>` : ""}
       <button type="button" class="ubp-later">${t.later}</button>`;
     const box = back.querySelector(".ubp");
@@ -754,6 +756,7 @@ form.addEventListener("submit", async (e) => {
       } catch (s) { btn.disabled = false; btn.textContent = t.cta; fail(s === 429 ? t.eR : t.eS); }
     });
     box.querySelectorAll('a[href*="/demo/"]').forEach((a) => a.addEventListener("click", () => set(KEY, Date.now())));
+    const more = box.querySelector(".ubp-more"); if (more) more.onclick = (e) => { e.preventDefault(); close(true); const m = document.querySelector(C.more); if (m) m.scrollIntoView({ behavior: "smooth", block: "start" }); };
   }
   function open() {
     if (blocked()) return;

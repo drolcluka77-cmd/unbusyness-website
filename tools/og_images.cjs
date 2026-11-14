@@ -12,6 +12,8 @@ const CARDS = {
                 en: ['For trades', 'The AI office manager for trades', 'Calls, quotes and invoices handled while you work.'] },
   hotels: { sl: ['Za hotele', 'Naloge za hotelsko osebje prek WhatsAppa', 'Vsaka prošnja z odgovorno osebo, ciljnim časom in stopnjevanjem.'],
             en: ['For hotels', 'Hotel tasks on WhatsApp', 'Every request with one owner, a target time and escalation.'] },
+  hosts: { sl: ['Za gostitelje Airbnb', 'AI-gostitelj 24/7 in lastne neposredne rezervacije', 'Odgovori gostom, čiščenje in popravila ter manj provizij platform.'],
+           en: ['For Airbnb hosts', 'A 24/7 AI host and your own direct bookings', 'Guests answered, cleaning and repairs organised, fewer platform fees.'] },
   home: { sl: ['Unbusyness Home', 'Digitalni potni list vašega doma', 'Opomniki pred roki in zanesljiv mojster, ko se kaj pokvari.'],
           en: ['Unbusyness Home', "Your home's digital passport", 'Reminders before things are due, and a reliable tradesperson when something breaks.'] },
   investors: { sl: ['Za vlagatelje', 'Unbusyness za vlagatelje', 'AI pisarniški pomočnik za storitvena podjetja.'],

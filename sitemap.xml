@@ -49,6 +49,18 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://unbusyness.com/hotels/"/>
   </url>
   <url>
+    <loc>https://unbusyness.com/sl/hosts/</loc>
+    <xhtml:link rel="alternate" hreflang="sl" href="https://unbusyness.com/sl/hosts/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://unbusyness.com/en/hosts/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://unbusyness.com/hosts/"/>
+  </url>
+  <url>
+    <loc>https://unbusyness.com/en/hosts/</loc>
+    <xhtml:link rel="alternate" hreflang="sl" href="https://unbusyness.com/sl/hosts/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://unbusyness.com/en/hosts/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://unbusyness.com/hosts/"/>
+  </url>
+  <url>
     <loc>https://unbusyness.com/sl/home/</loc>
     <xhtml:link rel="alternate" hreflang="sl" href="https://unbusyness.com/sl/home/"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://unbusyness.com/en/home/"/>

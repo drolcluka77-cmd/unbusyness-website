@@ -218,7 +218,7 @@ class StaticFileTests(unittest.TestCase):
             self.assertEqual(self.get(path)["status"], "404 Not Found", path)
 
     def test_new_pages_are_served(self):
-        for path in ("/manager/", "/contractor/sl/", "/sl/", "/en/", "/sl/investors/", "/en/home/", "/en/hotels/index.html"):
+        for path in ("/manager/", "/contractor/sl/", "/sl/", "/en/", "/sl/investors/", "/en/home/", "/en/hotels/index.html", "/sl/hosts/", "/en/hosts/"):
             self.assertEqual(self.get(path)["status"], "200 OK", path)
 
     def test_build_tools_are_not_served(self):
@@ -238,6 +238,7 @@ class StaticFileTests(unittest.TestCase):
         self.assertEqual(where("/contractor/", QUERY_STRING="lang=sl&popup=1", HTTP_COOKIE="ub-lang=en"), "/sl/contractor/?popup=1")
         self.assertEqual(where("/building-managers/index.html", HTTP_ACCEPT_LANGUAGE="sl"), "/sl/building-managers/")
         self.assertEqual(where("/investors/"), "/en/investors/")
+        self.assertEqual(where("/hosts/", HTTP_ACCEPT_LANGUAGE="sl"), "/sl/hosts/")
 
     def test_crawler_files(self):
         robots = self.get("/robots.txt")

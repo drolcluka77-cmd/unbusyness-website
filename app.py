@@ -40,6 +40,7 @@ ALLOWED_SEGMENTS = {
     "building_managers",
     "tradespeople",
     "hotels",
+    "hosts",
     "investors",
 }
 SEGMENT_LABELS = {
@@ -51,6 +52,7 @@ SEGMENT_LABELS = {
     "building_managers": "Building managers",
     "tradespeople": "Tradespeople",
     "hotels": "Hotels",
+    "hosts": "Airbnb hosts",
     "investors": "Investor request",
 }
 FIELD_LABELS = {
@@ -65,6 +67,8 @@ FIELD_LABELS = {
     "rooms": "Rooms",
     "country": "Country",
     "city": "City",
+    "apartments": "Apartments",
+    "channels": "Booking channels",
     "home": "Home type",
     "manager": "Building manager",
     "managerUsesUnbusyness": "Manager uses Unbusyness",
@@ -317,7 +321,7 @@ def _cache_header(suffix: str) -> str:
 # Pages exist once per language (/sl/..., /en/..., built by tools/build_pages.py). The old addresses
 # below have no language; they redirect to /sl/ or /en/: ?lang=, then the visitor's earlier choice
 # (cookie set by the pages), then the browser's languages. English is the default.
-LANGUAGE_PAGES = {"", "contractor", "building-managers", "hotels", "home", "investors"}
+LANGUAGE_PAGES = {"", "contractor", "building-managers", "hotels", "hosts", "home", "investors"}
 SITE_LANGUAGES = ("sl", "en")
 
 

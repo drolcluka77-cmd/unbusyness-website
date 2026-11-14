@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Unbusyness – AI office assistant for building managers, trades and hotels</title>
-<meta name="description" content="Unbusyness answers calls and fault reports, prepares quotes and jobs, and connects you directly with contractors. For building managers, trades, hotels and residents.">
+<meta name="description" content="Unbusyness answers calls and fault reports, prepares quotes and jobs, and connects you directly with contractors. For building managers, trades, hotels, Airbnb hosts and residents.">
 <link rel="canonical" href="https://unbusyness.com/en/">
 <link rel="alternate" hreflang="sl" href="https://unbusyness.com/sl/">
 <link rel="alternate" hreflang="en" href="https://unbusyness.com/en/">
@@ -13,7 +13,7 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Unbusyness">
 <meta property="og:title" content="Unbusyness – AI office assistant for building managers, trades and hotels">
-<meta property="og:description" content="Unbusyness answers calls and fault reports, prepares quotes and jobs, and connects you directly with contractors. For building managers, trades, hotels and residents.">
+<meta property="og:description" content="Unbusyness answers calls and fault reports, prepares quotes and jobs, and connects you directly with contractors. For building managers, trades, hotels, Airbnb hosts and residents.">
 <meta property="og:url" content="https://unbusyness.com/en/">
 <meta property="og:image" content="https://unbusyness.com/media/og/welcome-en.png">
 <meta property="og:image:width" content="1200">
@@ -22,7 +22,7 @@
 <meta property="og:locale:alternate" content="sl_SI">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Unbusyness – AI office assistant for building managers, trades and hotels">
-<meta name="twitter:description" content="Unbusyness answers calls and fault reports, prepares quotes and jobs, and connects you directly with contractors. For building managers, trades, hotels and residents.">
+<meta name="twitter:description" content="Unbusyness answers calls and fault reports, prepares quotes and jobs, and connects you directly with contractors. For building managers, trades, hotels, Airbnb hosts and residents.">
 <meta name="twitter:image" content="https://unbusyness.com/media/og/welcome-en.png">
 <script type="application/ld+json">
 {
@@ -64,7 +64,7 @@
    "@id": "https://unbusyness.com/en/#webpage",
    "url": "https://unbusyness.com/en/",
    "name": "Unbusyness – AI office assistant for building managers, trades and hotels",
-   "description": "Unbusyness answers calls and fault reports, prepares quotes and jobs, and connects you directly with contractors. For building managers, trades, hotels and residents.",
+   "description": "Unbusyness answers calls and fault reports, prepares quotes and jobs, and connects you directly with contractors. For building managers, trades, hotels, Airbnb hosts and residents.",
    "inLanguage": "en",
    "isPartOf": {
     "@id": "https://unbusyness.com/#website"
@@ -138,6 +138,7 @@ h2{font-size:clamp(30px,4.2vw,48px);line-height:1.08}
 @keyframes blink{50%{opacity:0}}
 
 .choices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.choices>:last-child:nth-child(odd){grid-column:1/-1}
 .choice{display:grid;grid-template-columns:52px minmax(0,1fr);gap:14px;align-items:center;text-align:left;background:var(--surface);border:1.5px solid var(--line);border-radius:20px;padding:18px;transition:border-color .15s,transform .15s}
 .choice:hover{border-color:var(--green);transform:translateY(-1px)}
 a.choice{color:inherit;text-decoration:none}
@@ -200,6 +201,7 @@ html[lang="sl"] [data-l="en"],html[lang="en"] [data-l="sl"]{display:none!importa
 .aud4{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
 .aud4 a{display:block;background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:20px 22px;color:inherit;text-decoration:none;transition:border-color .15s}
 .aud4 a:hover{border-color:var(--green)}
+.aud4 a:last-child:nth-child(odd){grid-column:1/-1}
 .aud4 h3{margin:0 0 6px;font-size:18px;letter-spacing:-.01em}
 .aud4 p{margin:0;color:var(--muted);font-size:15px;line-height:1.5}
 .aud4 span{display:inline-block;margin-top:10px;font-weight:700;font-size:14.5px;color:var(--green)}
@@ -218,7 +220,7 @@ footer{padding-block:28px;border-top:1px solid var(--line);color:var(--muted);fo
     <div class="topr"><button class="back" id="back" type="button" hidden></button>
       <div class="langs" role="group" aria-label="Language / Jezik"><button type="button" data-lang="sl" aria-pressed="false">SL</button><button type="button" data-lang="en" aria-pressed="false">EN</button></div></div>
   </header>
-    <p class="intro" data-l="en"><b>Unbusyness is an AI office assistant for building managers, trades and hotels.</b> It answers calls and fault reports, prepares quotes and jobs, and connects you directly with contractors. For residents and homeowners there is the Unbusyness Home app.</p>
+    <p class="intro" data-l="en"><b>Unbusyness is an AI office assistant for building managers, trades, hotels and Airbnb hosts.</b> It answers calls and fault reports, prepares quotes and jobs, and connects you directly with contractors. For residents and homeowners there is the Unbusyness Home app.</p>
 
   <div class="layout">
     <main class="stage" id="stage" aria-live="polite"></main>
@@ -239,6 +241,7 @@ footer{padding-block:28px;border-top:1px solid var(--line);color:var(--muted);fo
       <a href="/en/building-managers/"><h3>For building managers</h3><p>An app for building and property managers: fault reports, resident requests, owners' meetings, cleaning, and planned and emergency maintenance, connected directly to your contractors.</p><span>More for managers →</span></a>
       <a href="/en/contractor/"><h3>For trades</h3><p>For plumbers, electricians, heating engineers and other trades: it answers calls, drafts quotes and chases unpaid invoices while you work.</p><span>More for trades →</span></a>
       <a href="/en/hotels/"><h3>For hotels</h3><p>Your staff's WhatsApp messages, voice notes and photos become jobs with one owner, a target time and automatic escalation.</p><span>More for hotels →</span></a>
+      <a href="/en/hosts/"><h3>For Airbnb hosts</h3><p>An AI host answers guests 24/7 and turns problems into jobs for cleaning and repairs, while your own booking site brings direct bookings without platform fees.</p><span>More for hosts →</span></a>
       <a href="/en/home/"><h3>For your home: Unbusyness Home</h3><p>A digital passport for your flat, house, car and warranties. Reminders before things are due, and a reliable tradesperson when something breaks.</p><span>More about Unbusyness Home →</span></a>
     </div>
   </section>
@@ -250,6 +253,7 @@ footer{padding-block:28px;border-top:1px solid var(--line);color:var(--muted);fo
 const PAGES = {
   manager: "/en/building-managers/",
   hotel: "/en/hotels/",
+  host: "/en/hosts/",
   resident: "/en/home/",
   trade: "/en/contractor/",
 };
@@ -266,6 +270,7 @@ const T = {
     rMan: "I manage buildings", rManD: "Residents, fault reports, contractors, owners' meetings.",
     rTrade: "I'm a tradesperson", rTradeD: "Plumber, electrician, roofer, welder and more.",
     rHotel: "I run a hotel", rHotelD: "Housekeeping, maintenance and the front desk on one page.",
+    rHost: "I host on Airbnb or Booking", rHostD: "Guests answered 24/7, cleaning and repairs organised, and direct bookings.",
     tradeQ: "What's your trade?", tradeLede: "Pick one, or tell us yours.",
     trades: ["Plumber", "Electrician", "Roofer", "Welder", "Heating and heat pumps", "Carpenter", "Painter", "Locksmith", "Cleaning"], otherTrade: "Something else", otherPh: "Your trade", next: "Next",
     formQ: { resident: "Join as a resident", manager: "Join the building managers' waitlist", trade: "Join the waitlist for {trade}s", hotel: "Join the hotels' waitlist" },
@@ -290,6 +295,7 @@ const T = {
     rMan: "Upravljam stavbe", rManD: "Stanovalci, prijave okvar, izvajalci, zbori lastnikov.",
     rTrade: "Sem obrtnik", rTradeD: "Vodoinštalater, električar, krovec, varilec in drugi.",
     rHotel: "Vodim hotel", rHotelD: "Gospodinjstvo, vzdrževanje in recepcija na enem mestu.",
+    rHost: "Oddajam na Airbnbju ali Bookingu", rHostD: "Odgovori gostom 24/7, urejeno čiščenje in popravila ter neposredne rezervacije.",
     tradeQ: "Kakšna je vaša obrt?", tradeLede: "Izberite ali nam napišite svojo.",
     trades: ["Vodoinštalater", "Električar", "Krovec", "Varilec", "Ogrevanje in toplotne črpalke", "Mizar", "Pleskar", "Ključavničar", "Čiščenje"], otherTrade: "Nekaj drugega", otherPh: "Vaša obrt", next: "Naprej",
     formQ: { resident: "Prijava za stanovalce", manager: "Čakalni seznam za upravnike", trade: "Čakalni seznam: {trade}", hotel: "Čakalni seznam za hotele" },
@@ -311,6 +317,7 @@ const ICON = {
   man: '<path d="M4 21V5l8-3 8 3v16"/><path d="M9 21v-4h6v4M8 8h2M14 8h2M8 12h2M14 12h2"/>',
   trade: '<path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.8-3.8a6 6 0 0 1-7.9 7.9l-6.9 6.9a2.1 2.1 0 0 1-3-3l6.9-6.9a6 6 0 0 1 7.9-7.9z"/>',
   hotel: '<path d="M3 21V7h18v14"/><path d="M3 11h18M7 15h2M11 15h2M15 15h2M9 7V3h6v4"/>',
+  host: '<circle cx="8" cy="15" r="4"/><path d="M10.8 12.2 20 3M17 6l3 3M15 8l2 2"/>',
 };
 const svg = (n) => `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICON[n]}</svg>`;
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (m) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[m]));
@@ -346,10 +353,10 @@ function render() {
     typeHello(); document.getElementById("startBtn").onclick = () => go("role");
   } else if (S.step === "role") {
     // Every choice opens its own page. The language is kept in localStorage; the contractor page has its own SL/EN addresses.
-    const ROLE = { Res: "resident", Man: "manager", Trade: "trade", Hotel: "hotel" };
+    const ROLE = { Res: "resident", Man: "manager", Trade: "trade", Hotel: "hotel", Host: "host" };
     const c = (k, ic) => { const inner = `<span class="ic">${svg(ic)}</span><div><b>${t("r" + k)}</b><span>${t("r" + k + "D")}</span></div>`; let page = PAGES[ROLE[k]]; if (page && typeof page === "object") page = page[lang] || page.en;
       return page ? `<a class="choice" href="${page}">${inner}</a>` : `<button class="choice" data-r="${k}" type="button">${inner}</button>`; };
-    st.innerHTML = `<section class="step"><h2>${t("roleQ")}</h2><p class="lede">${t("roleLede")}</p><div class="choices">${c("Res", "res")}${c("Man", "man")}${c("Trade", "trade")}${c("Hotel", "hotel")}</div></section>`;
+    st.innerHTML = `<section class="step"><h2>${t("roleQ")}</h2><p class="lede">${t("roleLede")}</p><div class="choices">${c("Res", "res")}${c("Man", "man")}${c("Trade", "trade")}${c("Hotel", "hotel")}${c("Host", "host")}</div></section>`;
     st.querySelectorAll("[data-r]").forEach((x) => (x.onclick = () => { S.role = ROLE[x.dataset.r]; go(S.role === "trade" ? "trade" : "form"); }));
   } else if (S.step === "trade") {
     st.innerHTML = `<section class="step"><h2>${t("tradeQ")}</h2><p class="lede">${t("tradeLede")}</p>

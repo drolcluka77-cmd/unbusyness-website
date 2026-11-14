@@ -1,0 +1,735 @@
+<!doctype html>
+<html lang="sl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Unbusyness for Hosts</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="A 24/7 AI host for Airbnb and short-term rental hosts: answers guests, turns problems into jobs for cleaners and repairs, and helps guests book you directly.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+/* Unbusyness for Hosts: AI host chat, platform fees, three pillars, the NFC/QR tag, direct bookings with a savings estimate, pilot prices, the form, FAQ. */
+:root{
+  --bg:#FBFAF7; --surface:#FFFFFF; --sand:#F4EFE6; --line:#E7E3DA;
+  --ink:#14201E; --muted:#56615F;
+  --green:#1F4D45; --green-deep:#173D37; --on-green:#CFE0DA;
+  --apricot:#E8915F; --apricot-ink:#A84E22; --apricot-soft:#FBE8DC;
+  --ok:#2F7A55; --red:#B23A32;
+  --display:'Fraunces',Georgia,'Times New Roman',serif;
+  --body:'Plus Jakarta Sans','Segoe UI',system-ui,-apple-system,sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,'SFMono-Regular',Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#111816; --surface:#18211F; --sand:#1D2826; --line:#2B3735; --ink:#EEF2F0; --muted:#A3B0AC;
+  --green:#7FC2AE; --green-deep:#1B3A34; --on-green:#CFE0DA; --apricot:#F2A57A; --apricot-ink:#F2B48E; --apricot-soft:#3A2A20;
+  --ok:#7FC79E; --red:#F08A80; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#111816; --surface:#18211F; --sand:#1D2826; --line:#2B3735; --ink:#EEF2F0; --muted:#A3B0AC;
+  --green:#7FC2AE; --green-deep:#1B3A34; --on-green:#CFE0DA; --apricot:#F2A57A; --apricot-ink:#F2B48E; --apricot-soft:#3A2A20;
+  --ok:#7FC79E; --red:#F08A80; color-scheme:dark}
+
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1120px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--apricot);outline-offset:3px;border-radius:6px}
+h1,h2,h3{text-wrap:balance;margin:0}
+h1,h2{font-family:var(--display);font-weight:600;letter-spacing:-.02em}
+p{margin:0}
+.eyebrow{font-size:12.5px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--apricot-ink)}
+
+/* top bar */
+.top{display:flex;align-items:center;justify-content:space-between;gap:16px;padding-block:20px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:19px;letter-spacing:-.02em;text-decoration:none}
+.lang{display:inline-flex;border:1px solid var(--line);border-radius:999px;padding:3px;background:var(--surface)}
+.lang button{all:unset;cursor:pointer;font-size:13px;font-weight:700;padding:5px 11px;border-radius:999px;color:var(--muted)}
+.lang button[aria-pressed="true"]{background:var(--green);color:var(--bg)}
+.lang button:focus-visible{outline:3px solid var(--apricot)}
+
+/* hero */
+.hero{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:56px;align-items:center;padding-block:40px 72px}
+.hero h1{font-size:clamp(38px,5.4vw,64px);line-height:1.04;margin-top:14px}
+.hero h1 em{font-style:italic;color:var(--green)}
+.lede{font-size:19px;color:var(--muted);margin-top:22px;max-width:34em}
+.cta{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-top:30px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:52px;padding:0 24px;border-radius:14px;font:700 16px var(--body);text-decoration:none;border:0;cursor:pointer}
+.btn.primary{background:var(--green);color:var(--bg)}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
+.note{font-size:14px;color:var(--muted)}
+.demos{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:18px}
+.demos .lab{width:100%;font-size:14px;color:var(--muted)}
+.demos .btn{min-height:44px;padding:0 18px;font-size:15px}
+
+
+/* the ticket */
+.ticket{background:var(--surface);border:1px solid var(--line);border-radius:22px;box-shadow:0 30px 60px -30px rgba(20,32,30,.28);overflow:hidden;min-width:0}
+.t-head{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:16px 20px;border-bottom:1px dashed var(--line);font-family:var(--mono);font-size:12.5px;color:var(--muted)}
+.urg{font-family:var(--body);font-size:12px;font-weight:800;color:var(--red);background:color-mix(in srgb,var(--red) 12%,transparent);padding:3px 10px;border-radius:999px;white-space:nowrap}
+.t-body{padding:18px 20px 6px}
+.t-title{font-size:20px;font-weight:800;letter-spacing:-.01em}
+.t-where{color:var(--muted);font-size:14.5px;margin-top:2px}
+.t-quote{margin-top:12px;background:var(--sand);border-radius:12px;padding:12px 14px;font-size:14.5px}
+.t-quote small{display:block;color:var(--muted);font-size:12px;font-weight:700;margin-bottom:2px}
+.steps{list-style:none;margin:14px 0 0;padding:0 20px 20px;display:grid;gap:0}
+.steps li{display:grid;grid-template-columns:54px 18px minmax(0,1fr);gap:10px;align-items:start;padding-block:9px;position:relative}
+.steps time{font-family:var(--mono);font-size:12.5px;color:var(--muted);padding-top:2px;font-variant-numeric:tabular-nums}
+.dot{width:12px;height:12px;border-radius:50%;margin-top:5px;background:var(--green);box-shadow:0 0 0 4px color-mix(in srgb,var(--green) 16%,transparent);position:relative;z-index:1}
+.steps li:not(:last-child)::after{content:"";position:absolute;left:69px;top:24px;bottom:-9px;width:2px;background:var(--line)}
+.steps li.you .dot{background:var(--apricot);box-shadow:0 0 0 4px var(--apricot-soft)}
+.steps b{display:block;font-size:14.5px}
+.steps span{display:block;color:var(--muted);font-size:13.5px;line-height:1.45}
+@media (prefers-reduced-motion:no-preference){
+  .steps li{animation:rise .5s both}
+  .steps li:nth-child(2){animation-delay:.15s}.steps li:nth-child(3){animation-delay:.3s}.steps li:nth-child(4){animation-delay:.45s}.steps li:nth-child(5){animation-delay:.6s}
+  @keyframes rise{from{transform:translateY(6px);opacity:.35}to{transform:none;opacity:1}}
+}
+
+/* sections */
+section{padding-block:72px;border-top:1px solid var(--line)}
+.sec-head{display:grid;gap:12px;max-width:40em;margin-bottom:36px}
+.sec-head h2{font-size:clamp(30px,3.6vw,44px);line-height:1.1}
+.sec-head p{color:var(--muted);font-size:17.5px}
+
+.pains{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:28px}
+.pain{display:grid;gap:8px;align-content:start}
+.pain .k{font-family:var(--mono);font-size:13px;color:var(--apricot-ink)}
+.pain h3{font-size:19px;font-weight:800;letter-spacing:-.01em}
+.pain p{color:var(--muted)}
+
+.feats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.feat{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:22px;display:grid;gap:8px;align-content:start}
+.feat .ic{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:var(--sand);color:var(--green)}
+.feat h3{font-size:17.5px;font-weight:800;margin-top:6px}
+.feat p{color:var(--muted);font-size:15px}
+
+.cal{margin-top:28px;background:var(--surface);border:1px solid var(--line);border-radius:18px;overflow-x:auto}
+.cal table{border-collapse:collapse;width:100%;min-width:620px;font-size:14px}
+.cal th,.cal td{padding:12px 16px;text-align:left;border-bottom:1px solid var(--line)}
+.cal th{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:800}
+.cal tr:last-child td{border-bottom:0}
+.cal td.m{font-family:var(--mono);font-size:13px;white-space:nowrap;font-variant-numeric:tabular-nums}
+.st{font-size:12px;font-weight:800;padding:3px 10px;border-radius:999px;white-space:nowrap}
+.st.ok{color:var(--ok);background:color-mix(in srgb,var(--ok) 13%,transparent)}
+.st.soon{color:var(--apricot-ink);background:var(--apricot-soft)}
+.st.late{color:var(--red);background:color-mix(in srgb,var(--red) 12%,transparent)}
+.cap{font-size:13px;color:var(--muted);margin-top:10px}
+
+.how{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:28px;counter-reset:s}
+.how li{list-style:none;display:grid;gap:8px;align-content:start}
+.how li::before{counter-increment:s;content:counter(s);font-family:var(--display);font-size:44px;line-height:1;color:var(--green)}
+.how h3{font-size:18px;font-weight:800}
+.how p{color:var(--muted)}
+.how{padding:0;margin:0}
+
+/* form */
+.join{background:var(--green-deep);color:#F3F6F4;border-top:0}
+.join .sec-head h2{color:#fff}
+.join .sec-head p,.join .note{color:var(--on-green)}
+.join .eyebrow{color:#F2A57A}
+.joingrid{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:48px;align-items:start}
+.perks{list-style:none;padding:0;margin:8px 0 0;display:grid;gap:14px}
+.perks li{display:grid;grid-template-columns:22px minmax(0,1fr);gap:10px;color:var(--on-green)}
+.perks li b{color:#fff;font-weight:700}
+form{background:var(--surface);color:var(--ink);border-radius:22px;padding:28px;display:grid;gap:16px;min-width:0}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.field{display:grid;gap:6px;min-width:0}
+label,.lbl{font-size:13.5px;font-weight:700}
+.opt{font-weight:500;color:var(--muted)}
+input[type=text],input[type=email],input[type=tel],select,textarea{width:100%;font:500 15.5px var(--body);color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:12px 14px;min-height:48px}
+textarea{min-height:88px;resize:vertical}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--green);box-shadow:0 0 0 3px color-mix(in srgb,var(--green) 18%,transparent)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{position:relative}
+.chip input{position:absolute;opacity:0;inset:0;cursor:pointer}
+.chip span{display:inline-block;border:1px solid var(--line);border-radius:999px;padding:8px 14px;font-size:14px;font-weight:600;background:var(--bg);cursor:pointer}
+.chip input:checked+span{background:var(--green);border-color:var(--green);color:var(--bg)}
+.chip input:focus-visible+span{outline:3px solid var(--apricot);outline-offset:2px}
+.consent{display:grid;grid-template-columns:20px minmax(0,1fr);gap:10px;font-size:13.5px;color:var(--muted);font-weight:500}
+.consent input{width:18px;height:18px;margin-top:2px;accent-color:var(--green)}
+.err{color:var(--red);font-size:13.5px;font-weight:600}
+form .btn.primary{width:100%;min-height:56px;font-size:17px}
+.done{background:var(--surface);color:var(--ink);border-radius:22px;padding:32px;display:grid;gap:12px}
+.done h3{font-family:var(--display);font-size:30px;font-weight:600}
+.done p{color:var(--muted)}
+.preview{font-size:13px;background:var(--apricot-soft);color:var(--apricot-ink);border-radius:10px;padding:10px 12px;font-weight:600}
+
+.faq{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 40px}
+details{border-bottom:1px solid var(--line);padding-block:16px}
+summary{cursor:pointer;font-weight:800;font-size:17px;list-style:none;display:flex;justify-content:space-between;gap:12px}
+summary::after{content:"+";font-family:var(--mono);color:var(--green)}
+details[open] summary::after{content:"–"}
+details p{color:var(--muted);margin-top:8px}
+/* audience switcher (same on every waitlist page) */
+.aud{display:flex;gap:8px;overflow-x:auto;padding:10px 0 6px;scrollbar-width:none}
+.aud::-webkit-scrollbar{display:none}
+.aud a{display:inline-flex;align-items:center;gap:8px;white-space:nowrap;min-height:44px;padding:0 16px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--ink);font:600 15px var(--body);text-decoration:none}
+.aud a:hover{border-color:var(--green)}
+.aud a[aria-current="page"]{border:2px solid var(--green);color:var(--green);font-weight:800}
+.aud svg{flex-shrink:0}
+@media (max-width:620px){.aud{display:grid;grid-template-columns:1fr 1fr;overflow:visible}.aud a:last-child:nth-child(odd){grid-column:1/-1}.aud a{white-space:normal;line-height:1.2;padding:8px 12px;font-size:14px;justify-content:flex-start}}
+footer a{color:inherit;font-weight:700}
+footer{padding-block:36px;color:var(--muted);font-size:14px;display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;border-top:1px solid var(--line)}
+
+@media (max-width:900px){
+  .hero,.joingrid{grid-template-columns:minmax(0,1fr);gap:36px}
+  .pains,.feats,.how{grid-template-columns:minmax(0,1fr)}
+  .faq{grid-template-columns:minmax(0,1fr)}
+}
+@media (max-width:520px){
+  .row2{grid-template-columns:minmax(0,1fr)}
+  form,.done{padding:20px}
+  section{padding-block:52px}
+  .hero{padding-block:20px 52px}
+  .lede{font-size:17.5px}
+}
+/* host additions */
+.chat{background:var(--sand);padding:16px 16px 10px;display:grid;gap:8px}
+.msg{max-width:86%;border-radius:16px;padding:9px 12px;font-size:14.5px;line-height:1.45;background:var(--surface);border:1px solid var(--line)}
+.msg.me{justify-self:end;background:color-mix(in srgb,var(--green) 14%,var(--surface));border-color:transparent}
+.msg small{display:block;font-family:var(--mono);font-size:11px;color:var(--muted);margin-top:3px;text-align:right}
+.task{margin:4px 0 2px;border:1px solid var(--apricot);background:var(--apricot-soft);border-radius:14px;padding:12px 14px;display:grid;gap:2px;font-size:14px}
+.task b{font-size:14.5px}
+.task span{color:var(--muted)}
+.task em{font-style:normal;font-weight:800;color:var(--apricot-ink);font-size:12.5px}
+.fees{background:var(--green-deep);color:#F3F6F4;border-top:0;padding-block:44px}
+.feegrid{display:grid;grid-template-columns:1.2fr repeat(3,minmax(0,1fr));gap:28px;align-items:center}
+.feegrid h2{font-size:clamp(24px,2.6vw,30px);color:#fff;line-height:1.2}
+.fee b{display:block;font-family:var(--display);font-size:44px;font-weight:600;line-height:1;color:#fff;letter-spacing:-.02em}
+.fee b.good{color:#F2A57A}
+.fee span{display:block;margin-top:8px;font-size:14.5px;color:var(--on-green)}
+.fees .cap{color:var(--on-green);margin-top:22px}
+.feat ul{margin:6px 0 0;padding-left:18px;color:var(--muted);font-size:14.5px;line-height:1.7}
+.tagbox{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);gap:48px;align-items:center}
+.tag{justify-self:center;width:min(300px,100%);aspect-ratio:1;border-radius:28px;background:var(--surface);border:1px solid var(--line);box-shadow:0 30px 60px -30px rgba(20,32,30,.28);display:grid;place-items:center;align-content:center;gap:12px;text-align:center;padding:20px}
+.tag .disc{width:130px;height:130px;border-radius:50%;background:var(--green);display:grid;place-items:center;color:var(--bg)}
+.tag b{font-family:var(--display);font-size:22px;font-weight:600}
+.tag span{color:var(--muted);font-size:14px}
+.how4{display:grid;grid-template-columns:minmax(0,1fr);gap:20px;counter-reset:s;padding:0;margin:0}
+.how4 li{list-style:none;display:grid;grid-template-columns:40px minmax(0,1fr);gap:14px}
+.how4 li::before{counter-increment:s;content:counter(s);width:36px;height:36px;border-radius:50%;background:var(--green);color:var(--bg);display:grid;place-items:center;font-weight:800}
+.how4 li:last-child::before{background:var(--apricot);color:#14201E}
+.how4 h3{font-size:17.5px;font-weight:800}
+.how4 p{color:var(--muted);font-size:15.5px}
+.calc{margin-top:26px;background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:22px;display:grid;gap:16px}
+.calc h3{font-size:19px;font-weight:800}
+.calc label{display:flex;justify-content:space-between;gap:12px;font-size:14.5px;font-weight:600}
+.calc label output{font-family:var(--mono);font-size:14px;font-variant-numeric:tabular-nums}
+.calc input[type=range]{width:100%;height:36px;accent-color:var(--green)}
+.calc .res{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:10px;border-top:1px solid var(--line);padding-top:14px}
+.calc .res b{font-family:var(--display);font-size:38px;font-weight:600;color:var(--green);font-variant-numeric:tabular-nums}
+.ai{background:var(--sand);border:1px solid var(--line);border-radius:22px;padding:20px;display:grid;gap:12px;min-width:0}
+.ai .who{font-size:12.5px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.ai .ans{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:16px;display:grid;gap:8px;font-size:15px}
+.ai .ans ul{margin:0;padding-left:18px;color:var(--muted);font-size:14.5px}
+.ai .book{justify-self:start;background:var(--green);color:var(--bg);border-radius:10px;padding:9px 14px;font-weight:700;font-size:14px;text-decoration:none}
+.prices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+.plan{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:26px;display:grid;gap:12px;align-content:start}
+.plan.dark{background:var(--green-deep);color:#F3F6F4;border-color:transparent}
+.plan h3{font-size:20px;font-weight:800;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.plan .badge{font-size:12px;font-weight:800;background:#F2A57A;color:#14201E;padding:3px 9px;border-radius:999px}
+.plan .pr{font-family:var(--display);font-size:46px;font-weight:600;line-height:1;letter-spacing:-.02em}
+.plan .pr small{font-family:var(--body);font-size:15px;font-weight:500;color:var(--muted);letter-spacing:0}
+.plan.dark .pr small,.plan.dark .sub,.plan.dark li{color:var(--on-green)}
+.plan .sub{color:var(--muted);font-size:14px}
+.plan ul{margin:4px 0 0;padding-left:18px;line-height:1.85;color:var(--muted);font-size:15px}
+.split2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:40px;align-items:start}
+@media (max-width:900px){.feegrid,.tagbox,.prices,.split2{grid-template-columns:minmax(0,1fr)}.feegrid{gap:20px}}
+@media (max-width:440px){.brand [data-t="brandSub"]{display:none}}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header class="top">
+    <a class="brand" href="#join" aria-label="Unbusyness">
+      <svg width="34" height="34" viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="24" fill="#1F4D45"/><path d="M14.5 19 V25.5 a9.5 9.5 0 0 0 19 0 V19" fill="none" stroke="#FBFAF7" stroke-width="4" stroke-linecap="round"/><circle cx="24" cy="15.5" r="3.4" fill="#F2A57A"/></svg>
+      <span>unbusyness <span style="font-weight:600;color:var(--muted)" data-t="brandSub">for hosts</span></span>
+    </a>
+    <div class="lang" role="group" aria-label="Language">
+      <button type="button" data-lang="sl" aria-pressed="false">SL</button>
+      <button type="button" data-lang="en" aria-pressed="true">EN</button>
+    </div>
+  </header>
+  <nav class="aud" aria-label="Unbusyness">
+  <a href="/contractor/"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.5 2.5-2.4-.6-.6-2.4z"/></svg><span data-t="audT">For trades</span></a>
+  <a href="/building-managers/"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="1.5"/><path d="M9 7h1M14 7h1M9 11h1M14 11h1M9 15h1M14 15h1M11 21v-3h2v3"/></svg><span data-t="audM">For building managers</span></a>
+  <a href="/hotels/"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 19V7M3 15h18v4M21 15v-3a3 3 0 0 0-3-3h-7v6"/><circle cx="7" cy="11.5" r="1.8"/></svg><span data-t="audH">For hotels</span></a>
+  <a href="/hosts/" aria-current="page"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="8" cy="15" r="4"/><path d="M10.8 12.2 20 3M17 6l3 3M15 8l2 2"/></svg><span data-t="audA">For Airbnb hosts</span></a>
+  <a href="/home/"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/></svg><span data-t="audD">For your home</span></a>
+</nav>
+
+  <div class="hero">
+    <div>
+      <div class="eyebrow" data-t="eyebrow">For Airbnb and short-term rental hosts</div>
+      <h1 data-t="h1" data-html>Your 24/7 AI host. <em>Your own direct bookings.</em></h1>
+      <p class="lede" data-t="lede">Stop answering guests at 3 a.m. and stop giving away up to 15% of every booking. Unbusyness answers your guests, organises cleaners and repairs, and helps travellers find you and book directly.</p>
+      <div class="cta">
+        <a class="btn primary" href="#join" data-t="cta">Join the waitlist</a>
+        <a class="btn ghost" href="#how" data-t="ctaHow">See how it works</a>
+      </div>
+      <p class="note" style="margin-top:16px" data-t="ctaNote">Piloting with apartments in Ljubljana. Works alongside Airbnb and Booking.com.</p>
+    </div>
+
+    <article class="ticket" aria-label="Example: a guest message at night becomes a job">
+      <div class="t-head"><span data-t="tNo">AI HOST · APARTMENT 3</span><span class="urg" style="color:var(--ok);background:color-mix(in srgb,var(--ok) 13%,transparent)" data-t="tOn">Online</span></div>
+      <div class="chat">
+        <div class="msg me"><span data-t="m1">Hi, the hot water isn't working.</span><small>02:14 · <span data-t="gst">Guest</span></small></div>
+        <div class="msg"><span data-t="m2">Sorry about that! Please check that the boiler switch in the hallway cupboard is on. I've also let our maintenance team know, just in case.</span><small>02:14</small></div>
+        <div class="task"><b data-t="tk1">Job created automatically</b><span data-t="tk2">Apt 3 · Hot water · Plumber notified</span><em data-t="tk3">Urgent · Visit by 09:00</em></div>
+        <div class="msg me"><span data-t="m3">That fixed it, thank you!</span><small>02:17 · <span data-t="gst">Guest</span></small></div>
+      </div>
+    </article>
+  </div>
+</div>
+
+<section class="fees" aria-labelledby="fees-h">
+  <div class="wrap">
+    <div class="feegrid">
+      <h2 id="fees-h" data-t="fh">What every booking costs you</h2>
+      <div class="fee"><b data-t="fp1">15.5%</b><span data-t="f1">Airbnb host-only fee</span></div>
+      <div class="fee"><b data-t="fp2">~15%</b><span data-t="f2">Typical Booking.com commission</span></div>
+      <div class="fee"><b class="good" data-t="fp3">~3%</b><span data-t="f3">A direct booking (card payment fees)</span></div>
+    </div>
+    <p class="cap" data-t="fcap">Airbnb's host-only fee applies to hosts on the host-only fee structure; Booking.com commission depends on your country and programmes.</p>
+  </div>
+</section>
+
+<section id="features">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="eyebrow" data-t="p0">Everything a host needs, in one place</div>
+      <h2 data-t="p1">Less messaging. Fewer surprises. More direct guests.</h2>
+    </div>
+    <div class="feats">
+      <article class="feat">
+        <div class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/><path d="M9 11h.01M12 11h.01M15 11h.01"/></svg></div>
+        <h3 data-t="fa">AI host: guests answered 24/7</h3>
+        <p data-t="fad">Answers guests around the clock, handles everyday requests, and turns reported problems into jobs for your cleaners and maintenance.</p>
+        <ul><li data-t="fa1">Check-in, Wi-Fi, parking, house rules</li><li data-t="fa2">Answers in the guest's language</li><li data-t="fa3">Calls you in only when it's needed</li></ul>
+      </article>
+      <article class="feat">
+        <div class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3zM20 14v.01M14 20h.01M17 20h4v-3"/></svg></div>
+        <h3 data-t="fb">An NFC/QR tag in every apartment</h3>
+        <p data-t="fbd">Guests tap or scan to open the apartment's guide, report a problem, ask for help, and join your guest list for a discount on their next direct stay.</p>
+        <ul><li data-t="fb1">Tap or scan, no app needed</li><li data-t="fb2">One tag per apartment</li><li data-t="fb3">Builds your own guest list</li></ul>
+      </article>
+      <article class="feat">
+        <div class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/><path d="M11 8v6M8 11h6"/></svg></div>
+        <h3 data-t="fc">Direct bookings and AI search</h3>
+        <p data-t="fcd">Your own booking website with a booking engine, optimised for Google and for AI assistants, so guests can find your property by name and book it directly.</p>
+        <ul><li data-t="fc1">Live prices and availability</li><li data-t="fc2">Built for Google and AI answers</li><li data-t="fc3">Keep the commission you used to pay</li></ul>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section id="how">
+  <div class="wrap tagbox">
+    <div class="tag" aria-hidden="true">
+      <div class="disc"><svg width="62" height="62" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M6 8.3a7 7 0 0 1 0 7.4"/><path d="M9.5 6a11 11 0 0 1 0 12"/><path d="M13 4a15 15 0 0 1 0 16"/></svg></div>
+      <b data-t="tg1">Tap or scan</b><span data-t="tg2">Apartment 3 · Welcome</span>
+    </div>
+    <div>
+      <div class="sec-head" style="margin-bottom:24px">
+        <div class="eyebrow" data-t="h0">How it works</div>
+        <h2 data-t="h1b">One tag in every apartment</h2>
+      </div>
+      <ol class="how4">
+        <li><div><h3 data-t="ha">The guest taps the tag</h3><p data-t="had">The apartment's page opens on their phone: guide, Wi-Fi, check-out and local tips.</p></div></li>
+        <li><div><h3 data-t="hb">The AI host answers or acts</h3><p data-t="hbd">Questions are answered straight away. Problems become jobs for your cleaner or maintenance.</p></div></li>
+        <li><div><h3 data-t="hc">You see everything in one place</h3><p data-t="hcd">Open jobs, response times, cleaning status and which apartments need attention.</p></div></li>
+        <li><div><h3 data-t="hd">Happy guests come back direct</h3><p data-t="hdd">Guests join your list for a discount on their next stay, booked on your own site.</p></div></li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<section id="direct">
+  <div class="wrap split2">
+    <div>
+      <div class="sec-head" style="margin-bottom:0">
+        <div class="eyebrow" data-t="d0">Direct bookings and AI search</div>
+        <h2 data-t="d1">Be the apartment AI recommends by name</h2>
+        <p data-t="d2">More and more travellers plan trips by asking AI assistants. We build your booking site and optimise it for Google and AI search, so when someone asks for a place like yours, your apartment comes up with a link to book it directly.</p>
+      </div>
+      <div class="calc">
+        <h3 data-t="c0">How much could you keep?</h3>
+        <div><label for="rev"><span data-t="c1">Yearly booking revenue (all apartments)</span><output id="revOut" for="rev">€60,000</output></label>
+        <input id="rev" type="range" min="10000" max="300000" step="5000" value="60000"></div>
+        <div><label for="share"><span data-t="c2">Share of bookings moved to direct</span><output id="shareOut" for="share">30%</output></label>
+        <input id="share" type="range" min="5" max="60" step="5" value="30"></div>
+        <div class="res"><span data-t="c3">Commission saved per year</span><b id="saved">€2,250</b></div>
+        <p class="cap" style="margin:0" data-t="c4">Estimate: 15.5% platform fee minus about 3% card payment fees on direct bookings.</p>
+      </div>
+    </div>
+    <div class="ai" aria-label="Illustration: an AI assistant recommends a property">
+      <div class="who" data-t="a0">AI travel assistant</div>
+      <div class="msg me" style="max-width:92%"><span data-t="a1">A quiet apartment near Ljubljana's old town for two, with parking and self check-in?</span></div>
+      <div class="ans">
+        <span data-t="a2" data-html>A good match is <b>[your apartment]</b>:</span>
+        <ul><li data-t="a3">[X] minutes' walk to the old town</li><li data-t="a4">Private parking and 24/7 self check-in</li><li data-t="a5">Guests say it is quiet and spotless</li></ul>
+        <a class="book" href="#join" data-t="a6">Book directly at [yourapartment].com</a>
+      </div>
+      <p class="cap" style="margin:0" data-t="a7">An illustration of the goal. The brackets show where your apartment's details go.</p>
+    </div>
+  </div>
+</section>
+
+<section id="pricing">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="eyebrow" data-t="pr0">Pilot pricing</div>
+      <h2 data-t="pr1">Simple, per apartment</h2>
+    </div>
+    <div class="prices">
+      <div class="plan">
+        <h3 data-t="pa">Host</h3>
+        <div class="pr"><span data-t="paP">€12</span> <small data-t="pa1">/ apartment / month</small></div>
+        <div class="sub" data-t="pa2">Minimum €49 a month</div>
+        <ul><li data-t="pa3">AI host 24/7, in the guest's language</li><li data-t="pa4">NFC/QR tag and digital guide for each apartment</li><li data-t="pa5">Automatic jobs for cleaners and repairs</li><li data-t="pa6">Host overview</li></ul>
+      </div>
+      <div class="plan dark">
+        <h3><span data-t="pb">Host + Direct</span><span class="badge" data-t="pbB">Most value</span></h3>
+        <div class="pr"><span data-t="pbP">+€99</span> <small data-t="pb1">/ month</small></div>
+        <div class="sub" data-t="pb2">On top of the Host plan</div>
+        <ul><li data-t="pb3">Your own booking website and booking engine</li><li data-t="pb4">SEO and GEO for Google and AI search</li><li data-t="pb5">Guest list and next-stay discounts</li><li data-t="pb6">Monthly visibility report</li></ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="join" id="join">
+  <div class="wrap joingrid">
+    <div>
+      <div class="sec-head" style="margin-bottom:20px">
+        <div class="eyebrow" data-t="j0">Waitlist</div>
+        <h2 data-t="j1">Get your nights back.</h2>
+        <p data-t="j2">We are starting a pilot with hosts in Slovenia. We set everything up for you.</p>
+      </div>
+      <ul class="perks">
+        <li><span aria-hidden="true">✓</span><span data-t="k1" data-html><b>Set up for you</b>: guides, tags and answers for every apartment.</span></li>
+        <li><span aria-hidden="true">✓</span><span data-t="k2" data-html><b>Pilot prices</b> for the first hosts.</span></li>
+        <li><span aria-hidden="true">✓</span><span data-t="k3" data-html><b>Works with Airbnb and Booking.com</b>: nothing to give up.</span></li>
+      </ul>
+    </div>
+
+    <div id="formBox">
+      <form id="wl" novalidate>
+        <div class="row2">
+          <div class="field"><label for="name" data-t="lName">Your name</label><input id="name" name="name" type="text" autocomplete="name" required></div>
+          <div class="field"><label for="email" data-t="lEmail">Email</label><input id="email" name="email" type="email" autocomplete="email" required></div>
+        </div>
+        <div class="row2">
+          <div class="field"><label for="phone"><span data-t="lPhone">Phone</span> <span class="opt" data-t="optional">(optional)</span></label><input id="phone" name="phone" type="tel" autocomplete="tel" placeholder="+386 …"></div>
+          <div class="field"><label for="city" data-t="lCity">City or area</label><input id="city" name="city" type="text" autocomplete="address-level2"></div>
+        </div>
+        <div class="field"><label for="units" data-t="lUnits">Apartments</label>
+          <select id="units" name="units" required>
+            <option value="" data-t="choose">Choose…</option>
+            <option value="1">1</option><option value="2-5">2–5</option><option value="6-20">6–20</option><option value="20+">20+</option>
+          </select></div>
+        <fieldset class="field" style="border:0;padding:0;margin:0">
+          <legend class="lbl" style="padding:0;margin-bottom:8px" data-t="lWhere">Where do you take bookings today? <span class="opt">(pick any)</span></legend>
+          <div class="chips">
+            <label class="chip"><input type="checkbox" name="channel" value="airbnb"><span>Airbnb</span></label>
+            <label class="chip"><input type="checkbox" name="channel" value="booking"><span>Booking.com</span></label>
+            <label class="chip"><input type="checkbox" name="channel" value="direct"><span data-t="x3">Direct / own website</span></label>
+            <label class="chip"><input type="checkbox" name="channel" value="other"><span data-t="x4">Other</span></label>
+          </div>
+        </fieldset>
+        <fieldset class="field" style="border:0;padding:0;margin:0">
+          <legend class="lbl" style="padding:0;margin-bottom:8px" data-t="lPain">What takes most of your time? <span class="opt">(pick any)</span></legend>
+          <div class="chips">
+            <label class="chip"><input type="checkbox" name="pain" value="messages"><span data-t="y1">Guest messages</span></label>
+            <label class="chip"><input type="checkbox" name="pain" value="night"><span data-t="y2">Night-time calls</span></label>
+            <label class="chip"><input type="checkbox" name="pain" value="cleaning"><span data-t="y3">Cleaning schedule</span></label>
+            <label class="chip"><input type="checkbox" name="pain" value="repairs"><span data-t="y4">Repairs</span></label>
+            <label class="chip"><input type="checkbox" name="pain" value="fees"><span data-t="y5">Platform fees</span></label>
+          </div>
+        </fieldset>
+        <label class="consent"><input id="consent" type="checkbox" required><span data-t="consent">Unbusyness may contact me about the pilot. My details are used only for this and I can ask for them to be deleted at any time.</span></label>
+        <p class="err" id="err" role="alert" hidden></p>
+        <button class="btn primary" type="submit" id="submit" data-t="send">Join the waitlist</button>
+      </form>
+      <div class="done" id="done" hidden tabindex="-1">
+        <h3 data-t="d1x">You're on the list.</h3>
+        <p data-t="d2x">We'll get in touch within a few days to show you Unbusyness and talk about your apartments.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="sec-head"><div class="eyebrow" data-t="q0">Questions</div><h2 data-t="q1">What hosts ask us first</h2></div>
+    <div class="faq">
+      <details><summary data-t="qa">Does it replace Airbnb or Booking.com?</summary><p data-t="qad">No. Unbusyness works alongside them. The AI host and the tags work for every guest, and your own booking site gradually brings returning guests to book with you directly.</p></details>
+      <details><summary data-t="qb">What happens when something breaks at night?</summary><p data-t="qbd">The AI host helps the guest first. If it can't be solved, it creates a job for your cleaner or maintenance with the apartment, the problem and how urgent it is, and lets you know only when you're needed.</p></details>
+      <details><summary data-t="qc">Do guests need an app?</summary><p data-t="qcd">No. They tap the NFC tag with their phone or scan the QR code, and the apartment's page opens in the browser.</p></details>
+      <details><summary data-t="qd">Which languages does the AI host speak?</summary><p data-t="qdd">It answers in the guest's language. Anything it can't answer is passed to you.</p></details>
+      <details><summary data-t="qe">What will it cost?</summary><p data-t="qed">During the pilot: €12 per apartment per month, at least €49 a month. Your own booking site with SEO and GEO is €99 a month on top.</p></details>
+      <details><summary data-t="qf">I have one apartment. Is it worth it?</summary><p data-t="qfd">Yes, if guest messages take your evenings or you want more direct bookings. The minimum is €49 a month.</p></details>
+    </div>
+  </div>
+</section>
+
+<div class="wrap"><footer><span>© 2026 Unbusyness · unbusyness.com</span><span data-t="foot">Questions? Write to info@unbusyness.com or call +386 40 290 963</span><a href="/investors/" data-t="footInv">For investors</a></footer></div>
+
+<script>
+const WAITLIST_ENDPOINT = "/api/waitlist";
+
+const SL = {
+  audT:"Za obrtnike", audM:"Za upravnike stavb", audH:"Za hotele", audA:"Za gostitelje Airbnb", audD:"Za dom", footInv:"Za vlagatelje",
+  brandSub:"za gostitelje",
+  eyebrow:"Za gostitelje na Airbnbju, Bookingu in drugih platformah",
+  h1:"Vaš AI-gostitelj 24/7. <em>In vaše lastne neposredne rezervacije.</em>",
+  lede:"Nehajte odgovarjati gostom ob treh zjutraj in nehajte plačevati do 15 % od vsake rezervacije. Unbusyness odgovarja gostom, organizira čiščenje in popravila ter pomaga, da vas popotniki najdejo in rezervirajo neposredno.",
+  cta:"Prijava na čakalni seznam", ctaHow:"Poglejte, kako deluje", ctaNote:"Pilot izvajamo z apartmaji v Ljubljani. Deluje skupaj z Airbnbjem in Booking.com.",
+  tNo:"AI-GOSTITELJ · APARTMA 3", tOn:"Na zvezi",
+  m1:"Pozdravljeni, tople vode ni.", m2:"Opravičujemo se! Preverite, ali je stikalo bojlerja v omari na hodniku vklopljeno. Za vsak primer sem obvestil tudi naše vzdrževanje.", m3:"To je pomagalo, hvala!",
+  tk1:"Naloga ustvarjena samodejno", tk2:"Apartma 3 · Topla voda · Vodoinštalater obveščen", tk3:"Nujno · Obisk do 9.00",
+  fh:"Koliko vas stane vsaka rezervacija", f1:"Airbnb, ko plača samo gostitelj", f2:"Običajna provizija Booking.com", f3:"Neposredna rezervacija (stroški plačila s kartico)",
+  fcap:"Airbnbjeva provizija 15,5 % velja za gostitelje na modelu, kjer provizijo plača samo gostitelj. Provizija Booking.com je odvisna od države in programov.",
+  p0:"Vse, kar gostitelj potrebuje, na enem mestu", p1:"Manj sporočil. Manj presenečenj. Več neposrednih gostov.",
+  fa:"AI-gostitelj: gostje dobijo odgovor 24/7", fad:"Odgovarja gostom noč in dan, uredi vsakdanje prošnje, prijavljene težave pa spremeni v naloge za čistilce in vzdrževanje.",
+  fa1:"Prihod, Wi-Fi, parkiranje, hišni red", fa2:"Odgovarja v jeziku gosta", fa3:"Vas pokliče samo, ko je res treba",
+  fb:"Oznaka NFC/QR v vsakem apartmaju", fbd:"Gost se dotakne oznake ali jo skenira in odpre vodič po apartmaju, prijavi težavo, prosi za pomoč ter se vpiše na vaš seznam gostov za popust pri naslednji neposredni rezervaciji.",
+  fb1:"Dotik ali skeniranje, brez aplikacije", fb2:"Ena oznaka za vsak apartma", fb3:"Gradi vaš lasten seznam gostov",
+  fc:"Neposredne rezervacije in iskanje z AI", fcd:"Vaša lastna spletna stran z rezervacijskim sistemom, optimizirana za Google in AI-asistente, da vas gostje najdejo po imenu in rezervirajo neposredno.",
+  fc1:"Sprotne cene in razpoložljivost", fc2:"Pripravljeno za Google in odgovore AI", fc3:"Obdržite provizijo, ki ste jo prej plačevali",
+  tg1:"Dotik ali skeniranje", tg2:"Apartma 3 · Dobrodošli",
+  h0:"Kako deluje", h1b:"Ena oznaka v vsakem apartmaju",
+  ha:"Gost se dotakne oznake", had:"Na telefonu se odpre stran apartmaja: vodič, Wi-Fi, odjava in nasveti za okolico.",
+  hb:"AI-gostitelj odgovori ali ukrepa", hbd:"Na vprašanja odgovori takoj. Težave postanejo naloge za vašo čistilko ali vzdrževanje.",
+  hc:"Vse vidite na enem mestu", hcd:"Odprte naloge, odzivni časi, stanje čiščenja in apartmaji, ki potrebujejo pozornost.",
+  hd:"Zadovoljni gostje se vrnejo neposredno", hdd:"Gostje se vpišejo na vaš seznam za popust pri naslednjem bivanju, rezerviranem na vaši strani.",
+  d0:"Neposredne rezervacije in iskanje z AI", d1:"Bodite apartma, ki ga AI priporoči po imenu",
+  d2:"Vse več popotnikov potovanja načrtuje z AI-asistenti. Pripravimo vašo rezervacijsko stran in jo optimiziramo za Google in iskanje z AI, da se ob vprašanju po namestitvi, kot je vaša, prikaže vaš apartma s povezavo za neposredno rezervacijo.",
+  c0:"Koliko bi lahko obdržali?", c1:"Letni prihodek od rezervacij (vsi apartmaji)", c2:"Delež rezervacij, ki preidejo na neposredne", c3:"Prihranjena provizija na leto",
+  c4:"Ocena: 15,5 % provizije platforme, zmanjšano za približno 3 % stroškov plačila pri neposrednih rezervacijah.",
+  a0:"AI-asistent za potovanja", a1:"Miren apartma blizu ljubljanskega starega mestnega jedra za dva, s parkiriščem in samostojnim prihodom?",
+  a2:"Dobra izbira je <b>[vaš apartma]</b>:", a3:"[X] minut hoje do starega mestnega jedra", a4:"Zasebno parkirišče in samostojni prihod 24/7", a5:"Gostje pravijo, da je miren in brezhibno čist", a6:"Rezervirajte neposredno na [vasapartma].si",
+  a7:"Ponazoritev cilja. V oglatih oklepajih so mesta za podatke o vašem apartmaju.",
+  pr0:"Pilotne cene", pr1:"Preprosto, na apartma",
+  gst:"Gost", paP:"12 €", pbP:"+99 €", fp1:"15,5 %", fp2:"~15 %", fp3:"~3 %",
+  pa:"Gostitelj", pa1:"/ apartma / mesec", pa2:"Najmanj 49 € na mesec", pa3:"AI-gostitelj 24/7 v jeziku gosta", pa4:"Oznaka NFC/QR in digitalni vodič za vsak apartma", pa5:"Samodejne naloge za čiščenje in popravila", pa6:"Pregled za gostitelja",
+  pb:"Gostitelj + neposredne rezervacije", pbB:"Največ vrednosti", pb1:"/ mesec", pb2:"Poleg paketa Gostitelj", pb3:"Lastna rezervacijska stran in sistem", pb4:"SEO in GEO za Google in iskanje z AI", pb5:"Seznam gostov in popusti za naslednje bivanje", pb6:"Mesečno poročilo o vidnosti",
+  j0:"Čakalni seznam", j1:"Vrnite si noči.", j2:"Začenjamo pilot z gostitelji v Sloveniji. Vse nastavimo namesto vas.",
+  k1:"<b>Nastavimo namesto vas</b>: vodiče, oznake in odgovore za vsak apartma.", k2:"<b>Pilotne cene</b> za prve gostitelje.", k3:"<b>Deluje z Airbnbjem in Booking.com</b>: ničesar vam ni treba opustiti.",
+  lName:"Ime in priimek", lEmail:"E-pošta", lPhone:"Telefon", optional:"(neobvezno)", lCity:"Kraj ali območje", lUnits:"Število apartmajev", choose:"Izberite …",
+  lWhere:"Kje danes sprejemate rezervacije? <span class=\"opt\">(izberite poljubno)</span>", x3:"Neposredno / lastna stran", x4:"Drugje",
+  lPain:"Kaj vam vzame največ časa? <span class=\"opt\">(izberite poljubno)</span>", y1:"Sporočila gostov", y2:"Nočni klici", y3:"Urnik čiščenja", y4:"Popravila", y5:"Provizije platform",
+  consent:"Unbusyness me lahko kontaktira glede pilota. Moji podatki se uporabijo samo za to in lahko kadar koli zahtevam izbris.",
+  send:"Prijava na čakalni seznam", d1x:"Ste na seznamu.", d2x:"V nekaj dneh se vam oglasimo, da vam pokažemo Unbusyness in se pogovorimo o vaših apartmajih.",
+  q0:"Vprašanja", q1:"Kaj gostitelji najprej vprašajo",
+  qa:"Ali nadomesti Airbnb ali Booking.com?", qad:"Ne. Unbusyness deluje skupaj z njima. AI-gostitelj in oznake delujejo za vse goste, lastna rezervacijska stran pa postopoma pripelje goste, ki se vračajo, da rezervirajo neposredno pri vas.",
+  qb:"Kaj se zgodi, ko se ponoči kaj pokvari?", qbd:"AI-gostitelj najprej pomaga gostu. Če težave ni mogoče rešiti, ustvari nalogo za vašo čistilko ali vzdrževanje z apartmajem, opisom težave in nujnostjo, vas pa obvesti samo, ko ste potrebni.",
+  qc:"Ali gostje potrebujejo aplikacijo?", qcd:"Ne. S telefonom se dotaknejo oznake NFC ali skenirajo kodo QR in stran apartmaja se odpre v brskalniku.",
+  qd:"V katerih jezikih govori AI-gostitelj?", qdd:"Odgovarja v jeziku gosta. Kar ne zna odgovoriti, posreduje vam.",
+  qe:"Koliko stane?", qed:"Med pilotom 12 € na apartma na mesec, najmanj 49 € na mesec. Lastna rezervacijska stran s SEO in GEO je dodatnih 99 € na mesec.",
+  qf:"Imam en apartma. Se splača?", qfd:"Da, če vam sporočila gostov vzamejo večere ali si želite več neposrednih rezervacij. Najnižji znesek je 49 € na mesec.",
+  foot:"Vprašanja? Pišite na info@unbusyness.com ali pokličite +386 40 290 963",
+  errReq:"Izpolnite ime, e-pošto in število apartmajev.", errEmail:"Vpišite veljaven e-poštni naslov.", errConsent:"Za prijavo potrdite soglasje.", errSend:"Prijave ni bilo mogoče poslati. Poskusite znova ali pišite na info@unbusyness.com.", sending:"Pošiljam …"
+};
+const EN_EXTRA = { errReq:"Please fill in your name, email and number of apartments.", errEmail:"Please enter a valid email address.", errConsent:"Please tick the consent box to join.", errSend:"We couldn't send your sign-up. Try again or write to info@unbusyness.com.", sending:"Sending…" };
+
+const EN = {};
+document.querySelectorAll("[data-t]").forEach((el) => { EN[el.dataset.t] = el.hasAttribute("data-html") || el.querySelector("span.opt") ? el.innerHTML : el.textContent; });
+Object.assign(EN, EN_EXTRA);
+let lang = "en";
+function t(k) { return (lang === "sl" ? SL : EN)[k] ?? EN[k] ?? ""; }
+function setLang(l) {
+  lang = l === "sl" ? "sl" : "en";
+  document.documentElement.lang = lang;
+  document.querySelectorAll("[data-t]").forEach((el) => {
+    const v = t(el.dataset.t); if (!v) return;
+    if (el.hasAttribute("data-html") || /<\w/.test(v)) el.innerHTML = v; else el.textContent = v;
+  });
+  document.querySelectorAll(".lang button").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.lang === lang)));
+  try { localStorage.setItem("ub-lang", lang); } catch {}
+  calc();
+}
+
+// Savings estimate: moved revenue × (15.5% platform fee − ~3% card fees).
+const rev = document.getElementById("rev"), share = document.getElementById("share");
+function money(n) { return lang === "sl" ? n.toLocaleString("sl-SI") + " €" : "€" + n.toLocaleString("en-GB"); }
+function calc() {
+  const r = Number(rev.value), s = Number(share.value);
+  document.getElementById("revOut").textContent = money(r);
+  document.getElementById("shareOut").textContent = lang === "sl" ? s + " %" : s + "%";
+  document.getElementById("saved").textContent = money(Math.round(r * (s / 100) * (0.155 - 0.03)));
+}
+rev.addEventListener("input", calc); share.addEventListener("input", calc);
+
+document.querySelectorAll(".lang button").forEach((b) => b.addEventListener("click", () => setLang(b.dataset.lang)));
+const navSl = (navigator.language || "").toLowerCase().startsWith("sl") ? "sl" : "en";
+let start = navSl; try { start = new URLSearchParams(location.search).get("lang") || localStorage.getItem("ub-lang") || navSl; } catch {}
+setLang(start);
+
+const form = document.getElementById("wl"); const err = document.getElementById("err"); const btn = document.getElementById("submit");
+form.addEventListener("submit", async (e) => {
+  e.preventDefault(); err.hidden = true;
+  const v = (id) => document.getElementById(id).value.trim();
+  const fail = (k, id) => { err.textContent = t(k); err.hidden = false; if (id) document.getElementById(id).focus(); };
+  if (!v("name") || !v("email") || !v("units")) return fail("errReq", !v("name") ? "name" : !v("email") ? "email" : "units");
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v("email"))) return fail("errEmail", "email");
+  if (!document.getElementById("consent").checked) return fail("errConsent", "consent");
+  const data = { segment: "hosts", name: v("name"), email: v("email"), phone: v("phone"), city: v("city"), apartments: v("units"),
+    channels: [...form.querySelectorAll('input[name="channel"]:checked')].map((x) => x.value),
+    pains: [...form.querySelectorAll('input[name="pain"]:checked')].map((x) => x.value), language: lang, consent: true, page: location.pathname };
+  const label = btn.textContent; btn.disabled = true; btn.textContent = t("sending");
+  try {
+    const r = await fetch(WAITLIST_ENDPOINT, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(data) });
+    if (!r.ok) throw new Error("send failed");
+    form.hidden = true; const d = document.getElementById("done"); d.hidden = false; d.focus();
+  } catch { fail("errSend"); }
+  finally { btn.disabled = false; btn.textContent = label; }
+});
+</script>
+<style id="ubp-css">
+.ubp-back{position:fixed;inset:0;z-index:1000;background:rgba(20,32,30,.45);display:flex;align-items:center;justify-content:center;padding:16px;opacity:0;transition:opacity .2s}
+.ubp-back.on{opacity:1}
+.ubp{position:relative;width:100%;max-width:440px;max-height:calc(100vh - 32px);overflow:auto;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:22px;box-shadow:0 24px 60px rgba(0,0,0,.25);padding:26px 24px 20px;font-family:var(--body);transform:translateY(10px);transition:transform .2s}
+.ubp-back.on .ubp{transform:none}
+.ubp h2{font-family:var(--display,Georgia,serif);font-size:26px;line-height:1.15;margin:0 34px 6px 0;letter-spacing:-.01em}
+.ubp .ubp-sub{margin:0 0 14px;color:var(--muted);font-size:15px}
+.ubp ul{list-style:none;margin:0 0 18px;padding:0;display:grid;gap:9px}
+.ubp li{display:flex;gap:10px;font-size:15px;line-height:1.4}
+.ubp li::before{content:"✓";flex:none;width:22px;height:22px;border-radius:50%;background:var(--apricot-soft);color:var(--apricot-ink);font-weight:800;font-size:12px;display:grid;place-items:center;margin-top:1px}
+.ubp .ubp-btn{display:block;width:100%;box-sizing:border-box;text-align:center;border-radius:999px;padding:14px 18px;font-weight:700;font-size:16px;text-decoration:none;cursor:pointer;border:0;font-family:inherit}
+.ubp .ubp-f{display:block;margin:0;padding:0;background:none;border:0;box-shadow:none;max-width:none;width:auto;grid-template-columns:none;gap:0}
+.ubp .ubp-f label{text-transform:none;letter-spacing:0}
+.ubp .ubp-l{padding:0;color:var(--ink);display:block;font-weight:700;font-size:14px;margin:0 0 6px}
+.ubp .ubp-in{display:block;width:100%;box-sizing:border-box;font:inherit;font-size:16px;padding:13px 16px;border:1px solid var(--line);border-radius:14px;background:var(--bg);color:var(--ink)}
+.ubp .ubp-in:focus{outline:3px solid var(--apricot);outline-offset:1px;border-color:transparent;background:var(--bg);box-shadow:none}
+.ubp .ubp-c{font-weight:400;flex-direction:row;grid-template-columns:none;padding:0;border:0;background:none;display:flex;gap:9px;align-items:flex-start;margin:11px 0 12px;font-size:13px;line-height:1.4;color:var(--muted);cursor:pointer}
+.ubp .ubp-c input{min-height:0;max-height:18px;border-radius:4px;box-shadow:none;position:static;display:block;order:0;padding:0;appearance:auto;-webkit-appearance:checkbox;flex:none;width:18px;height:18px;margin:1px 0 0;accent-color:var(--green)}
+.ubp .ubp-err{margin:-4px 0 10px;color:var(--red);font-size:14px;font-weight:600}
+.ubp .ubp-hp{position:absolute;left:-9999px;width:1px;height:1px;opacity:0}
+.ubp .ubp-main[disabled]{opacity:.7;cursor:wait}
+.ubp .ubp-main{background:var(--green);color:var(--bg)}
+.ubp .ubp-main:hover{background:var(--green-deep);color:#fff}
+.ubp .ubp-or{margin:20px 0 10px;padding-top:16px;border-top:1px solid var(--line)}
+.ubp .ubp-or b{display:block;font-size:16px;margin-bottom:2px}
+.ubp .ubp-or span{color:var(--muted);font-size:14px}
+.ubp .ubp-demo{background:var(--apricot-soft);color:var(--apricot-ink);border:1px solid var(--apricot)}
+.ubp .ubp-demo:hover{background:var(--apricot);color:#14201E}
+.ubp .ubp-alt{display:block;text-align:center;margin-top:9px;font-size:14px;color:var(--muted)}
+.ubp .ubp-x{position:absolute;top:14px;right:14px;width:36px;height:36px;border-radius:50%;border:1px solid var(--line);background:var(--surface);color:var(--muted);font-size:20px;line-height:1;cursor:pointer}
+.ubp .ubp-later{display:block;margin:12px auto 0;background:none;border:0;color:var(--muted);font:inherit;font-size:14px;text-decoration:underline;cursor:pointer}
+.ubp :focus-visible{outline:3px solid var(--apricot);outline-offset:2px}
+@media (max-width:620px){.ubp-back{align-items:flex-end;padding:0}.ubp{max-width:none;border-radius:22px 22px 0 0;max-height:88vh;padding:24px 18px calc(16px + env(safe-area-inset-bottom))}}
+@media (prefers-reduced-motion:reduce){.ubp-back,.ubp{transition:none}}
+</style>
+<script id="ubp-js">
+(() => {
+  const C = {"segment": "hosts", "demo": {}, "more": "#how", "sl": ["<b>Nastavimo namesto vas</b>: vodiče, oznake in odgovore za vsak apartma.", "<b>Pilotne cene</b> za prve gostitelje.", "<b>Deluje z Airbnbjem in Booking.com</b>, ničesar vam ni treba opustiti."], "en": ["<b>Set up for you</b>: guides, tags and answers for every apartment.", "<b>Pilot prices</b> for the first hosts.", "<b>Works with Airbnb and Booking.com</b>, nothing to give up."], "page": "hosts"};
+  const TX = {
+    sl: { h: "Bodite med prvimi.", sub: "Prijavite se na čakalni seznam in dobite:", cta: "Prijava na čakalni seznam", howS: "Poglejte, kako deluje: oznaka v apartmaju, AI-gostitelj in neposredne rezervacije.", howB: "Poglejte, kako deluje", em: "Vaš e-poštni naslov", ph: "ime@primer.si", cons: "Unbusyness mi lahko piše glede zgodnjega dostopa. Izbris lahko zahtevam kadar koli.", eE: "Vpišite veljaven e-poštni naslov.", eC: "Za prijavo potrdite soglasje.", eS: "Prijave ni bilo mogoče shraniti. Poskusite znova ali pišite na info@unbusyness.com.", eR: "Preveč poskusov v kratkem času. Poskusite čez nekaj minut.", sending: "Shranjujem …", okH: "Ste na seznamu.", okP: "Hvala! Oglasili se vam bomo, ko boste lahko začeli.", more: "Povejte nam več o sebi", done: "Zapri", orB: "Še niste prepričani?", orS: "Preizkusite klikabilni demo aplikacije z izmišljenimi podatki. Prijava ni potrebna.", demoP: "Odpri demo na telefonu", demoD: "Odpri demo na računalniku", altP: "ali demo za telefon", altD: "ali demo za računalnik", later: "Ne zdaj", close: "Zapri", label: "Prijava na čakalni seznam" },
+    en: { h: "Be among the first.", sub: "Join the waitlist and get:", cta: "Join the waitlist", howS: "See how it works: the tag in each apartment, the AI host and direct bookings.", howB: "See how it works", em: "Your email", ph: "name@example.com", cons: "Unbusyness may email me about early access. I can ask for deletion at any time.", eE: "Please enter a valid email address.", eC: "Please tick the consent box to join.", eS: "We couldn't save your sign-up. Try again or write to info@unbusyness.com.", eR: "Too many attempts in a short time. Try again in a few minutes.", sending: "Saving…", okH: "You're on the list.", okP: "Thanks! We'll be in touch when your spot opens.", more: "Tell us a bit more", done: "Close", orB: "Not sure yet?", orS: "Try the demo app: clickable, with made-up data, no sign-up.", demoP: "Open the phone demo", demoD: "Open the desktop demo", altP: "or the phone demo", altD: "or the desktop demo", later: "Not now", close: "Close", label: "Join the waitlist" },
+  };
+  const KEY = "ub-pop-" + C.page, DAYS = 1;
+  const qs = new URLSearchParams(location.search), force = qs.get("popup") === "1";
+  const get = (k) => { try { return localStorage.getItem(k); } catch { return null; } };
+  const set = (k, v) => { try { localStorage.setItem(k, v); } catch {} };
+  const snoozed = () => { const t = +get(KEY) || 0; return Date.now() - t < DAYS * 864e5; };
+  const lang = () => (document.documentElement.lang || "en").startsWith("sl") ? "sl" : "en";
+  const demoHref = (kind) => "/demo/" + C.demo[kind] + (!C.enOnly && lang() === "en" ? "-en" : "") + ".html";
+  let shownOk = false, shown = false, back = null, lastFocus = null;
+
+  document.addEventListener("submit", (e) => { if (!(back && back.contains(e.target))) set("ub-joined-" + C.page, "1"); }, true);
+  document.addEventListener("click", (e) => { const a = e.target.closest && e.target.closest('a[href*="/demo/"]'); if (a && !(back && back.contains(a))) set(KEY, Date.now()); }, true);
+
+  function blocked() {
+    if (force) return false;
+    if (shown || snoozed() || get("ub-joined-" + C.page)) return true;
+    const a = document.activeElement; if (a && /INPUT|SELECT|TEXTAREA/.test(a.tagName)) return true;
+    const j = document.getElementById("join"); if (j) { const r = j.getBoundingClientRect(); if (r.top < innerHeight * .8 && r.bottom > 0) return true; }
+    return false;
+  }
+  function render() {
+    const keep = back.querySelector("#ubp-e"); const kv = keep ? keep.value : "", kc = !!(back.querySelector(".ubp-c input") || {}).checked;
+    if (back.querySelector(".ubp-f") === null && back.querySelector(".ubp h2") && shownOk) return;
+    const t = TX[lang()], c = C[lang()];
+    const narrow = matchMedia("(max-width: 760px)").matches;
+    const kinds = Object.keys(C.demo); const first = kinds.length > 1 ? (narrow ? "phone" : "desk") : kinds[0]; const second = kinds.find((k) => k !== first);
+    back.querySelector(".ubp").setAttribute("aria-label", t.label);
+    back.querySelector(".ubp").innerHTML = `<button type="button" class="ubp-x" aria-label="${t.close}">×</button>
+      <h2 id="ubp-h">${t.h}</h2><p class="ubp-sub">${t.sub}</p>
+      <ul>${c.map((x) => `<li><span>${x}</span></li>`).join("")}</ul>
+      <form class="ubp-f" novalidate>
+        <label class="ubp-l" for="ubp-e">${t.em}</label>
+        <input id="ubp-e" class="ubp-in" type="email" name="email" autocomplete="email" inputmode="email" placeholder="${t.ph}" required>
+        <input type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" class="ubp-hp">
+        <label class="ubp-c"><input type="checkbox" name="consent"><span>${t.cons}</span></label>
+        <p class="ubp-err" role="alert" hidden></p>
+        <button class="ubp-btn ubp-main" type="submit">${t.cta}</button>
+      </form>
+      ${first ? `<div class="ubp-or"><b>${t.orB}</b><span>${t.orS}</span></div>
+      <a class="ubp-btn ubp-demo" href="${demoHref(first)}">${first === "phone" ? t.demoP : t.demoD}</a>` : C.more ? `<div class="ubp-or"><b>${t.orB}</b><span>${t.howS}</span></div>
+      <a class="ubp-btn ubp-demo ubp-more" href="${C.more}">${t.howB}</a>` : ""}
+      ${second ? `<a class="ubp-alt" href="${demoHref(second)}">${second === "phone" ? t.altP : t.altD}</a>` : ""}
+      <button type="button" class="ubp-later">${t.later}</button>`;
+    const box = back.querySelector(".ubp");
+    if (kv) box.querySelector("#ubp-e").value = kv; if (kc) box.querySelector(".ubp-c input").checked = true;
+    box.querySelector(".ubp-x").onclick = box.querySelector(".ubp-later").onclick = () => close();
+    const toJoin = (e) => { e.preventDefault(); close(true); const j = document.getElementById("join"); if (j) { j.scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "start" }); const f = j.querySelector("input:not([type=hidden]):not([tabindex='-1'])"); if (f) setTimeout(() => f.focus({ preventScroll: true }), 500); } };
+    const form = box.querySelector(".ubp-f"), err = box.querySelector(".ubp-err");
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault(); e.stopPropagation();
+      const email = form.email.value.trim(), btn = form.querySelector("button");
+      const fail = (m, el) => { err.textContent = m; err.hidden = false; if (el) el.focus(); };
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return fail(t.eE, form.email);
+      if (!form.consent.checked) return fail(t.eC, form.consent);
+      err.hidden = true; btn.disabled = true; btn.textContent = t.sending;
+      try {
+        const r = await fetch("/api/waitlist", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ segment: C.segment, email, consent: true, website: form.website.value, language: lang(), page: location.pathname + "#popup" }) });
+        if (!r.ok) throw r.status;
+        set("ub-joined-" + C.page, "1"); shownOk = true;
+        box.innerHTML = `<button type="button" class="ubp-x" aria-label="${t.close}">×</button><h2 id="ubp-h">${t.okH}</h2><p class="ubp-sub">${t.okP}</p>${document.getElementById("join") ? `<a class="ubp-btn ubp-demo" href="#join">${t.more}</a>` : ""}<button type="button" class="ubp-later">${t.done}</button>`;
+        box.querySelector(".ubp-x").onclick = box.querySelector(".ubp-later").onclick = () => close();
+        const m = box.querySelector('a[href="#join"]'); if (m) m.onclick = toJoin;
+        box.querySelector(".ubp-later").focus();
+      } catch (s) { btn.disabled = false; btn.textContent = t.cta; fail(s === 429 ? t.eR : t.eS); }
+    });
+    box.querySelectorAll('a[href*="/demo/"]').forEach((a) => a.addEventListener("click", () => set(KEY, Date.now())));
+    const more = box.querySelector(".ubp-more"); if (more) more.onclick = (e) => { e.preventDefault(); close(true); const m = document.querySelector(C.more); if (m) m.scrollIntoView({ behavior: "smooth", block: "start" }); };
+  }
+  function open() {
+    if (blocked()) return;
+    shown = true; lastFocus = document.activeElement;
+    back = document.createElement("div"); back.className = "ubp-back";
+    back.innerHTML = '<div class="ubp" role="dialog" aria-modal="true" aria-labelledby="ubp-h"></div>';
+    document.body.appendChild(back); render();
+    back.addEventListener("mousedown", (e) => { if (e.target === back) close(); });
+    document.addEventListener("keydown", onKey);
+    requestAnimationFrame(() => back.classList.add("on"));
+    back.querySelector("#ubp-e").focus({ preventScroll: true });
+    new MutationObserver(() => back && render()).observe(document.documentElement, { attributes: true, attributeFilter: ["lang"] });
+  }
+  function close(keepScroll) {
+    if (!back) return; set(KEY, Date.now());
+    document.removeEventListener("keydown", onKey);
+    const b = back; back = null; b.classList.remove("on"); setTimeout(() => b.remove(), 200);
+    if (!keepScroll && lastFocus && lastFocus.focus) lastFocus.focus({ preventScroll: true });
+  }
+  function onKey(e) {
+    if (e.key === "Escape") return close();
+    if (e.key !== "Tab") return;
+    const f = [...back.querySelectorAll("a,button")]; const i = f.indexOf(document.activeElement);
+    if (e.shiftKey && i <= 0) { e.preventDefault(); f[f.length - 1].focus(); } else if (!e.shiftKey && i === f.length - 1) { e.preventDefault(); f[0].focus(); }
+  }
+  if (force) return void setTimeout(open, 300);
+  if (snoozed()) return;
+  const t0 = Date.now();
+  setTimeout(open, 12000);
+  addEventListener("scroll", function s() { const h = document.documentElement.scrollHeight - innerHeight; if (h > 0 && scrollY / h > .4 && Date.now() - t0 > 6000) { removeEventListener("scroll", s); open(); } }, { passive: true });
+  document.addEventListener("mouseout", (e) => { if (!e.relatedTarget && e.clientY <= 0 && Date.now() - t0 > 6000) open(); });
+})();
+</script>
+</body>
+</html>

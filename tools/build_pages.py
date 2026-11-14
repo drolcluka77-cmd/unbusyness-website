@@ -36,8 +36,8 @@ PAGES = [
         "slug": "", "og": "welcome", "app": None,
         "title": {"sl": "Unbusyness – AI pisarniški pomočnik za upravnike, obrtnike in hotele",
                   "en": "Unbusyness – AI office assistant for building managers, trades and hotels"},
-        "desc": {"sl": "Unbusyness sprejema klice in prijave okvar, pripravlja ponudbe in naloge ter vas neposredno poveže z izvajalci. Za upravnike stavb, obrtnike, hotele in stanovalce.",
-                 "en": "Unbusyness answers calls and fault reports, prepares quotes and jobs, and connects you directly with contractors. For building managers, trades, hotels and residents."},
+        "desc": {"sl": "Unbusyness sprejema klice in prijave okvar, pripravlja ponudbe in naloge ter vas neposredno poveže z izvajalci. Za upravnike stavb, obrtnike, hotele, gostitelje na Airbnbju in stanovalce.",
+                 "en": "Unbusyness answers calls and fault reports, prepares quotes and jobs, and connects you directly with contractors. For building managers, trades, hotels, Airbnb hosts and residents."},
     },
     {
         "slug": "building-managers/", "og": "building-managers",
@@ -65,6 +65,15 @@ PAGES = [
                   "en": "Hotel task management on WhatsApp | Unbusyness for Hotels"},
         "desc": {"sl": "Unbusyness sporočila, glasovna sporočila in fotografije osebja na WhatsAppu spremeni v naloge z odgovorno osebo, ciljnim časom in samodejnim stopnjevanjem. Za gospodinjstvo, vzdrževanje in recepcijo.",
                  "en": "Unbusyness turns your staff's WhatsApp messages, voice notes and photos into tracked jobs with one owner, a target time and automatic escalation. For housekeeping, maintenance and front desk."},
+    },
+    {
+        "slug": "hosts/", "og": "hosts",
+        "app": {"name": {"sl": "Unbusyness za gostitelje", "en": "Unbusyness for Hosts"},
+                "category": "BusinessApplication", "audience": {"sl": "Gostitelji na Airbnbju in Bookingu", "en": "Airbnb and short-term rental hosts"}},
+        "title": {"sl": "AI-gostitelj za Airbnb apartmaje in neposredne rezervacije | Unbusyness",
+                  "en": "AI host for Airbnb hosts, plus your own direct bookings | Unbusyness"},
+        "desc": {"sl": "Unbusyness za gostitelje na Airbnbju in Bookingu: AI-gostitelj odgovarja gostom 24/7, težave spremeni v naloge za čiščenje in popravila, oznaka NFC/QR v apartmaju in lastna stran za neposredne rezervacije brez provizije platform.",
+                 "en": "Unbusyness for Airbnb and short-term rental hosts: a 24/7 AI host that answers guests and turns problems into jobs for cleaning and repairs, an NFC/QR tag in every apartment, and your own site for commission-free direct bookings."},
     },
     {
         "slug": "home/", "og": "home",
@@ -320,6 +329,7 @@ Unbusyness is in early access: each product has a waitlist, and the first buildi
 - [Unbusyness for building managers]({BASE}/en/building-managers/): fault reports, resident requests, owners' meetings, cleaning, and planned and emergency maintenance, connected directly to contractors. Residents call, text or email as today; no app needed. Slovenian: [{BASE}/sl/building-managers/]({BASE}/sl/building-managers/)
 - [Unbusyness for trades]({BASE}/en/contractor/): an AI office manager for plumbers, electricians, heating engineers and other trades. It answers calls 24/7, drafts quotes and chases unpaid invoices; prices and anything sent to customers need the owner's approval. Slovenian: [{BASE}/sl/contractor/]({BASE}/sl/contractor/)
 - [Unbusyness for hotels]({BASE}/en/hotels/): staff keep using WhatsApp; messages, voice notes and photos become jobs with one owner, a target time and automatic escalation for housekeeping, maintenance and front desk. Slovenian: [{BASE}/sl/hotels/]({BASE}/sl/hotels/)
+- [Unbusyness for Airbnb hosts]({BASE}/en/hosts/): a 24/7 AI host that answers guests in their language and turns reported problems into jobs for cleaners and maintenance; an NFC/QR tag in every apartment with the digital guide; and the host's own booking website optimised for Google and AI search, for direct bookings without platform commission. Pilot prices: €12 per apartment per month (minimum €49), own booking site +€99 per month. Slovenian: [{BASE}/sl/hosts/]({BASE}/sl/hosts/)
 - [Unbusyness Home]({BASE}/en/home/): a digital passport for a flat, house, car, appliances and warranties, with reminders before things are due and reliable, punctual tradespeople when something breaks. Slovenian: [{BASE}/sl/home/]({BASE}/sl/home/)
 
 ## Company

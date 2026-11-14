@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Unbusyness – AI pisarniški pomočnik za upravnike, obrtnike in hotele</title>
-<meta name="description" content="Unbusyness sprejema klice in prijave okvar, pripravlja ponudbe in naloge ter vas neposredno poveže z izvajalci. Za upravnike stavb, obrtnike, hotele in stanovalce.">
+<meta name="description" content="Unbusyness sprejema klice in prijave okvar, pripravlja ponudbe in naloge ter vas neposredno poveže z izvajalci. Za upravnike stavb, obrtnike, hotele, gostitelje na Airbnbju in stanovalce.">
 <link rel="canonical" href="https://unbusyness.com/sl/">
 <link rel="alternate" hreflang="sl" href="https://unbusyness.com/sl/">
 <link rel="alternate" hreflang="en" href="https://unbusyness.com/en/">
@@ -13,7 +13,7 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Unbusyness">
 <meta property="og:title" content="Unbusyness – AI pisarniški pomočnik za upravnike, obrtnike in hotele">
-<meta property="og:description" content="Unbusyness sprejema klice in prijave okvar, pripravlja ponudbe in naloge ter vas neposredno poveže z izvajalci. Za upravnike stavb, obrtnike, hotele in stanovalce.">
+<meta property="og:description" content="Unbusyness sprejema klice in prijave okvar, pripravlja ponudbe in naloge ter vas neposredno poveže z izvajalci. Za upravnike stavb, obrtnike, hotele, gostitelje na Airbnbju in stanovalce.">
 <meta property="og:url" content="https://unbusyness.com/sl/">
 <meta property="og:image" content="https://unbusyness.com/media/og/welcome-sl.png">
 <meta property="og:image:width" content="1200">
@@ -22,7 +22,7 @@
 <meta property="og:locale:alternate" content="en_GB">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Unbusyness – AI pisarniški pomočnik za upravnike, obrtnike in hotele">
-<meta name="twitter:description" content="Unbusyness sprejema klice in prijave okvar, pripravlja ponudbe in naloge ter vas neposredno poveže z izvajalci. Za upravnike stavb, obrtnike, hotele in stanovalce.">
+<meta name="twitter:description" content="Unbusyness sprejema klice in prijave okvar, pripravlja ponudbe in naloge ter vas neposredno poveže z izvajalci. Za upravnike stavb, obrtnike, hotele, gostitelje na Airbnbju in stanovalce.">
 <meta name="twitter:image" content="https://unbusyness.com/media/og/welcome-sl.png">
 <script type="application/ld+json">
 {
@@ -64,7 +64,7 @@
    "@id": "https://unbusyness.com/sl/#webpage",
    "url": "https://unbusyness.com/sl/",
    "name": "Unbusyness – AI pisarniški pomočnik za upravnike, obrtnike in hotele",
-   "description": "Unbusyness sprejema klice in prijave okvar, pripravlja ponudbe in naloge ter vas neposredno poveže z izvajalci. Za upravnike stavb, obrtnike, hotele in stanovalce.",
+   "description": "Unbusyness sprejema klice in prijave okvar, pripravlja ponudbe in naloge ter vas neposredno poveže z izvajalci. Za upravnike stavb, obrtnike, hotele, gostitelje na Airbnbju in stanovalce.",
    "inLanguage": "sl",
    "isPartOf": {
     "@id": "https://unbusyness.com/#website"
@@ -138,6 +138,7 @@ h2{font-size:clamp(30px,4.2vw,48px);line-height:1.08}
 @keyframes blink{50%{opacity:0}}
 
 .choices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.choices>:last-child:nth-child(odd){grid-column:1/-1}
 .choice{display:grid;grid-template-columns:52px minmax(0,1fr);gap:14px;align-items:center;text-align:left;background:var(--surface);border:1.5px solid var(--line);border-radius:20px;padding:18px;transition:border-color .15s,transform .15s}
 .choice:hover{border-color:var(--green);transform:translateY(-1px)}
 a.choice{color:inherit;text-decoration:none}
@@ -200,6 +201,7 @@ html[lang="sl"] [data-l="en"],html[lang="en"] [data-l="sl"]{display:none!importa
 .aud4{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
 .aud4 a{display:block;background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:20px 22px;color:inherit;text-decoration:none;transition:border-color .15s}
 .aud4 a:hover{border-color:var(--green)}
+.aud4 a:last-child:nth-child(odd){grid-column:1/-1}
 .aud4 h3{margin:0 0 6px;font-size:18px;letter-spacing:-.01em}
 .aud4 p{margin:0;color:var(--muted);font-size:15px;line-height:1.5}
 .aud4 span{display:inline-block;margin-top:10px;font-weight:700;font-size:14.5px;color:var(--green)}
@@ -218,7 +220,7 @@ footer{padding-block:28px;border-top:1px solid var(--line);color:var(--muted);fo
     <div class="topr"><button class="back" id="back" type="button" hidden></button>
       <div class="langs" role="group" aria-label="Language / Jezik"><button type="button" data-lang="sl" aria-pressed="false">SL</button><button type="button" data-lang="en" aria-pressed="false">EN</button></div></div>
   </header>
-  <p class="intro" data-l="sl"><b>Unbusyness je pisarniški pomočnik z umetno inteligenco za upravnike stavb, obrtnike in hotele.</b> Sprejema klice in prijave okvar, pripravlja ponudbe in naloge ter vas neposredno poveže z izvajalci. Za stanovalce in lastnike domov je tu aplikacija Unbusyness Home.</p>
+  <p class="intro" data-l="sl"><b>Unbusyness je pisarniški pomočnik z umetno inteligenco za upravnike stavb, obrtnike, hotele in gostitelje na Airbnbju.</b> Sprejema klice in prijave okvar, pripravlja ponudbe in naloge ter vas neposredno poveže z izvajalci. Za stanovalce in lastnike domov je tu aplikacija Unbusyness Home.</p>
   
   <div class="layout">
     <main class="stage" id="stage" aria-live="polite"></main>
@@ -239,6 +241,7 @@ footer{padding-block:28px;border-top:1px solid var(--line);color:var(--muted);fo
       <a href="/sl/building-managers/"><h3>Za upravnike stavb</h3><p>Aplikacija za upravnike stavb: prijave okvar, zahtevki stanovalcev, zbori lastnikov, čiščenje ter redno in nujno vzdrževanje, z neposredno povezavo do izvajalcev.</p><span>Več za upravnike →</span></a>
       <a href="/sl/contractor/"><h3>Za obrtnike</h3><p>Za vodoinštalaterje, električarje, serviserje ogrevanja in druge obrtnike: sprejema klice, pripravlja ponudbe in opominja na neplačane račune, medtem ko delate.</p><span>Več za obrtnike →</span></a>
       <a href="/sl/hotels/"><h3>Za hotele</h3><p>Sporočila, glasovna sporočila in fotografije osebja na WhatsAppu postanejo naloge z odgovorno osebo, ciljnim časom in samodejnim stopnjevanjem.</p><span>Več za hotele →</span></a>
+      <a href="/sl/hosts/"><h3>Za gostitelje Airbnb</h3><p>AI-gostitelj odgovarja gostom 24/7, težave spremeni v naloge za čiščenje in popravila, lastna rezervacijska stran pa prinaša neposredne rezervacije brez provizije platform.</p><span>Več za gostitelje →</span></a>
       <a href="/sl/home/"><h3>Za dom: Unbusyness Home</h3><p>Digitalni potni list stanovanja, hiše, avta in garancij. Opomniki pred roki in zanesljiv mojster, ko se kaj pokvari.</p><span>Več o Unbusyness Home →</span></a>
     </div>
   </section>
@@ -250,6 +253,7 @@ footer{padding-block:28px;border-top:1px solid var(--line);color:var(--muted);fo
 const PAGES = {
   manager: "/sl/building-managers/",
   hotel: "/sl/hotels/",
+  host: "/sl/hosts/",
   resident: "/sl/home/",
   trade: "/sl/contractor/",
 };
@@ -266,6 +270,7 @@ const T = {
     rMan: "I manage buildings", rManD: "Residents, fault reports, contractors, owners' meetings.",
     rTrade: "I'm a tradesperson", rTradeD: "Plumber, electrician, roofer, welder and more.",
     rHotel: "I run a hotel", rHotelD: "Housekeeping, maintenance and the front desk on one page.",
+    rHost: "I host on Airbnb or Booking", rHostD: "Guests answered 24/7, cleaning and repairs organised, and direct bookings.",
     tradeQ: "What's your trade?", tradeLede: "Pick one, or tell us yours.",
     trades: ["Plumber", "Electrician", "Roofer", "Welder", "Heating and heat pumps", "Carpenter", "Painter", "Locksmith", "Cleaning"], otherTrade: "Something else", otherPh: "Your trade", next: "Next",
     formQ: { resident: "Join as a resident", manager: "Join the building managers' waitlist", trade: "Join the waitlist for {trade}s", hotel: "Join the hotels' waitlist" },
@@ -290,6 +295,7 @@ const T = {
     rMan: "Upravljam stavbe", rManD: "Stanovalci, prijave okvar, izvajalci, zbori lastnikov.",
     rTrade: "Sem obrtnik", rTradeD: "Vodoinštalater, električar, krovec, varilec in drugi.",
     rHotel: "Vodim hotel", rHotelD: "Gospodinjstvo, vzdrževanje in recepcija na enem mestu.",
+    rHost: "Oddajam na Airbnbju ali Bookingu", rHostD: "Odgovori gostom 24/7, urejeno čiščenje in popravila ter neposredne rezervacije.",
     tradeQ: "Kakšna je vaša obrt?", tradeLede: "Izberite ali nam napišite svojo.",
     trades: ["Vodoinštalater", "Električar", "Krovec", "Varilec", "Ogrevanje in toplotne črpalke", "Mizar", "Pleskar", "Ključavničar", "Čiščenje"], otherTrade: "Nekaj drugega", otherPh: "Vaša obrt", next: "Naprej",
     formQ: { resident: "Prijava za stanovalce", manager: "Čakalni seznam za upravnike", trade: "Čakalni seznam: {trade}", hotel: "Čakalni seznam za hotele" },
@@ -311,6 +317,7 @@ const ICON = {
   man: '<path d="M4 21V5l8-3 8 3v16"/><path d="M9 21v-4h6v4M8 8h2M14 8h2M8 12h2M14 12h2"/>',
   trade: '<path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.8-3.8a6 6 0 0 1-7.9 7.9l-6.9 6.9a2.1 2.1 0 0 1-3-3l6.9-6.9a6 6 0 0 1 7.9-7.9z"/>',
   hotel: '<path d="M3 21V7h18v14"/><path d="M3 11h18M7 15h2M11 15h2M15 15h2M9 7V3h6v4"/>',
+  host: '<circle cx="8" cy="15" r="4"/><path d="M10.8 12.2 20 3M17 6l3 3M15 8l2 2"/>',
 };
 const svg = (n) => `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICON[n]}</svg>`;
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (m) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[m]));
@@ -346,10 +353,10 @@ function render() {
     typeHello(); document.getElementById("startBtn").onclick = () => go("role");
   } else if (S.step === "role") {
     // Every choice opens its own page. The language is kept in localStorage; the contractor page has its own SL/EN addresses.
-    const ROLE = { Res: "resident", Man: "manager", Trade: "trade", Hotel: "hotel" };
+    const ROLE = { Res: "resident", Man: "manager", Trade: "trade", Hotel: "hotel", Host: "host" };
     const c = (k, ic) => { const inner = `<span class="ic">${svg(ic)}</span><div><b>${t("r" + k)}</b><span>${t("r" + k + "D")}</span></div>`; let page = PAGES[ROLE[k]]; if (page && typeof page === "object") page = page[lang] || page.en;
       return page ? `<a class="choice" href="${page}">${inner}</a>` : `<button class="choice" data-r="${k}" type="button">${inner}</button>`; };
-    st.innerHTML = `<section class="step"><h2>${t("roleQ")}</h2><p class="lede">${t("roleLede")}</p><div class="choices">${c("Res", "res")}${c("Man", "man")}${c("Trade", "trade")}${c("Hotel", "hotel")}</div></section>`;
+    st.innerHTML = `<section class="step"><h2>${t("roleQ")}</h2><p class="lede">${t("roleLede")}</p><div class="choices">${c("Res", "res")}${c("Man", "man")}${c("Trade", "trade")}${c("Hotel", "hotel")}${c("Host", "host")}</div></section>`;
     st.querySelectorAll("[data-r]").forEach((x) => (x.onclick = () => { S.role = ROLE[x.dataset.r]; go(S.role === "trade" ? "trade" : "form"); }));
   } else if (S.step === "trade") {
     st.innerHTML = `<section class="step"><h2>${t("tradeQ")}</h2><p class="lede">${t("tradeLede")}</p>

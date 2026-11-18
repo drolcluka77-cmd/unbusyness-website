@@ -251,3 +251,27 @@ class StaticFileTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class CrmHandOffTests(unittest.TestCase):
+    def test_payload_maps_segment_and_keeps_ref_and_code(self):
+        from app import _crm_payload
+        p = _crm_payload({"segment": "building_managers", "email": "a@b.si", "buildings": "12", "ref": "ana", "code": "ANA"})
+        self.assertEqual(p["segment"], "building-managers")
+        self.assertEqual(p["units"], "12")
+        self.assertEqual((p["ref"], p["code"]), ("ana", "ANA"))
+
+    def test_residents_and_investors_are_not_sent(self):
+        from app import _crm_payload
+        self.assertIsNone(_crm_payload({"segment": "investors", "email": "a@b.si"}))
+        self.assertIsNone(_crm_payload({"segment": "residents", "email": "a@b.si"}))
+
+    def test_send_posts_json_with_secret(self):
+        from app import _send_to_crm
+        response = MagicMock(status=200)
+        response.__enter__.return_value = response
+        with patch("app.urlopen", return_value=response) as opened:
+            _send_to_crm(1, {"email": "a@b.si", "segment": "hosts"}, "https://crm.test/api/webhooks/waitlist", "s3cret")
+        request = opened.call_args[0][0]
+        self.assertEqual(request.get_header("X-webhook-secret"), "s3cret")
+        self.assertEqual(json.loads(request.data)["email"], "a@b.si")

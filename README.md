@@ -75,3 +75,15 @@ These claims are on the pages but are not decided or verified yet:
 Do not use the name of the hotel brochure that inspired the hotels page.
 
 Contact in the footers: info@unbusyness.com · +386 40 290 963
+
+## Sales CRM hand-off and creator codes
+
+Waitlist sign-ups for a product (hosts, hotels, building managers, tradespeople) are also sent to the
+sales CRM (Distribution Hub), where they become warm leads for a seller. Residents and investor requests are not sent.
+
+- Set two Replit Secrets: `CRM_WEBHOOK_URL` = `https://crm-digital-production.up.railway.app/api/webhooks/waitlist`
+  and `CRM_WEBHOOK_SECRET` = the same value as `WAITLIST_WEBHOOK_SECRET` in the CRM. Without them nothing is sent.
+- The hand-off runs in the background after the sign-up is stored, with retries (0 s, 30 s, 3 min, 15 min).
+  The CRM ignores an e-mail it already has, so a repeat is harmless.
+- `ref.js` (loaded on every page) remembers `?ref=<code>` from a UGC creator's link for 30 days, adds an optional
+  "creator code" field (first month free) to the waitlist forms, and adds `ref` and `code` to every `/api/waitlist` request.

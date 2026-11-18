@@ -15,6 +15,7 @@ from collections import defaultdict, deque
 from email.message import EmailMessage
 from pathlib import Path
 from urllib.parse import parse_qsl, unquote, urlencode, urlsplit
+from urllib.request import Request, urlopen
 
 import psycopg
 
@@ -80,6 +81,8 @@ FIELD_LABELS = {
     "message": "Message",
     "language": "Language",
     "page": "Page",
+    "ref": "Came via creator link",
+    "code": "Creator code (1st month free)",
 }
 STATIC_EXTENSIONS = {
     ".avif",
@@ -287,6 +290,82 @@ def _smtp_error_summary(exc: Exception) -> str:
     return type(exc).__name__
 
 
+# ─── Sales CRM hand-off ──────────────────────────────────────────────────
+# Every waitlist sign-up for a product is also sent to the sales CRM
+# (Distribution Hub), where it becomes a warm lead for a seller. Set
+# CRM_WEBHOOK_URL (https://…/api/webhooks/waitlist) and CRM_WEBHOOK_SECRET.
+# Runs in a background thread with a few retries; the sign-up is already
+# stored here, and the CRM ignores duplicates by e-mail.
+CRM_SEGMENTS = {
+    "hosts": "hosts",
+    "hotel": "hotels",
+    "hotels": "hotels",
+    "manager": "building-managers",
+    "building_managers": "building-managers",
+    "trade": "contractor",
+    "tradespeople": "contractor",
+}
+CRM_RETRY_DELAYS = (0, 30, 180, 900)
+
+
+def _crm_payload(data: dict) -> dict | None:
+    segment = CRM_SEGMENTS.get(str(data.get("segment")))
+    if not segment:
+        return None
+    units = data.get("apartments") or data.get("rooms") or data.get("buildings") or data.get("units")
+    return {
+        "segment": segment,
+        "email": data.get("email"),
+        "name": data.get("name"),
+        "phone": data.get("phone"),
+        "city": data.get("city"),
+        "company": data.get("company"),
+        "units": units,
+        "channels": data.get("channels") if isinstance(data.get("channels"), list) else [],
+        "pains": data.get("pains") if isinstance(data.get("pains"), list) else [],
+        "language": data.get("language"),
+        "page": data.get("page"),
+        "ref": data.get("ref"),
+        "code": data.get("code"),
+    }
+
+
+def _send_to_crm(signup_id: int, payload: dict, url: str, secret: str):
+    body = json.dumps(payload, ensure_ascii=False).encode("utf-8")
+    for attempt, delay in enumerate(CRM_RETRY_DELAYS, start=1):
+        if delay:
+            time.sleep(delay)
+        try:
+            request = Request(
+                url,
+                data=body,
+                method="POST",
+                headers={"Content-Type": "application/json", "X-Webhook-Secret": secret, "User-Agent": "unbusyness-website"},
+            )
+            with urlopen(request, timeout=15) as response:
+                if 200 <= response.status < 300:
+                    logging.info("Waitlist signup %s sent to the CRM.", signup_id)
+                    return
+                logging.warning("CRM returned %s for signup %s (attempt %s).", response.status, signup_id, attempt)
+        except Exception as exc:  # network errors, HTTP 4xx/5xx
+            code = getattr(exc, "code", None)
+            logging.warning("CRM hand-off for signup %s failed (attempt %s): %s %s", signup_id, attempt, type(exc).__name__, code or "")
+            if code in (400, 401, 403):
+                return  # retrying won't help
+    logging.error("CRM hand-off for signup %s gave up after %s attempts.", signup_id, len(CRM_RETRY_DELAYS))
+
+
+def _forward_to_crm(signup_id: int, data: dict):
+    url = os.environ.get("CRM_WEBHOOK_URL", "").strip()
+    secret = os.environ.get("CRM_WEBHOOK_SECRET", "").strip()
+    if not url or not secret:
+        return
+    payload = _crm_payload(data)
+    if not payload:
+        return
+    threading.Thread(target=_send_to_crm, args=(signup_id, payload, url, secret), daemon=True).start()
+
+
 RANGE_RE = re.compile(r"^bytes=(\d*)-(\d*)$")
 
 
@@ -438,6 +517,7 @@ def application(environ, start_response):
         except (DatabaseConfigurationError, psycopg.Error, OSError) as exc:
             logging.error("Waitlist signup could not be stored (%s)", type(exc).__name__)
             return _json_response(start_response, "503 Service Unavailable", {"error": "We couldn't save your sign-up. Please try again.", "code": "storage_unavailable"})
+        _forward_to_crm(signup_id, data)
         email_enabled = os.environ.get("WAITLIST_EMAIL_ENABLED", "false").strip().lower() in {"1", "true", "yes", "on"}
         if not email_enabled:
             logging.info("Waitlist signup %s stored; notification pending; SMTP remains paused.", signup_id)
